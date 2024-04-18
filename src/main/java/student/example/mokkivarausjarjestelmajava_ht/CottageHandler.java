@@ -3,6 +3,7 @@ package student.example.mokkivarausjarjestelmajava_ht;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
@@ -50,10 +51,14 @@ public class CottageHandler extends Application {
         CheckBox latu = new CheckBox("Hiihtolatu lähellä");
         CheckBox kuivain = new CheckBox("Hiustenkuivain");
         Button tallennusNappi = new Button("Tallenna");
+        tallennusNappi.setAlignment(Pos.CENTER);
+        Button kotiNappi = main.kotiNappain(mokkiStage);
+        BPMokinLisaamiselle.setBottom(kotiNappi);
         paneeliCheckBoxeille.getChildren().addAll(keittio, sauna, latu, kuivain);
         paneeliMokinVarusteille.getChildren().addAll(varusteTeksti, paneeliCheckBoxeille);
         paneeliUudenMokinTiedoille.getChildren().addAll(annaAlue, paneeliAlueelle, mokinNimi, nimiTF, hintaTeksti, hintaTF, kuvausTeksti, kuvausTF,
                 henkilomaaraTeksti, henkiloTF, paneeliMokinVarusteille, tallennusNappi);
+        paneeliUudenMokinTiedoille.setAlignment(Pos.CENTER);
 
         //toiminnallisuus
         tallennusNappi.setOnAction(e->{
@@ -103,6 +108,7 @@ public class CottageHandler extends Application {
 
     protected void mokkiMetodi(Stage mokkiStage){
         BorderPane BPmokeille = new BorderPane();
+        //ohjelma lukee tässä aina mökit mökkienluku metodilla, joten sinne tallentamattomat mökit eivät näy listassa!
         mokkienLuku();
         TextArea alueMokkienTiedoille = new TextArea();
         alueMokkienTiedoille.setText("Klikkaa mökkiä nähdäksesi sen tarkemmat tiedot :)");
@@ -120,11 +126,14 @@ public class CottageHandler extends Application {
                     luettavaMokkiLista.get(mokkiLista.getSelectionModel().getSelectedIndex()).toString());
         });
 
+        Button kotiNappi = main.kotiNappain(mokkiStage);
         Button lisaysNappi = new Button("Lisää uusi mökki");
         lisaysNappi.setOnAction(e->{
             mokinLisaysMetodi(mokkiStage);
         });
-        BPmokeille.setBottom(lisaysNappi);
+        HBox paneeliAlaValikolle = new HBox(10);
+        paneeliAlaValikolle.getChildren().addAll(kotiNappi, lisaysNappi);
+        BPmokeille.setBottom(paneeliAlaValikolle);
         BPmokeille.setLeft(mokkiLista);
         BPmokeille.setCenter(alueMokkienTiedoille);
         Scene scene = new Scene(BPmokeille);
@@ -139,6 +148,5 @@ public class CottageHandler extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        mokkiMetodi(primaryStage);
     }
 }

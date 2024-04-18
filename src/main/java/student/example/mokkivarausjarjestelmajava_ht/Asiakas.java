@@ -3,7 +3,9 @@ package student.example.mokkivarausjarjestelmajava_ht;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-public class Asiakas extends Application {
+import java.security.PublicKey;
+
+public class Asiakas {
     int asiakas_id = 0;
     int postinro = 0;
     String etunimi;
@@ -12,12 +14,20 @@ public class Asiakas extends Application {
     String email;
     String puhelinnumero;
 
-    public static void main(String[] args) {
-        launch(args);
+    public String toString(){
+        return ("Asiakas id: " + asiakas_id + "\npostinumero: " + postinro + "\nEtunimi: " + etunimi + "\nSukunimi: " + sukunimi + "\nOsoite: " + lahiosoite + "\nSähköposti: " + email + "\nPuhelinnumero: " + puhelinnumero);
     }
 
-    @Override
-    public void start(Stage primaryStage) {
+    public Asiakas(int asiakas_id, int postinro, String etunimi, String sukunimi, String lahiosoite, String email, String puhelinnumero) {
+        this.asiakas_id = asiakas_id;
+        this.postinro = postinro;
+        this.etunimi = etunimi;
+        this.sukunimi = sukunimi;
+        this.lahiosoite = lahiosoite;
+        this.email = email;
+        this.puhelinnumero = puhelinnumero;
+    }
 
+    public Asiakas() {
     }
 }

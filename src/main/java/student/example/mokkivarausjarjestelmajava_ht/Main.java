@@ -20,7 +20,10 @@ import java.util.ArrayList;
 public class Main extends Application {
     private BillHandler billHandler = new BillHandler(this);
     private CottageHandler cottageHandler = new CottageHandler(this);
+    private CustomerHandler customerHandler = new CustomerHandler(this);
 
+    public Main() {
+    }
 
     public static void main(String[] args) {
         launch(args);
@@ -36,7 +39,8 @@ public class Main extends Application {
         paneeliKeskiNapeille.setAlignment(Pos.CENTER);
         Button laskujenKatsomisNappi = new Button("Laskut");
         Button mokkiNappi = new Button("Mökit");
-        paneeliKeskiNapeille.getChildren().addAll(laskujenKatsomisNappi, mokkiNappi);
+        Button asiakasNappi = new Button("Asiakkaat");
+        paneeliKeskiNapeille.getChildren().addAll(laskujenKatsomisNappi, mokkiNappi, asiakasNappi);
         paneeliAloitusNaytolle.setCenter(paneeliKeskiNapeille);
         paneeliAloitusNaytolle.setLeft(kotiNappain(primaryStage));
         laskujenKatsomisNappi.setOnAction(e->{
@@ -44,6 +48,9 @@ public class Main extends Application {
         });
         mokkiNappi.setOnAction(e->{
             cottageHandler.mokkiMetodi(primaryStage);
+        });
+        asiakasNappi.setOnAction(e->{
+            customerHandler.asiakasMetodi(primaryStage);
         });
 
         Scene scene = new Scene(paneeliAloitusNaytolle);
