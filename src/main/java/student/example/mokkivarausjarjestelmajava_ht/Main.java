@@ -18,7 +18,7 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 
 public class Main extends Application {
-    private BillHandler billHandler = new BillHandler();
+    private BillHandler billHandler = new BillHandler(this);
 
 
     public static void main(String[] args) {
@@ -37,7 +37,7 @@ public class Main extends Application {
         Button mokkiNappi = new Button("Mökit");
         paneeliKeskiNapeille.getChildren().addAll(laskujenKatsomisNappi, mokkiNappi);
         paneeliAloitusNaytolle.setCenter(paneeliKeskiNapeille);
-        paneeliAloitusNaytolle.setLeft(kotiNappain());
+        paneeliAloitusNaytolle.setLeft(kotiNappain(primaryStage));
         laskujenKatsomisNappi.setOnAction(e->{
             billHandler.laskutusMetodi(primaryStage);
         });
@@ -47,10 +47,10 @@ public class Main extends Application {
         primaryStage.setTitle("Mökkienvaraus ohjelma 1.0");
         primaryStage.show();
     }
-    public Button kotiNappain(){
+    public Button kotiNappain(Stage primaryStage){
         Button kotiNappi = new Button("Koti");
         kotiNappi.setOnAction(e->{
-            //PALAA ALOITUSNÄYTTÖÖN
+            start(primaryStage);
         });
         return kotiNappi;
     }

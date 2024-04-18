@@ -11,6 +11,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -18,7 +19,14 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 
 public class BillHandler extends Application {
+    private Main main;
+    public BillHandler(Main main) {
+        this.main = main;
+    }
     ArrayList<Lasku> olemassaOlevatLaskut = new ArrayList<>();
+
+    public BillHandler() {
+    }
 
     public static void main(String[] args) {
         launch(args);
@@ -52,7 +60,14 @@ public class BillHandler extends Application {
             System.out.println("nappi toimii :)");
             laskunLisaaminen(laskuStage);
         });
-        paneeliLaskutukselle.setBottom(lisays);
+        Button maksettu = new Button("Lasku maksettu");
+        maksettu.setOnAction(e->{
+            laskunMerkkaaminenMaksetuksi(luettavaLaskuLista.get(laskuLista.getSelectionModel().getSelectedIndex()).lasku_id - 1);
+        });
+        HBox paneeliAlaPalkille = new HBox(10);
+        Button koti = main.kotiNappain(laskuStage);
+        paneeliAlaPalkille.getChildren().addAll(koti, lisays, maksettu);
+        paneeliLaskutukselle.setBottom(paneeliAlaPalkille);
         paneeliLaskutukselle.setCenter(laskuLista);
         paneeliLaskutukselle.setRight(alueLaskujenTiedoille);
         Scene sceneLaskuille = new Scene(paneeliLaskutukselle);
@@ -86,6 +101,10 @@ public class BillHandler extends Application {
         });
         paneeliLaskunLisaamiselle.getChildren().addAll(varausid, varausTF, laskunSumma, summaTF, laskunALV, ALVTF, lisaaLasku);
         paneeliLaskunLisaamiselle.setAlignment(Pos.CENTER);
+        HBox alapalkkiPaneeli = new HBox(10);
+        Button kotiNappi = main.kotiNappain(primaryStage);
+        alapalkkiPaneeli.getChildren().addAll(kotiNappi);
+        BPlaskunLisaamiselle.setBottom(alapalkkiPaneeli);
         BPlaskunLisaamiselle.setCenter(paneeliLaskunLisaamiselle);
         Scene scene = new Scene(BPlaskunLisaamiselle);
         primaryStage.setScene(scene);
@@ -102,5 +121,8 @@ public class BillHandler extends Application {
         olemassaOlevatLaskut.add(lasku1);
         olemassaOlevatLaskut.add(lasku2);
         olemassaOlevatLaskut.add(lasku3);
+    }
+    protected void laskunMerkkaaminenMaksetuksi(int laskunro){
+        olemassaOlevatLaskut.get(laskunro).maksettu=true;
     }
 }
