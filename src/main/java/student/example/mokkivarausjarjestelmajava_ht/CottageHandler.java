@@ -3,6 +3,7 @@ package student.example.mokkivarausjarjestelmajava_ht;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -23,6 +24,7 @@ public class CottageHandler extends Application {
 
     public CottageHandler() {
     }
+    int valittuIndeksi=-1;
 
     ArrayList<Mokki> olemassaolevatMokit = new ArrayList<>();
     protected void mokinLisaysMetodi(Stage mokkiStage){
@@ -124,6 +126,7 @@ public class CottageHandler extends Application {
         mokkiLista.getSelectionModel().selectedItemProperty().addListener(ov->{
             alueMokkienTiedoille.setText(
                     luettavaMokkiLista.get(mokkiLista.getSelectionModel().getSelectedIndex()).toString());
+            valittuIndeksi=mokkiLista.getSelectionModel().getSelectedIndex();
         });
 
         Button kotiNappi = main.kotiNappain(mokkiStage);
@@ -131,8 +134,12 @@ public class CottageHandler extends Application {
         lisaysNappi.setOnAction(e->{
             mokinLisaysMetodi(mokkiStage);
         });
+        Button poistoNappi = new Button("Poista valittu mökki");
+        poistoNappi.setOnAction(e->{
+            mokinPoisto(valittuIndeksi);
+        });
         HBox paneeliAlaValikolle = new HBox(10);
-        paneeliAlaValikolle.getChildren().addAll(kotiNappi, lisaysNappi);
+        paneeliAlaValikolle.getChildren().addAll(kotiNappi, lisaysNappi, poistoNappi);
         BPmokeille.setBottom(paneeliAlaValikolle);
         BPmokeille.setLeft(mokkiLista);
         BPmokeille.setCenter(alueMokkienTiedoille);
@@ -140,6 +147,35 @@ public class CottageHandler extends Application {
         mokkiStage.setTitle("Mökit");
         mokkiStage.setScene(scene);
         mokkiStage.show();
+    }
+    public void mokinPoisto(int poistettavaIndeksi){
+        System.out.println(olemassaolevatMokit.get(poistettavaIndeksi));
+
+        VBox varoitusPaneeli = new VBox(30);
+        varoitusPaneeli.setPrefSize(300, 300);
+        varoitusPaneeli.setPadding(new Insets(10, 10, 10, 10));
+        Text varoitusTeksti = new Text("Oletko varma että haluat poistaa mökin\n" + olemassaolevatMokit.get(poistettavaIndeksi));
+        HBox paneeliValikolle = new HBox(10);
+        paneeliValikolle.setAlignment(Pos.CENTER);
+        Button haluanPoistaa = new Button("Kyllä");
+        Button enHalua = new Button("Ei");
+        paneeliValikolle.getChildren().addAll(haluanPoistaa, enHalua);
+        varoitusPaneeli.getChildren().addAll(varoitusTeksti, paneeliValikolle);
+        Stage popUpStage = new Stage();
+        Scene popUpScene = new Scene(varoitusPaneeli);
+        haluanPoistaa.setOnAction(e->{
+            olemassaolevatMokit.remove(poistettavaIndeksi);
+            System.out.println("mökki poistettu onnistuneesti");
+            popUpStage.close();
+        });
+        enHalua.setOnAction(e->{
+            System.out.println("Mökkiä ei poistettu");
+            popUpStage.close();
+        });
+
+        popUpStage.setScene(popUpScene);
+        popUpStage.setTitle("VAROITUS");
+        popUpStage.show();
     }
 
     public static void main(String[] args) {
