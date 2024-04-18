@@ -4,10 +4,7 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -21,6 +18,9 @@ public class CottageHandler extends Application {
 
     public CottageHandler(Main main) {
         this.main = main;
+    }
+
+    public CottageHandler() {
     }
 
     ArrayList<Mokki> olemassaolevatMokit = new ArrayList<>();
@@ -42,7 +42,47 @@ public class CottageHandler extends Application {
         TextField kuvausTF = new TextField();
         Text henkilomaaraTeksti = new Text("Anna mökin henkilömäärä");
         TextField henkiloTF = new TextField();
-        paneeliUudenMokinTiedoille.getChildren().addAll(annaAlue, paneeliAlueelle, mokinNimi, nimiTF, hintaTeksti, hintaTF, kuvausTeksti, kuvausTF, henkilomaaraTeksti, henkiloTF);
+        HBox paneeliMokinVarusteille = new HBox(10);
+        Text varusteTeksti = new Text("Mitä varusteita mökissä on?");
+        VBox paneeliCheckBoxeille = new VBox(10);
+        CheckBox keittio = new CheckBox("Keittiö");
+        CheckBox sauna = new CheckBox("Sauna");
+        CheckBox latu = new CheckBox("Hiihtolatu lähellä");
+        CheckBox kuivain = new CheckBox("Hiustenkuivain");
+        Button tallennusNappi = new Button("Tallenna");
+        paneeliCheckBoxeille.getChildren().addAll(keittio, sauna, latu, kuivain);
+        paneeliMokinVarusteille.getChildren().addAll(varusteTeksti, paneeliCheckBoxeille);
+        paneeliUudenMokinTiedoille.getChildren().addAll(annaAlue, paneeliAlueelle, mokinNimi, nimiTF, hintaTeksti, hintaTF, kuvausTeksti, kuvausTF,
+                henkilomaaraTeksti, henkiloTF, paneeliMokinVarusteille, tallennusNappi);
+
+        //toiminnallisuus
+        tallennusNappi.setOnAction(e->{
+            int mokinID = 0;
+            for (int i = 0; i<olemassaolevatMokit.size(); i++){
+                mokinID=i;
+                i++;
+            }
+            int mokinAlue = Integer.parseInt(alueTF.getText());
+            int mokinPostinumero = Integer.parseInt(postinroTF.getText());
+            String lisattavanMokinNimi = nimiTF.getText();
+            String lisattavaOsoite = katuosoiteTF.getText();
+            Double lisattavaHinta = Double.parseDouble(hintaTF.getText());
+            String lisattavaKuvaus = kuvausTF.getText();
+            int lisattavaHenkilomaara = Integer.parseInt(henkiloTF.getText());
+            ArrayList<String> lisattavatVarusteet = new ArrayList<>();
+            if (keittio.isSelected())
+                lisattavatVarusteet.add("Keittiö");
+            if (sauna.isSelected())
+                lisattavatVarusteet.add("Sauna");
+            if (latu.isSelected())
+                lisattavatVarusteet.add("Hiihtolatu lähellä mökkiä");
+            if (kuivain.isSelected())
+                lisattavatVarusteet.add("Hiustenkuivain");
+            Mokki uusiMokki = new Mokki(mokinID, mokinAlue, mokinPostinumero, lisattavanMokinNimi, lisattavaOsoite, lisattavaHinta, lisattavaKuvaus, lisattavaHenkilomaara, lisattavatVarusteet);
+            olemassaolevatMokit.add(uusiMokki);
+            System.out.println(uusiMokki);
+        });
+
         BPMokinLisaamiselle.setCenter(paneeliUudenMokinTiedoille);
         Scene lisaysScene = new Scene(BPMokinLisaamiselle);
         mokkiStage.setScene(lisaysScene);
