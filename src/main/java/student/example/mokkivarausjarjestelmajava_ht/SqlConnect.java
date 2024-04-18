@@ -68,11 +68,9 @@ public class SqlConnect {
      *
      * @param user Käyttäjä, jos haluaa pelleillä niiden kanssa niin eiku vaan, default "root"
      * @param password :I mulla default "1234", pitää olla Stringinä
-     * @param query sql kielellä mitä tehdään, mielellään tulis vain SELECT jotta ei rikota tietokantaa tässä vaiheessa
      */
-    public  SqlConnect(String user, String password,String query ){
+    public  SqlConnect(String user, String password){
         this.user = user;
         this.password = password;
-        createConnection(query);
     }
 }
