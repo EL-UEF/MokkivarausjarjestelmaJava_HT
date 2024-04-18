@@ -239,6 +239,8 @@ public class CottageHandler extends Application {
         paneeliMuokattavilleTiedoille.getChildren().addAll(muokattavaMokki, alueMuokkausTeksti, alueTF, postinroTeksti,
                 postinroTF, nimiTeksti, nimiTF, osoiteTeksti, osoiteTF, hintaTeksti,
                 hintaTF, kuvausTeksti, kuvausTF, henkilomaaraTeksti, henkilomaaraTF, varusteetTeksti, paneeliCheckBoxeille, tallennusNappi);
+        Button kotiNappula = main.kotiNappain(muokkausStage);
+        BPMokinMuokkaukselle.setLeft(kotiNappula);
         paneeliMuokattavilleTiedoille.setAlignment(Pos.CENTER);
         paneeliMuokattavilleTiedoille.setPadding(new Insets(10, 10, 10, 10));
         BPMokinMuokkaukselle.setCenter(paneeliMuokattavilleTiedoille);
