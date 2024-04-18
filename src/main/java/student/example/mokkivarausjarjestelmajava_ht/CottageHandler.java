@@ -138,8 +138,12 @@ public class CottageHandler extends Application {
         poistoNappi.setOnAction(e->{
             mokinPoisto(valittuIndeksi);
         });
+        Button muokkausNappi = new Button("Muokkaa valittua mökkiä");
+        muokkausNappi.setOnAction(e->{
+            mokinMuokkausMetodi(mokkiStage);
+        });
         HBox paneeliAlaValikolle = new HBox(10);
-        paneeliAlaValikolle.getChildren().addAll(kotiNappi, lisaysNappi, poistoNappi);
+        paneeliAlaValikolle.getChildren().addAll(kotiNappi, lisaysNappi, muokkausNappi, poistoNappi);
         BPmokeille.setBottom(paneeliAlaValikolle);
         BPmokeille.setLeft(mokkiLista);
         BPmokeille.setCenter(alueMokkienTiedoille);
@@ -176,6 +180,72 @@ public class CottageHandler extends Application {
         popUpStage.setScene(popUpScene);
         popUpStage.setTitle("VAROITUS");
         popUpStage.show();
+    }
+    public void mokinMuokkausMetodi(Stage muokkausStage){
+        BorderPane BPMokinMuokkaukselle = new BorderPane();
+        VBox paneeliMuokattavilleTiedoille = new VBox(10);
+        Text muokattavaMokki = new Text("Muokattava mökki: id: " + olemassaolevatMokit.get(valittuIndeksi).mokki_id + " nimi: " + olemassaolevatMokit.get(valittuIndeksi).mokkinimi);
+        Text alueMuokkausTeksti = new Text("Uusi alue id (numero)");
+        TextField alueTF = new TextField();
+        Text postinroTeksti = new Text("Uusi postinumero");
+        TextField postinroTF = new TextField();
+        Text nimiTeksti = new Text("Uusi nimi");
+        TextField nimiTF = new TextField();
+        Text osoiteTeksti = new Text("Haluatko oikeasti muokata osoitetta? Go for it champ...");
+        TextField osoiteTF = new TextField();
+        Text hintaTeksti = new Text("Uusi hinta");
+        TextField hintaTF = new TextField();
+        Text kuvausTeksti = new Text("Uusi kuvaus");
+        TextField kuvausTF = new TextField();
+        Text henkilomaaraTeksti = new Text("Uusi henkilömäärä");
+        TextField henkilomaaraTF = new TextField();
+        Text varusteetTeksti = new Text("Uudet varusteet (nämä merkattava aina)");
+        VBox paneeliCheckBoxeille = new VBox(10);
+        paneeliCheckBoxeille.setAlignment(Pos.CENTER);
+        CheckBox keittio = new CheckBox("Keittiö");
+        CheckBox sauna = new CheckBox("Sauna");
+        CheckBox latu = new CheckBox("Hiihtolatu lähellä");
+        CheckBox kuivain = new CheckBox("Hiustenkuivain");
+        paneeliCheckBoxeille.getChildren().addAll(keittio, sauna, latu, kuivain);
+        Button tallennusNappi = new Button("Tallenna");
+        tallennusNappi.setOnAction(e->{
+            if (!alueTF.getText().isEmpty())
+                olemassaolevatMokit.get(valittuIndeksi).alue_id=Integer.parseInt(alueTF.getText());
+            if (!postinroTF.getText().isEmpty())
+                olemassaolevatMokit.get(valittuIndeksi).postinro=Integer.parseInt(postinroTF.getText());
+            if (!nimiTF.getText().isEmpty())
+                olemassaolevatMokit.get(valittuIndeksi).mokkinimi=nimiTF.getText();
+            if (!osoiteTF.getText().isEmpty())
+                olemassaolevatMokit.get(valittuIndeksi).katuosoite=osoiteTF.getText();
+            if (!hintaTF.getText().isEmpty())
+                olemassaolevatMokit.get(valittuIndeksi).hinta=Double.parseDouble(hintaTF.getText());
+            if (!kuvausTF.getText().isEmpty())
+                olemassaolevatMokit.get(valittuIndeksi).kuvaus=kuvausTF.getText();
+            if (!henkilomaaraTF.getText().isEmpty())
+                olemassaolevatMokit.get(valittuIndeksi).henkilomaara=Integer.parseInt(henkilomaaraTF.getText());
+            if (keittio.isSelected()||sauna.isSelected()||latu.isSelected()||kuivain.isSelected()){
+                olemassaolevatMokit.get(valittuIndeksi).varustelu.clear();
+                if (keittio.isSelected())
+                    olemassaolevatMokit.get(valittuIndeksi).varustelu.add("Keittiö");
+                if (sauna.isSelected())
+                    olemassaolevatMokit.get(valittuIndeksi).varustelu.add("Sauna");
+                if (latu.isSelected())
+                    olemassaolevatMokit.get(valittuIndeksi).varustelu.add("Hiihtolatu lähellä mökkiä");
+                if (kuivain.isSelected())
+                    olemassaolevatMokit.get(valittuIndeksi).varustelu.add("Hiustenkuivain");
+            }
+            System.out.println(olemassaolevatMokit.get(valittuIndeksi));
+        });
+        paneeliMuokattavilleTiedoille.getChildren().addAll(muokattavaMokki, alueMuokkausTeksti, alueTF, postinroTeksti,
+                postinroTF, nimiTeksti, nimiTF, osoiteTeksti, osoiteTF, hintaTeksti,
+                hintaTF, kuvausTeksti, kuvausTF, henkilomaaraTeksti, henkilomaaraTF, varusteetTeksti, paneeliCheckBoxeille, tallennusNappi);
+        paneeliMuokattavilleTiedoille.setAlignment(Pos.CENTER);
+        paneeliMuokattavilleTiedoille.setPadding(new Insets(10, 10, 10, 10));
+        BPMokinMuokkaukselle.setCenter(paneeliMuokattavilleTiedoille);
+        Scene scene = new Scene(BPMokinMuokkaukselle);
+        muokkausStage.setTitle("Mökin tietojen muokkaus");
+        muokkausStage.setScene(scene);
+        muokkausStage.show();
     }
 
     public static void main(String[] args) {
