@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 public class Main extends Application {
     private BillHandler billHandler = new BillHandler(this);
+    private CottageHandler cottageHandler = new CottageHandler(this);
 
 
     public static void main(String[] args) {
@@ -40,6 +41,9 @@ public class Main extends Application {
         paneeliAloitusNaytolle.setLeft(kotiNappain(primaryStage));
         laskujenKatsomisNappi.setOnAction(e->{
             billHandler.laskutusMetodi(primaryStage);
+        });
+        mokkiNappi.setOnAction(e->{
+            cottageHandler.mokkiMetodi(primaryStage);
         });
 
         Scene scene = new Scene(paneeliAloitusNaytolle);

@@ -5,7 +5,7 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 
-public class Mokki extends Application {
+public class Mokki {
     int mokki_id;
     int alue_id;
     int postinro;
@@ -15,13 +15,27 @@ public class Mokki extends Application {
     String kuvaus;
     int henkilomaara;
     ArrayList<String> varustelu = new ArrayList<>();
-
-    public static void main(String[] args) {
-        launch(args);
+    public String toString(){
+        return ("Mökki: " + mokkinimi + "\nmökin id: " + mokki_id + "\nalue: " + alue_id + "\nPostinumero: " + postinro + "\nosoite: " + katuosoite +
+                "\nhinta/yö: " + hinta + "\nmökin kuvaus: " + kuvaus + "\nhenkilömäärä: " + henkilomaara + "\nmökin varustelu: " + varustelu);
     }
 
-    @Override
-    public void start(Stage primaryStage) {
+    public Mokki() {
+    }
+
+    public Mokki(int mokki_id, int alue_id, int postinro, String mokkinimi, String katuosoite, Double hinta, String kuvaus, int henkilomaara, ArrayList<String> varustelu) {
+        this.mokki_id = mokki_id;
+        this.alue_id = alue_id;
+        this.postinro = postinro;
+        this.mokkinimi = mokkinimi;
+        this.katuosoite = katuosoite;
+        this.hinta = hinta;
+        this.kuvaus = kuvaus;
+        this.henkilomaara = henkilomaara;
+        this.varustelu = varustelu;
+    }
+
+    public static void main(String[] args) {
 
     }
 }
