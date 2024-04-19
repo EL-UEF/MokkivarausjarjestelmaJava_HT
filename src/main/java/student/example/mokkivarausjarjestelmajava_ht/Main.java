@@ -21,6 +21,7 @@ public class Main extends Application {
     private BillHandler billHandler = new BillHandler(this);
     private CottageHandler cottageHandler = new CottageHandler(this);
     private CustomerHandler customerHandler = new CustomerHandler(this);
+    private AlueHandler alueHandler = new AlueHandler(this);
 
     public Main() {
     }
@@ -40,7 +41,8 @@ public class Main extends Application {
         Button laskujenKatsomisNappi = new Button("Laskut");
         Button mokkiNappi = new Button("Mökit");
         Button asiakasNappi = new Button("Asiakkaat");
-        paneeliKeskiNapeille.getChildren().addAll(laskujenKatsomisNappi, mokkiNappi, asiakasNappi);
+        Button alueNappi = new Button("Alueet");
+        paneeliKeskiNapeille.getChildren().addAll(laskujenKatsomisNappi, mokkiNappi, asiakasNappi, alueNappi);
         paneeliAloitusNaytolle.setCenter(paneeliKeskiNapeille);
         paneeliAloitusNaytolle.setLeft(kotiNappain(primaryStage));
         laskujenKatsomisNappi.setOnAction(e->{
@@ -51,6 +53,9 @@ public class Main extends Application {
         });
         asiakasNappi.setOnAction(e->{
             customerHandler.asiakasMetodi(primaryStage);
+        });
+        alueNappi.setOnAction(e->{
+            alueHandler.alueMetodi(primaryStage);
         });
 
         Scene scene = new Scene(paneeliAloitusNaytolle);
