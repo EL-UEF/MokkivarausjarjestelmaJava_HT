@@ -99,7 +99,7 @@ public class CottageHandler extends Application {
         //TÄMÄN PITÄISI LUKEA MÖKIT SQL:STÄ
         ArrayList<String> mokin1Varustelu = new ArrayList<>();
         mokin1Varustelu.add("Keittiö");
-        mokin1Varustelu.add("vessa");
+        mokin1Varustelu.add("Sauna");
         Mokki mokki1 = new Mokki(1, 1, 70800, "HassuMökki", "Hassunmökintie 7", 200.0, "mökki hassuille asiakkaille", 5,
                 mokin1Varustelu);
         Mokki mokki2 = new Mokki(2, 2, 70900, "HöpsöMökki", "Höpsönmökintie 7", 250.0, "mökki höpsöille asiakkaille", 10,
@@ -142,8 +142,12 @@ public class CottageHandler extends Application {
         muokkausNappi.setOnAction(e->{
             mokinMuokkausMetodi(mokkiStage);
         });
+        Button etsintaNappi = new Button("Etsi mökkiä");
+        etsintaNappi.setOnAction(e->{
+            mokinEtsintaMetodi(mokkiStage);
+        });
         HBox paneeliAlaValikolle = new HBox(10);
-        paneeliAlaValikolle.getChildren().addAll(kotiNappi, lisaysNappi, muokkausNappi, poistoNappi);
+        paneeliAlaValikolle.getChildren().addAll(kotiNappi, lisaysNappi, muokkausNappi, etsintaNappi, poistoNappi);
         BPmokeille.setBottom(paneeliAlaValikolle);
         BPmokeille.setLeft(mokkiLista);
         BPmokeille.setCenter(alueMokkienTiedoille);
@@ -180,6 +184,116 @@ public class CottageHandler extends Application {
         popUpStage.setScene(popUpScene);
         popUpStage.setTitle("VAROITUS");
         popUpStage.show();
+    }
+    public void mokinEtsintaMetodi(Stage etsintaStage){
+        BorderPane BPMokinEtsinnalle = new BorderPane();
+
+        VBox paneeliEtsintaKriteereille = new VBox(10);
+        paneeliEtsintaKriteereille.setAlignment(Pos.CENTER);
+        Text alkuHopina = new Text("Kirjoita haluamasi kriteerit alla oleviin kenttiin.\nVoit jättää kentän tyhjäksi jos et halua käyttää kyseistä kriteeriä");
+        Text nimiKriteeri = new Text("Mökin nimi");
+        TextField nimiTF = new TextField();
+        Text alueKriteeri = new Text("Alueen ID, jolla mökki sijaitsee");
+        TextField alueTF = new TextField();
+        Text osoiteKriteeri = new Text("Mökin katuosoite");
+        TextField osoiteTF = new TextField();
+        Text hinnat = new Text("Mökin minimi ja maksimi hinta");
+        HBox paneeliHinnoille = new HBox(10);
+        TextField minimiHinta = new TextField();
+        TextField maksimiHinta = new TextField();
+        Label minimiLabel = new Label("Min", minimiHinta);
+        minimiLabel.setContentDisplay(ContentDisplay.RIGHT);
+        Label maksimiLabel = new Label("Max", maksimiHinta);
+        maksimiLabel.setContentDisplay(ContentDisplay.RIGHT);
+        paneeliHinnoille.getChildren().addAll(minimiLabel, minimiHinta, maksimiLabel, maksimiHinta);
+        Text henkilomaaraKriteeri = new Text("Minimi henkilömäärä");
+        TextField henkilomaaraTF = new TextField();
+        Text varusteetKriteeri = new Text("Varusteet");
+        VBox paneeliCheckBoxeille = new VBox(10);
+        paneeliCheckBoxeille.setAlignment(Pos.CENTER);
+        CheckBox keittio = new CheckBox("Keittiö");
+        CheckBox sauna = new CheckBox("Sauna");
+        CheckBox latu = new CheckBox("Hiihtolatu lähellä");
+        CheckBox kuivain = new CheckBox("Hiustenkuivain");
+        paneeliCheckBoxeille.getChildren().addAll(keittio, sauna, latu, kuivain);
+        Button etsi = new Button("Etsi");
+        etsi.setOnAction(e->{
+            ArrayList<Mokki> nimiKay = new ArrayList<>();
+            ArrayList<Mokki> alueKay = new ArrayList<>();
+            ArrayList<Mokki> osoiteKay = new ArrayList<>();
+            ArrayList<Mokki> tarpeeksiKallis = new ArrayList<>();
+            ArrayList<Mokki> tarpeeksiHalpa = new ArrayList<>();
+            ArrayList<Mokki> tarpeeksiIso = new ArrayList<>();
+            ArrayList<Mokki> kaikkiKay = new ArrayList<>();
+            if (!nimiTF.getText().isEmpty()){
+                for (int i=0; i < olemassaolevatMokit.size(); i++){
+                    if (olemassaolevatMokit.get(i).mokkinimi.equalsIgnoreCase(nimiTF.getText())){
+                        nimiKay.add(olemassaolevatMokit.get(i));
+                    }
+                }
+            } else nimiKay.addAll(olemassaolevatMokit);
+            if (!alueTF.getText().isEmpty()){
+                for (int i=0; i < nimiKay.size(); i++){
+                    if (nimiKay.get(i).alue_id==Integer.parseInt(alueTF.getText())){
+                        alueKay.add(nimiKay.get(i));
+                    }
+                }
+            } else alueKay.addAll(nimiKay);
+            if (!osoiteTF.getText().isEmpty()){
+                for (int i=0; i < alueKay.size(); i++){
+                    if (alueKay.get(i).katuosoite.equalsIgnoreCase(osoiteTF.getText())){
+                        osoiteKay.add(alueKay.get(i));
+                    }
+                }
+            } else osoiteKay.addAll(alueKay);
+            if (!minimiHinta.getText().isEmpty()){
+                for (int i=0; i < osoiteKay.size(); i++){
+                    if (osoiteKay.get(i).hinta>=Double.parseDouble(minimiHinta.getText())){
+                        tarpeeksiKallis.add(osoiteKay.get(i));
+                    }
+                }
+            } else tarpeeksiKallis.addAll(osoiteKay);
+            if (!maksimiHinta.getText().isEmpty()){
+                for (int i=0; i < tarpeeksiKallis.size(); i++){
+                    if (tarpeeksiKallis.get(i).hinta<=Double.parseDouble(maksimiHinta.getText())){
+                        tarpeeksiHalpa.add(tarpeeksiKallis.get(i));
+                    }
+                }
+            } else tarpeeksiHalpa.addAll(tarpeeksiKallis);
+            if (!henkilomaaraTF.getText().isEmpty()) {
+                for (int i = 0; i < tarpeeksiHalpa.size(); i++){
+                    if (tarpeeksiHalpa.get(i).henkilomaara>=Integer.parseInt(henkilomaaraTF.getText())){
+                        tarpeeksiIso.add(tarpeeksiHalpa.get(i));
+                    }
+                }
+            } else tarpeeksiIso.addAll(tarpeeksiHalpa);
+            ArrayList<String> mokinVarusteet = new ArrayList<>();
+            if (keittio.isSelected())
+                mokinVarusteet.add("Keittiö");
+            if (sauna.isSelected())
+                mokinVarusteet.add("Sauna");
+            if (latu.isSelected())
+                mokinVarusteet.add("Hiihtolatu lähellä mökkiä");
+            if (kuivain.isSelected())
+                mokinVarusteet.add("Hiustenkuivain");
+            if (keittio.isSelected()||sauna.isSelected()||latu.isSelected()||kuivain.isSelected()){
+                for (int i = 0; i < tarpeeksiIso.size(); i++){
+                    if (tarpeeksiIso.get(i).varustelu.containsAll(mokinVarusteet)){
+                        kaikkiKay.add(tarpeeksiIso.get(i));
+                    }
+                }
+            } else kaikkiKay.addAll(tarpeeksiIso);
+            System.out.println(kaikkiKay);
+        });
+
+        Button kotiNappi = main.kotiNappain(etsintaStage);
+        paneeliEtsintaKriteereille.getChildren().addAll(alkuHopina, nimiKriteeri, nimiTF, alueKriteeri, alueTF, osoiteKriteeri, osoiteTF, hinnat, paneeliHinnoille, henkilomaaraKriteeri, henkilomaaraTF, varusteetKriteeri, paneeliCheckBoxeille, etsi);
+        BPMokinEtsinnalle.setCenter(paneeliEtsintaKriteereille);
+        BPMokinEtsinnalle.setLeft(kotiNappi);
+        Scene scene = new Scene(BPMokinEtsinnalle);
+        etsintaStage.setTitle("Mökin haku");
+        etsintaStage.setScene(scene);
+        etsintaStage.show();
     }
     public void mokinMuokkausMetodi(Stage muokkausStage){
         BorderPane BPMokinMuokkaukselle = new BorderPane();
