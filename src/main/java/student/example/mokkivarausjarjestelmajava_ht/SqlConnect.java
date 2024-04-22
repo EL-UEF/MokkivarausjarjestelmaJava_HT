@@ -63,6 +63,21 @@ public class SqlConnect {
         }
         return rs;
     }
+    public void insertData(String data, String table, String values){
+        String query = "INSERT INTO "+table+"("+values+")"+
+                "VALUES (" + data + ")";
+        System.out.println(query);
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            this.con = DriverManager.getConnection("jdbc:mysql://localhost:3306/vn", this.user, this.password);
+            this.stmt = con.createStatement();
+            this.stmt.executeUpdate(query);
+            this.con.close();
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 
     /**
      *

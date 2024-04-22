@@ -40,6 +40,13 @@ public class Mokki {
         //this.varustelu = rs.getString("varustelu");
     }
 
+    public Mokki(String data, String table, String values) throws SQLException {
+        SqlConnect connect = new SqlConnect("Test_user", "1234");
+        connect.insertData(data,table,values);
+
+    }
+
+
     public static void main(String[] args) {
         try {
             Mokki testi = new Mokki("1");
