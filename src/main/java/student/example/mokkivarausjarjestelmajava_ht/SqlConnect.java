@@ -48,7 +48,7 @@ public class SqlConnect {
     public ResultSet createConnection(String query) {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            this.con = DriverManager.getConnection("jdbc:mysql://localhost:3306/traffic", this.user, this.password);
+            this.con = DriverManager.getConnection("jdbc:mysql://localhost:3306/vn", this.user, this.password);
             this.stmt = con.createStatement();
             this.rs = stmt.executeQuery(query);
             while(rs.next()) return rs;
