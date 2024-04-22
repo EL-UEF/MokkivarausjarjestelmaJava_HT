@@ -85,9 +85,7 @@ public class CottageHandler extends Application {
                 lisattavatVarusteet.add("Hiihtolatu lähellä mökkiä");
             if (kuivain.isSelected())
                 lisattavatVarusteet.add("Hiustenkuivain");
-            Mokki uusiMokki = new Mokki(mokinID, mokinAlue, mokinPostinumero, lisattavanMokinNimi, lisattavaOsoite, lisattavaHinta, lisattavaKuvaus, lisattavaHenkilomaara, lisattavatVarusteet);
-            olemassaolevatMokit.add(uusiMokki);
-            System.out.println(uusiMokki);
+
         });
 
         BPMokinLisaamiselle.setCenter(paneeliUudenMokinTiedoille);
@@ -95,23 +93,11 @@ public class CottageHandler extends Application {
         mokkiStage.setScene(lisaysScene);
         mokkiStage.show();
     }
-    protected void mokkienLuku(){
-        //TÄMÄN PITÄISI LUKEA MÖKIT SQL:STÄ
-        ArrayList<String> mokin1Varustelu = new ArrayList<>();
-        mokin1Varustelu.add("Keittiö");
-        mokin1Varustelu.add("Sauna");
-        Mokki mokki1 = new Mokki(1, 1, 70800, "HassuMökki", "Hassunmökintie 7", 200.0, "mökki hassuille asiakkaille", 5,
-                mokin1Varustelu);
-        Mokki mokki2 = new Mokki(2, 2, 70900, "HöpsöMökki", "Höpsönmökintie 7", 250.0, "mökki höpsöille asiakkaille", 10,
-                mokin1Varustelu);
-        olemassaolevatMokit.add(mokki1);
-        olemassaolevatMokit.add(mokki2);
-    }
+
 
     protected void mokkiMetodi(Stage mokkiStage){
         BorderPane BPmokeille = new BorderPane();
         //ohjelma lukee tässä aina mökit mökkienluku metodilla, joten sinne tallentamattomat mökit eivät näy listassa!
-        mokkienLuku();
         TextArea alueMokkienTiedoille = new TextArea();
         alueMokkienTiedoille.setText("Klikkaa mökkiä nähdäksesi sen tarkemmat tiedot :)");
         alueMokkienTiedoille.setEditable(false);
