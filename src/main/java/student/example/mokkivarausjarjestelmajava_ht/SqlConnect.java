@@ -76,16 +76,29 @@ public class SqlConnect {
         } catch (ClassNotFoundException | SQLException e) {
             throw new RuntimeException(e);
         }
-
+    }
+    public void updateTable (String table, String rivi, String data, String where) {
+        String query = "UPDATE " + table + " SET " + rivi + " = \"" + data + "\" " + where + ";";
+        System.out.println(query);
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            this.con = DriverManager.getConnection("jdbc:mysql://localhost:3306/vn", this.user, this.password);
+            this.stmt = con.createStatement();
+            this.stmt.executeUpdate(query);
+            this.con.close();
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    /**
-     *
-     * @param user Käyttäjä, jos haluaa pelleillä niiden kanssa niin eiku vaan, default "root"
-     * @param password :I mulla default "1234", pitää olla Stringinä
-     */
-    public  SqlConnect(String user, String password){
-        this.user = user;
-        this.password = password;
-    }
+        /**
+         *
+         * @param user Käyttäjä, jos haluaa pelleillä niiden kanssa niin eiku vaan, default "root"
+         * @param password :I mulla default "1234", pitää olla Stringinä
+         */
+    public SqlConnect(String user, String password) {
+            this.user = user;
+            this.password = password;
+        }
+
 }
