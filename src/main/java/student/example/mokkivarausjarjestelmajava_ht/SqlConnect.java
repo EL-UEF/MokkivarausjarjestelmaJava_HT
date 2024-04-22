@@ -52,16 +52,25 @@ public class SqlConnect {
             this.stmt = con.createStatement();
             this.rs = stmt.executeQuery(query);
             while(rs.next()) return rs;
-            this.con.close();
         } catch (ClassNotFoundException | SQLException e) {throw new RuntimeException(e);
         }
         System.out.println("Connection succesfull!");
-        try {
-            this.con.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
         return rs;
+    }
+    public void closeResources() {
+        try {
+            if (rs != null) {
+                this.rs.close();
+            }
+            if (stmt != null) {
+                this.stmt.close();
+            }
+            if (con != null) {
+                this.con.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error closing resources: ", e);
+        }
     }
     public void insertData(String data, String table, String values){
         String query = "INSERT INTO "+table+"("+values+")"+
