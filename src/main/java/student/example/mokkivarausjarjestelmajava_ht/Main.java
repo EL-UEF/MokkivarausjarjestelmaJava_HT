@@ -18,10 +18,13 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 
 public class Main extends Application {
+    private Mokki mokki = new Mokki(this);
     private BillHandler billHandler = new BillHandler(this);
-    private CottageHandler cottageHandler = new CottageHandler(this);
+    private CottageHandler cottageHandler = new CottageHandler(this, mokki);
     private CustomerHandler customerHandler = new CustomerHandler(this);
     private AlueHandler alueHandler = new AlueHandler(this);
+
+    public SqlConnect connect = new SqlConnect("Test_user", "1234");
 
     public Main() {
     }
@@ -49,7 +52,7 @@ public class Main extends Application {
             billHandler.laskutusMetodi(primaryStage);
         });
         mokkiNappi.setOnAction(e->{
-            cottageHandler.mokkiMetodi(primaryStage);
+            cottageHandler.uusiMokkiMetodi(primaryStage);
         });
         asiakasNappi.setOnAction(e->{
             customerHandler.asiakasMetodi(primaryStage);

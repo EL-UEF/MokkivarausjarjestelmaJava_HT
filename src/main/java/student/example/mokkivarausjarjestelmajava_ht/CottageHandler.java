@@ -13,16 +13,17 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class CottageHandler extends Application {
     private Main main;
+    Mokki mokki;
 
-    public CottageHandler(Main main) {
+    public CottageHandler(Main main, Mokki mokki) {
         this.main = main;
-    }
-
-    public CottageHandler() {
+        this.mokki=mokki;
     }
     int valittuIndeksi=-1;
 
@@ -94,7 +95,55 @@ public class CottageHandler extends Application {
         mokkiStage.show();
     }
 
-
+    protected void uusiMokkiMetodi(Stage mokkiStage){
+        BorderPane BPmokeille = new BorderPane();
+        TextArea alueMokkienTiedoille = new TextArea();
+        alueMokkienTiedoille.setText("Klikkaa mökkiä nähdäksesi sen tarkemmat tiedot :)");
+        alueMokkienTiedoille.setEditable(false);
+        String query = "SELECT mokkinimi, mokki_id FROM mokki";
+        ResultSet rs = main.connect.createConnection(query);
+        ArrayList<String> mokkiNimiLista = new ArrayList<>();
+        try {
+            mokkiNimiLista.add(rs.getString("mokki_id"));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println(mokkiNimiLista);
+        ListView<String> mokkiLista = new ListView<>();
+        mokkiLista.setItems(FXCollections.observableArrayList(mokkiNimiLista));
+        mokkiLista.getSelectionModel().selectedItemProperty().addListener(ov->{
+            valittuIndeksi=Integer.parseInt(mokkiLista.getSelectionModel().getSelectedItem());
+            alueMokkienTiedoille.setText(mokki.SQLToString(valittuIndeksi));
+            System.out.println("tää toimii");
+        });
+        Button kotiNappi = main.kotiNappain(mokkiStage);
+        Button lisaysNappi = new Button("Lisää uusi mökki");
+        lisaysNappi.setOnAction(e->{
+            mokinLisaysMetodi(mokkiStage);
+        });
+        Button poistoNappi = new Button("Poista valittu mökki");
+        poistoNappi.setOnAction(e->{
+            mokinPoisto(valittuIndeksi);
+        });
+        Button muokkausNappi = new Button("Muokkaa valittua mökkiä");
+        muokkausNappi.setOnAction(e->{
+            mokinMuokkausMetodi(mokkiStage);
+        });
+        Button etsintaNappi = new Button("Etsi mökkiä");
+        etsintaNappi.setOnAction(e->{
+            mokinEtsintaMetodi(mokkiStage);
+        });
+        HBox paneeliAlaValikolle = new HBox(10);
+        paneeliAlaValikolle.getChildren().addAll(kotiNappi, lisaysNappi, muokkausNappi, etsintaNappi, poistoNappi);
+        BPmokeille.setBottom(paneeliAlaValikolle);
+        BPmokeille.setLeft(mokkiLista);
+        BPmokeille.setCenter(alueMokkienTiedoille);
+        Scene scene = new Scene(BPmokeille);
+        mokkiStage.setTitle("Mökit");
+        mokkiStage.setScene(scene);
+        mokkiStage.show();
+    }
+    /*
     protected void mokkiMetodi(Stage mokkiStage){
         BorderPane BPmokeille = new BorderPane();
         //ohjelma lukee tässä aina mökit mökkienluku metodilla, joten sinne tallentamattomat mökit eivät näy listassa!
@@ -142,6 +191,8 @@ public class CottageHandler extends Application {
         mokkiStage.setScene(scene);
         mokkiStage.show();
     }
+
+     */
     public void mokinPoisto(int poistettavaIndeksi){
         System.out.println(olemassaolevatMokit.get(poistettavaIndeksi));
 
