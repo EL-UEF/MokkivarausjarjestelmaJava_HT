@@ -52,7 +52,7 @@ public class Main extends Application {
             billHandler.laskutusMetodi(primaryStage);
         });
         mokkiNappi.setOnAction(e->{
-            cottageHandler.uusiMokkiMetodi(primaryStage);
+            cottageHandler.mokkiMetodi(primaryStage);
         });
         asiakasNappi.setOnAction(e->{
             customerHandler.asiakasMetodi(primaryStage);

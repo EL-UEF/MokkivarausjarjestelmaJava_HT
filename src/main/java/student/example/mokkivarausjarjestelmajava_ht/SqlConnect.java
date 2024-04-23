@@ -99,6 +99,19 @@ public class SqlConnect {
             throw new RuntimeException(e);
         }
     }
+    public void deleteStuff (String table, String minkaMukaanPoistetaan, String poistettavaArvo) {
+        String query = "DELETE FROM " + table + " WHERE " + minkaMukaanPoistetaan + " = " + poistettavaArvo;
+        System.out.println(query);
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            this.con = DriverManager.getConnection("jdbc:mysql://localhost:3306/vn", this.user, this.password);
+            this.stmt = con.createStatement();
+            this.stmt.executeUpdate(query);
+            this.con.close();
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
         /**
          *

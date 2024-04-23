@@ -95,7 +95,7 @@ public class CottageHandler extends Application {
         mokkiStage.show();
     }
 
-    protected void uusiMokkiMetodi(Stage mokkiStage){
+    protected void mokkiMetodi(Stage mokkiStage){ //JOSTAN SYYSTÄ NÄYTTÄÄ VAAN YHDEN MÖKIN LISTASSA
         BorderPane BPmokeille = new BorderPane();
         TextArea alueMokkienTiedoille = new TextArea();
         alueMokkienTiedoille.setText("Klikkaa mökkiä nähdäksesi sen tarkemmat tiedot :)");
@@ -123,7 +123,7 @@ public class CottageHandler extends Application {
         });
         Button poistoNappi = new Button("Poista valittu mökki");
         poistoNappi.setOnAction(e->{
-            mokinPoisto(valittuIndeksi);
+            uusiMokinPoisto(valittuIndeksi);
         });
         Button muokkausNappi = new Button("Muokkaa valittua mökkiä");
         muokkausNappi.setOnAction(e->{
@@ -143,56 +143,33 @@ public class CottageHandler extends Application {
         mokkiStage.setScene(scene);
         mokkiStage.show();
     }
-    /*
-    protected void mokkiMetodi(Stage mokkiStage){
-        BorderPane BPmokeille = new BorderPane();
-        //ohjelma lukee tässä aina mökit mökkienluku metodilla, joten sinne tallentamattomat mökit eivät näy listassa!
-        TextArea alueMokkienTiedoille = new TextArea();
-        alueMokkienTiedoille.setText("Klikkaa mökkiä nähdäksesi sen tarkemmat tiedot :)");
-        alueMokkienTiedoille.setEditable(false);
-        ObservableList<Mokki> luettavaMokkiLista = FXCollections.observableArrayList(olemassaolevatMokit);
-        ArrayList<String> MokinNimiLista = new ArrayList<>();
-        for (int i=0; i<2; i++){
-            MokinNimiLista.add(luettavaMokkiLista.get(i).mokkinimi);
-        }
-        ListView<String> mokkiLista = new ListView<>();
-        mokkiLista.setItems(FXCollections.observableArrayList(MokinNimiLista));
-
-        mokkiLista.getSelectionModel().selectedItemProperty().addListener(ov->{
-            alueMokkienTiedoille.setText(
-                    luettavaMokkiLista.get(mokkiLista.getSelectionModel().getSelectedIndex()).toString());
-            valittuIndeksi=mokkiLista.getSelectionModel().getSelectedIndex();
+    public void uusiMokinPoisto(int poistettavaIndeksi){
+        VBox varoitusPaneeli = new VBox(30);
+        varoitusPaneeli.setPrefSize(300, 300);
+        varoitusPaneeli.setPadding(new Insets(10, 10, 10, 10));
+        Text varoitusTeksti = new Text("Oletko varma että haluat poistaa mökin\n" + mokki.SQLToString(valittuIndeksi)); //TÄHÄN SQL:STÄ MÖKIN TIEDOT
+        HBox paneeliValikolle = new HBox(10);
+        paneeliValikolle.setAlignment(Pos.CENTER);
+        Button haluanPoistaa = new Button("Kyllä");
+        Button enHalua = new Button("Ei");
+        paneeliValikolle.getChildren().addAll(haluanPoistaa, enHalua);
+        varoitusPaneeli.getChildren().addAll(varoitusTeksti, paneeliValikolle);
+        Stage popUpStage = new Stage();
+        Scene popUpScene = new Scene(varoitusPaneeli);
+        haluanPoistaa.setOnAction(e->{
+            main.connect.deleteStuff("mokki", "mokki_id", Integer.toString(valittuIndeksi));
+            System.out.println("mökki poistettu onnistuneesti");
+            popUpStage.close();
+        });
+        enHalua.setOnAction(e->{
+            System.out.println("Mökkiä ei poistettu");
+            popUpStage.close();
         });
 
-        Button kotiNappi = main.kotiNappain(mokkiStage);
-        Button lisaysNappi = new Button("Lisää uusi mökki");
-        lisaysNappi.setOnAction(e->{
-            mokinLisaysMetodi(mokkiStage);
-        });
-        Button poistoNappi = new Button("Poista valittu mökki");
-        poistoNappi.setOnAction(e->{
-            mokinPoisto(valittuIndeksi);
-        });
-        Button muokkausNappi = new Button("Muokkaa valittua mökkiä");
-        muokkausNappi.setOnAction(e->{
-            mokinMuokkausMetodi(mokkiStage);
-        });
-        Button etsintaNappi = new Button("Etsi mökkiä");
-        etsintaNappi.setOnAction(e->{
-            mokinEtsintaMetodi(mokkiStage);
-        });
-        HBox paneeliAlaValikolle = new HBox(10);
-        paneeliAlaValikolle.getChildren().addAll(kotiNappi, lisaysNappi, muokkausNappi, etsintaNappi, poistoNappi);
-        BPmokeille.setBottom(paneeliAlaValikolle);
-        BPmokeille.setLeft(mokkiLista);
-        BPmokeille.setCenter(alueMokkienTiedoille);
-        Scene scene = new Scene(BPmokeille);
-        mokkiStage.setTitle("Mökit");
-        mokkiStage.setScene(scene);
-        mokkiStage.show();
+        popUpStage.setScene(popUpScene);
+        popUpStage.setTitle("VAROITUS");
+        popUpStage.show();
     }
-
-     */
     public void mokinPoisto(int poistettavaIndeksi){
         System.out.println(olemassaolevatMokit.get(poistettavaIndeksi));
 
