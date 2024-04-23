@@ -14,10 +14,11 @@ import java.sql.ResultSet;
 
 public class Main extends Application {
     private Mokki mokki = new Mokki(this);
+    private Alue alue = new Alue(this);
     private BillHandler billHandler = new BillHandler(this);
     private CottageHandler cottageHandler = new CottageHandler(this, mokki);
     private CustomerHandler customerHandler = new CustomerHandler(this);
-    private AlueHandler alueHandler = new AlueHandler(this);
+    private AlueHandler alueHandler = new AlueHandler(this, alue);
 
     public SqlConnect connect = new SqlConnect("Test_user", "1234");
     public Main() {
@@ -53,7 +54,7 @@ public class Main extends Application {
             customerHandler.asiakasMetodi(primaryStage);
         });
         alueNappi.setOnAction(e->{
-            alueHandler.alueMetodi(primaryStage);
+            alueHandler.alueMetodi(primaryStage, connect.executeQuery("SELECT nimi, alue_id FROM alue"));
         });
 
         Scene scene = new Scene(paneeliAloitusNaytolle);

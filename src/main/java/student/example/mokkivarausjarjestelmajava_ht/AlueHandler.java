@@ -16,39 +16,37 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class AlueHandler extends Application {
-    ArrayList<Alue> olemassaolevatAlueet = new ArrayList<>();
     private Main main;
-    Alue valittuAlue;
+    Alue alue;
+    int valittuIndeksi=-1;
 
-    public AlueHandler() {
-    }
-
-    public AlueHandler(Main main) {
+    public AlueHandler(Main main, Alue alue) {
         this.main = main;
+        this.alue = alue;
     }
 
-    public void alueMetodi(Stage alueStage){
+    public void alueMetodi(Stage alueStage, ResultSet rs){
         BorderPane BPAlueille = new BorderPane();
-        alueenLuontiMetodi();
-
         TextArea alueAlueidenTiedoille = new TextArea();
         alueAlueidenTiedoille.setText("Klikkaa aluetta nähdäksesi sen tarkemmat tiedot :)");
         alueAlueidenTiedoille.setEditable(false);
-        ObservableList<Alue> luettavaAlueLista = FXCollections.observableArrayList(olemassaolevatAlueet);
         ArrayList<String> alueNimiLista = new ArrayList<>();
-        for (int i=0; i<2; i++){
-            alueNimiLista.add(luettavaAlueLista.get(i).nimi);
+        try {
+            while (rs.next())
+                alueNimiLista.add(rs.getString("alue_id"));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
         ListView<String> alueLista = new ListView<>();
         alueLista.setItems(FXCollections.observableArrayList(alueNimiLista));
-
         alueLista.getSelectionModel().selectedItemProperty().addListener(ov->{
-            alueAlueidenTiedoille.setText(
-                    luettavaAlueLista.get(alueLista.getSelectionModel().getSelectedIndex()).toString());
-            valittuAlue=luettavaAlueLista.get(alueLista.getSelectionModel().getSelectedIndex());
+            valittuIndeksi=Integer.parseInt(alueLista.getSelectionModel().getSelectedItem());
+            alueAlueidenTiedoille.setText(alue.SQLToStringAlue(valittuIndeksi));
         });
         Button uusiAlue = new Button("Lisää uusi alue");
         Button muokkausNappi = new Button("Muokkaa valittua aluetta");
@@ -70,13 +68,8 @@ public class AlueHandler extends Application {
         alueStage.setTitle("Alueet");
         alueStage.show();
     }
-    public void alueenLuontiMetodi(){
-        Alue alue1 = new Alue(1, "Tahko");
-        Alue alue2 = new Alue(2, "Ruka");
 
-        olemassaolevatAlueet.add(alue1);
-        olemassaolevatAlueet.add(alue2);
-    }
+
     public void alueenLisaysMetodi(Stage alueenLisaysStage){
         BorderPane BPAlueidenLisaamiselle = new BorderPane();
         BPAlueidenLisaamiselle.setPrefSize(400, 400);
@@ -87,32 +80,33 @@ public class AlueHandler extends Application {
         TextField nimiTF = new TextField();
         Button lisaysNappi = new Button("Lisää");
         lisaysNappi.setOnAction(e->{
-            int uusiID = olemassaolevatAlueet.size() + 1;
             String uusiNimi = nimiTF.getText();
-            olemassaolevatAlueet.add(new Alue(uusiID, uusiNimi));
-            System.out.println(olemassaolevatAlueet);
+            main.connect.insertData("alue", "nimi","\"" + uusiNimi + "\"");
         });
+        Button kotiNappula = main.kotiNappain(alueenLisaysStage);
         paneeliUudenAlueenTiedoille.setAlignment(Pos.CENTER);
-        paneeliUudenAlueenTiedoille.getChildren().addAll(alkuHopina, nimiTF, lisaysNappi);
+        paneeliUudenAlueenTiedoille.getChildren().addAll(alkuHopina, nimiTF, lisaysNappi, kotiNappula);
         BPAlueidenLisaamiselle.setCenter(paneeliUudenAlueenTiedoille);
         Scene scene = new Scene(BPAlueidenLisaamiselle);
         alueenLisaysStage.setScene(scene);
         alueenLisaysStage.setTitle("Lisää uusi alue");
         alueenLisaysStage.show();
     }
+
     public void alueenMuokkausMetodi(Stage muokkausStage){
         BorderPane BPAlueenMuokkaamiselle = new BorderPane();
         BPAlueenMuokkaamiselle.setPrefSize(400, 400);
         VBox paneeliMuokattavilleTiedoille = new VBox(10);
         paneeliMuokattavilleTiedoille.setAlignment(Pos.CENTER);
-        Text nimiTeksti = new Text("Anna alueen " + valittuAlue.nimi + " uusi nimi");
+        Text nimiTeksti = new Text("Anna alueen " +alue.SQLToStringAlue(valittuIndeksi) + " uusi nimi");
         TextField nimiTF = new TextField();
         Button tallenna = new Button("Tallenna");
         tallenna.setOnAction(e->{
-            valittuAlue.nimi=nimiTF.getText();
-            System.out.println(valittuAlue);
+            String uusiNimi = nimiTF.getText();
+            main.connect.updateTable("alue","nimi","\"" + uusiNimi + "\"",("alue_id = "+valittuIndeksi));
         });
-        paneeliMuokattavilleTiedoille.getChildren().addAll(nimiTeksti, nimiTF, tallenna);
+        Button kotiNappula = main.kotiNappain(muokkausStage);
+        paneeliMuokattavilleTiedoille.getChildren().addAll(nimiTeksti, nimiTF, tallenna, kotiNappula);
         paneeliMuokattavilleTiedoille.setAlignment(Pos.CENTER);
         BPAlueenMuokkaamiselle.setCenter(paneeliMuokattavilleTiedoille);
 
@@ -121,11 +115,6 @@ public class AlueHandler extends Application {
         muokkausStage.setTitle("Muokkaa aluetta");
         muokkausStage.show();
     }
-
-
-
-
-
 
     public static void main(String[] args) {
         launch(args);

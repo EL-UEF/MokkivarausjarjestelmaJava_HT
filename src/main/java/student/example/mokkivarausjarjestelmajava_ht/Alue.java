@@ -1,17 +1,32 @@
 package student.example.mokkivarausjarjestelmajava_ht;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class Alue {
-    protected int alue_id;
-    protected String nimi;
+    Main main;
+     int alue_id;
+     String nimi;
     public String toString(){
         return ("Alue: " + nimi + " id: " + alue_id);
     }
 
-    public Alue() {
+    public Alue(Main main) {this.main = main;}
+
+    public String SQLToStringAlue(int valittuId){
+        String query = ("SELECT * FROM alue WHERE alue_id = " + valittuId);
+        int SQLalue_id = 0;
+        String SQLtoimipaikka = null;
+        try {
+            ResultSet rs = main.connect.executeQuery(query);
+            rs.next();
+            SQLalue_id = rs.getInt("alue_id");
+            SQLtoimipaikka = rs.getString("nimi");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        String kokoTeksti = "Alue_id "+ SQLalue_id + "\nnimi "+ SQLtoimipaikka;
+        return kokoTeksti;
     }
 
-    public Alue(int alue_id, String nimi) {
-        this.alue_id = alue_id;
-        this.nimi = nimi;
-    }
 }
