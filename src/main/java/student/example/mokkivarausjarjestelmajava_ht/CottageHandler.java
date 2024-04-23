@@ -95,7 +95,7 @@ public class CottageHandler extends Application {
         mokkiStage.show();
     }
 
-    protected void mokkiMetodi(Stage mokkiStage){ //JOSTAN SYYSTÄ NÄYTTÄÄ VAAN YHDEN MÖKIN LISTASSA
+    protected void mokkiMetodi(Stage mokkiStage){
         BorderPane BPmokeille = new BorderPane();
         TextArea alueMokkienTiedoille = new TextArea();
         alueMokkienTiedoille.setText("Klikkaa mökkiä nähdäksesi sen tarkemmat tiedot :)");
@@ -104,7 +104,8 @@ public class CottageHandler extends Application {
         ResultSet rs = main.connect.createConnection(query);
         ArrayList<String> mokkiNimiLista = new ArrayList<>();
         try {
-            mokkiNimiLista.add(rs.getString("mokki_id"));
+            while (rs.next())
+                mokkiNimiLista.add(rs.getString("mokki_id"));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -123,7 +124,7 @@ public class CottageHandler extends Application {
         });
         Button poistoNappi = new Button("Poista valittu mökki");
         poistoNappi.setOnAction(e->{
-            uusiMokinPoisto(valittuIndeksi);
+            mokinPoisto(valittuIndeksi);
         });
         Button muokkausNappi = new Button("Muokkaa valittua mökkiä");
         muokkausNappi.setOnAction(e->{
@@ -143,7 +144,7 @@ public class CottageHandler extends Application {
         mokkiStage.setScene(scene);
         mokkiStage.show();
     }
-    public void uusiMokinPoisto(int poistettavaIndeksi){
+    public void mokinPoisto(int poistettavaIndeksi){
         VBox varoitusPaneeli = new VBox(30);
         varoitusPaneeli.setPrefSize(300, 300);
         varoitusPaneeli.setPadding(new Insets(10, 10, 10, 10));
@@ -158,35 +159,6 @@ public class CottageHandler extends Application {
         Scene popUpScene = new Scene(varoitusPaneeli);
         haluanPoistaa.setOnAction(e->{
             main.connect.deleteStuff("mokki", "mokki_id", Integer.toString(valittuIndeksi));
-            System.out.println("mökki poistettu onnistuneesti");
-            popUpStage.close();
-        });
-        enHalua.setOnAction(e->{
-            System.out.println("Mökkiä ei poistettu");
-            popUpStage.close();
-        });
-
-        popUpStage.setScene(popUpScene);
-        popUpStage.setTitle("VAROITUS");
-        popUpStage.show();
-    }
-    public void mokinPoisto(int poistettavaIndeksi){
-        System.out.println(olemassaolevatMokit.get(poistettavaIndeksi));
-
-        VBox varoitusPaneeli = new VBox(30);
-        varoitusPaneeli.setPrefSize(300, 300);
-        varoitusPaneeli.setPadding(new Insets(10, 10, 10, 10));
-        Text varoitusTeksti = new Text("Oletko varma että haluat poistaa mökin\n" + olemassaolevatMokit.get(poistettavaIndeksi));
-        HBox paneeliValikolle = new HBox(10);
-        paneeliValikolle.setAlignment(Pos.CENTER);
-        Button haluanPoistaa = new Button("Kyllä");
-        Button enHalua = new Button("Ei");
-        paneeliValikolle.getChildren().addAll(haluanPoistaa, enHalua);
-        varoitusPaneeli.getChildren().addAll(varoitusTeksti, paneeliValikolle);
-        Stage popUpStage = new Stage();
-        Scene popUpScene = new Scene(varoitusPaneeli);
-        haluanPoistaa.setOnAction(e->{
-            olemassaolevatMokit.remove(poistettavaIndeksi);
             System.out.println("mökki poistettu onnistuneesti");
             popUpStage.close();
         });
