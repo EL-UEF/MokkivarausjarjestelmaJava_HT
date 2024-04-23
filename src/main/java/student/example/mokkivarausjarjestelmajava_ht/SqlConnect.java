@@ -72,9 +72,9 @@ public class SqlConnect {
             throw new RuntimeException("Error closing resources: ", e);
         }
     }
-    public void insertData(String data, String table, String values){
+    public void insertData(String table, String values, String data){
         String query = "INSERT INTO "+table+"("+values+")"+
-                "VALUES (" + data + ")";
+                " VALUES (" + data + ")";
         System.out.println(query);
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");

@@ -30,12 +30,11 @@ public class CottageHandler extends Application {
     ArrayList<Mokki> olemassaolevatMokit = new ArrayList<>();
     protected void mokinLisaysMetodi(Stage mokkiStage){
         BorderPane BPMokinLisaamiselle = new BorderPane();
-
         VBox paneeliUudenMokinTiedoille = new VBox(10);
         Text annaAlue = new Text("Mille alueelle mökki kuuluu? (Alue ID, katuosoite ja postinumero)");
-        TextField alueTF = new TextField("Alue");
-        TextField postinroTF = new TextField("Postinumero");
-        TextField katuosoiteTF = new TextField("Katuosoite");
+        TextField alueTF = new TextField();
+        TextField postinroTF = new TextField();
+        TextField katuosoiteTF = new TextField();
         HBox paneeliAlueelle = new HBox(10);
         paneeliAlueelle.getChildren().addAll(alueTF, katuosoiteTF, postinroTF);
         Text mokinNimi = new Text("Anna mökin nimi");
@@ -65,36 +64,43 @@ public class CottageHandler extends Application {
 
         //toiminnallisuus
         tallennusNappi.setOnAction(e->{
-            int mokinID = 0;
-            for (int i = 0; i<olemassaolevatMokit.size(); i++){
-                mokinID=i;
-                i++;
-            }
-            int mokinAlue = Integer.parseInt(alueTF.getText());
-            int mokinPostinumero = Integer.parseInt(postinroTF.getText());
+            String mokinAlue = alueTF.getText();
+            String mokinPostinumero = postinroTF.getText();
             String lisattavanMokinNimi = nimiTF.getText();
             String lisattavaOsoite = katuosoiteTF.getText();
-            Double lisattavaHinta = Double.parseDouble(hintaTF.getText());
+            String lisattavaHinta = hintaTF.getText();
             String lisattavaKuvaus = kuvausTF.getText();
-            int lisattavaHenkilomaara = Integer.parseInt(henkiloTF.getText());
-            ArrayList<String> lisattavatVarusteet = new ArrayList<>();
+            String lisattavaHenkilomaara = henkiloTF.getText();
+            String lisattavatVarusteet = "";
             if (keittio.isSelected())
-                lisattavatVarusteet.add("Keittiö");
-            if (sauna.isSelected())
-                lisattavatVarusteet.add("Sauna");
-            if (latu.isSelected())
-                lisattavatVarusteet.add("Hiihtolatu lähellä mökkiä");
-            if (kuivain.isSelected())
-                lisattavatVarusteet.add("Hiustenkuivain");
-
+                lisattavatVarusteet+="Keittiö";
+            if (sauna.isSelected()) {
+                if (!lisattavatVarusteet.isEmpty()) {
+                    lisattavatVarusteet += ", ";
+                }
+                lisattavatVarusteet += "Sauna";
+            }
+            if (latu.isSelected()) {
+                if (!lisattavatVarusteet.isEmpty()) {
+                    lisattavatVarusteet += ", ";
+                }
+                lisattavatVarusteet += "Hiihtolatu lähellä mökkiä";
+            }
+            if (kuivain.isSelected()) {
+                if (!lisattavatVarusteet.isEmpty()) {
+                    lisattavatVarusteet += ", ";
+                }
+                lisattavatVarusteet += "Hiustenkuivain";
+            }
+            main.connect.insertData("mokki", "alue_id, postinro, mokkinimi, katuosoite, hinta, kuvaus, henkilomaara, varustelu",
+                    (mokinAlue + ", " + mokinPostinumero + ", \"" + lisattavanMokinNimi + "\", \"" + lisattavaOsoite + "\", " + lisattavaHinta +
+                            ", \"" + lisattavaKuvaus + "\", " + lisattavaHenkilomaara + ", \""+ lisattavatVarusteet + "\""));
         });
-
         BPMokinLisaamiselle.setCenter(paneeliUudenMokinTiedoille);
         Scene lisaysScene = new Scene(BPMokinLisaamiselle);
         mokkiStage.setScene(lisaysScene);
         mokkiStage.show();
     }
-
     protected void mokkiMetodi(Stage mokkiStage){
         BorderPane BPmokeille = new BorderPane();
         TextArea alueMokkienTiedoille = new TextArea();
