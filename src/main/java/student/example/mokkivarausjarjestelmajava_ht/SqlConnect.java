@@ -119,7 +119,7 @@ public class SqlConnect {
         }
         try {
             Statement stmt = con.createStatement();
-            stmt.executeQuery(query);
+            stmt.executeUpdate(query);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
