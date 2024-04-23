@@ -110,6 +110,7 @@ public class CottageHandler extends Application {
         ResultSet rs = main.connect.createConnection(query);
         ArrayList<String> mokkiNimiLista = new ArrayList<>();
         try {
+            mokkiNimiLista.add(rs.getString("mokki_id"));
             while (rs.next())
                 mokkiNimiLista.add(rs.getString("mokki_id"));
         } catch (SQLException e) {
@@ -121,7 +122,6 @@ public class CottageHandler extends Application {
         mokkiLista.getSelectionModel().selectedItemProperty().addListener(ov->{
             valittuIndeksi=Integer.parseInt(mokkiLista.getSelectionModel().getSelectedItem());
             alueMokkienTiedoille.setText(mokki.SQLToString(valittuIndeksi));
-            System.out.println("tää toimii");
         });
         Button kotiNappi = main.kotiNappain(mokkiStage);
         Button lisaysNappi = new Button("Lisää uusi mökki");
