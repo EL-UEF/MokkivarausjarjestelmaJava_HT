@@ -1,21 +1,16 @@
 package student.example.mokkivarausjarjestelmajava_ht;
 
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
+import java.sql.ResultSet;
+
 
 public class Main extends Application {
     private Mokki mokki = new Mokki(this);
@@ -25,7 +20,6 @@ public class Main extends Application {
     private AlueHandler alueHandler = new AlueHandler(this);
 
     public SqlConnect connect = new SqlConnect("Test_user", "1234");
-
     public Main() {
     }
 
@@ -35,6 +29,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        connect.createConnection();
         //TEEN ALOITUSNÄYTÖN KÄYTTÖLIITTYMÄN TÄHÄN
         BorderPane paneeliAloitusNaytolle = new BorderPane();
         paneeliAloitusNaytolle.setPrefSize(500, 500);
@@ -52,7 +47,7 @@ public class Main extends Application {
             billHandler.laskutusMetodi(primaryStage);
         });
         mokkiNappi.setOnAction(e->{
-            cottageHandler.mokkiMetodi(primaryStage);
+            cottageHandler.mokkiMetodi(primaryStage, connect.executeQuery("SELECT mokkinimi, mokki_id FROM mokki"));
         });
         asiakasNappi.setOnAction(e->{
             customerHandler.asiakasMetodi(primaryStage);
@@ -73,5 +68,4 @@ public class Main extends Application {
         });
         return kotiNappi;
     }
-
 }

@@ -38,24 +38,37 @@ public class SqlConnect {
 
     /**
      *
-     * @param query sql kieltä, mieluiten SELECT jotta ei ruveta rikkomaan tietokantaa : )
+     * query sql kieltä, mieluiten SELECT jotta ei ruveta rikkomaan tietokantaa : )
      * @return palauttaa Resultset, eli se pitää sen jälkeen rikkoa rs.getString(int colum) metodilla,
      * int colum tarkoittaa mitä kohtaa taulukosta haluaa ulos
      * ---------------------------------------------------------------------------------------------------
      * Tuo on tällä hetkellä pistetty mulla olevaan random traffic tietokantaan, pitää lisätä dataa
      * vn tietokantaa että pääsee testaamaan, pyritään pitämään portti, salasana ja user samana kaikilla.
      */
-    public ResultSet createConnection(String query) {
+    public Connection createConnection() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            this.con = DriverManager.getConnection("jdbc:mysql://localhost:3306/vn", this.user, this.password);
-            this.stmt = con.createStatement();
-            this.rs = stmt.executeQuery(query);
-            while(rs.next()) return rs;
-        } catch (ClassNotFoundException | SQLException e) {throw new RuntimeException(e);
+            this.con = DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3306/vn", this.user, this.password
+            );
+            System.out.println("Connection successful!");
+            return this.con;
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new RuntimeException("Failed to create database connection", e);
         }
-        System.out.println("Connection succesfull!");
-        return rs;
+    }
+
+    public ResultSet executeQuery(String query) {
+        if (this.con == null) {
+            throw new IllegalStateException("Connection not established. Call createConnection() first.");
+        }
+        try {
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            return rs;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to execute query", e);
+        }
     }
     public void closeResources() {
         try {
@@ -77,13 +90,25 @@ public class SqlConnect {
                 " VALUES (" + data + ")";
         System.out.println(query);
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            this.con = DriverManager.getConnection("jdbc:mysql://localhost:3306/vn", this.user, this.password);
             this.stmt = con.createStatement();
             this.stmt.executeUpdate(query);
             this.con.close();
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+    public ResultSet searchForStuff(String table, String criteria){
+        String query = "SELECT * FROM " + table + " WHERE " + criteria + ";";
+        System.out.println(query);
+        if (this.con == null) {
+            throw new IllegalStateException("Connection not established. Call createConnection() first.");
+        }
+        try {
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            return rs;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to execute query", e);
         }
     }
     public void updateTable (String table, String rivi, String data, String where) {

@@ -39,7 +39,8 @@ public class Mokki {
         int SQLhenkilomaara = 0;
         String SQLvarustelu = null;
         try {
-            ResultSet rs = main.connect.createConnection(query);
+            ResultSet rs = main.connect.executeQuery(query);
+            rs.next();
             SQLalue_id = rs.getInt("alue_id");
             SQLpostinro = rs.getInt("postinro");
             SQLnimi = rs.getString("mokkinimi");
@@ -65,7 +66,7 @@ public class Mokki {
     public Mokki(String identifier, Main main) throws SQLException {
         this.main=main;
         String query = "SELECT * FROM mokki WHERE alue_id = "+identifier+";";
-        try (ResultSet rs = main.connect.createConnection(query)) {
+        try (ResultSet rs = main.connect.executeQuery(query)) {
             this.mokki_id = rs.getInt("mokki_id");
             this.alue_id = rs.getInt("alue_id");
             this.postinro = rs.getInt("postinro");
