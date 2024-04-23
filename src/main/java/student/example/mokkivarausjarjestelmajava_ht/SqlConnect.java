@@ -112,15 +112,15 @@ public class SqlConnect {
         }
     }
     public void updateTable (String table, String rivi, String data, String where) {
-        String query = "UPDATE " + table + " SET " + rivi + " = \"" + data + "\" " + where + ";";
+        String query = "UPDATE " + table + " SET " + rivi + " = " + data + " WHERE " + where + ";";
         System.out.println(query);
+        if (this.con == null) {
+            throw new IllegalStateException("Connection not established. Call createConnection() first.");
+        }
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            this.con = DriverManager.getConnection("jdbc:mysql://localhost:3306/vn", this.user, this.password);
-            this.stmt = con.createStatement();
-            this.stmt.executeUpdate(query);
-            this.con.close();
-        } catch (ClassNotFoundException | SQLException e) {
+            Statement stmt = con.createStatement();
+            stmt.executeQuery(query);
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
