@@ -15,10 +15,12 @@ import java.sql.ResultSet;
 public class Main extends Application {
     private Mokki mokki = new Mokki(this);
     private Alue alue = new Alue(this);
+    private Palvelu palvelu = new Palvelu(this);
     private BillHandler billHandler = new BillHandler(this);
     private CottageHandler cottageHandler = new CottageHandler(this, mokki);
     private CustomerHandler customerHandler = new CustomerHandler(this);
     private AlueHandler alueHandler = new AlueHandler(this, alue);
+    private PalveluHandler palveluHandler = new PalveluHandler(this, palvelu);
 
     public SqlConnect connect = new SqlConnect("Test_user", "1234");
     public Main() {
@@ -41,25 +43,29 @@ public class Main extends Application {
         Button mokkiNappi = new Button("Mökit");
         Button asiakasNappi = new Button("Asiakkaat");
         Button alueNappi = new Button("Alueet");
-        paneeliKeskiNapeille.getChildren().addAll(laskujenKatsomisNappi, mokkiNappi, asiakasNappi, alueNappi);
+        Button palveluNappi = new Button("Palvelut");
+        paneeliKeskiNapeille.getChildren().addAll(laskujenKatsomisNappi, mokkiNappi, asiakasNappi, alueNappi, palveluNappi);
         paneeliAloitusNaytolle.setCenter(paneeliKeskiNapeille);
         paneeliAloitusNaytolle.setLeft(kotiNappain(primaryStage));
         laskujenKatsomisNappi.setOnAction(e->{
             billHandler.laskutusMetodi(primaryStage);
         });
         mokkiNappi.setOnAction(e->{
-            cottageHandler.mokkiMetodi(primaryStage, connect.executeQuery("SELECT mokkinimi, mokki_id FROM mokki"));
+            cottageHandler.mokkiMetodi(primaryStage, connect.executeQuery("SELECT mokki_id FROM mokki ORDER BY mokki_id"));
         });
         asiakasNappi.setOnAction(e->{
             customerHandler.asiakasMetodi(primaryStage);
         });
         alueNappi.setOnAction(e->{
-            alueHandler.alueMetodi(primaryStage, connect.executeQuery("SELECT nimi, alue_id FROM alue"));
+            alueHandler.alueMetodi(primaryStage, connect.executeQuery("SELECT alue_id FROM alue ORDER BY alue_id"));
+        });
+        palveluNappi.setOnAction(e->{
+            palveluHandler.palveluMetodi(primaryStage, connect.executeQuery("SELECT palvelu_id FROM palvelu ORDER BY palvelu_id"));
         });
 
         Scene scene = new Scene(paneeliAloitusNaytolle);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Mökkienvaraus ohjelma 1.0");
+        primaryStage.setTitle("Mökkienvarausohjelma 1.0");
         primaryStage.show();
     }
     public Button kotiNappain(Stage primaryStage){

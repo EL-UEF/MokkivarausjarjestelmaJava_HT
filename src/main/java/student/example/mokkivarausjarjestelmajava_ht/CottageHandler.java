@@ -194,7 +194,7 @@ public class CottageHandler extends Application {
         VBox varoitusPaneeli = new VBox(30);
         varoitusPaneeli.setPrefSize(300, 300);
         varoitusPaneeli.setPadding(new Insets(10, 10, 10, 10));
-        Text varoitusTeksti = new Text("Oletko varma että haluat poistaa mökin\n" + mokki.SQLToString(valittuIndeksi)); //TÄHÄN SQL:STÄ MÖKIN TIEDOT
+        Text varoitusTeksti = new Text("Oletko varma että haluat poistaa mökin\n" + mokki.SQLToString(valittuIndeksi));
         HBox paneeliValikolle = new HBox(10);
         paneeliValikolle.setAlignment(Pos.CENTER);
         Button haluanPoistaa = new Button("Kyllä");
