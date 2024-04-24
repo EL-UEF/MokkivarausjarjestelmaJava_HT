@@ -16,6 +16,8 @@ public class Main extends Application {
     private Mokki mokki = new Mokki(this);
     private Alue alue = new Alue(this);
     private Palvelu palvelu = new Palvelu(this);
+    private Varaus varaus = new Varaus(this);
+    private VarausHandler varausHandler = new VarausHandler(this, varaus);
     private BillHandler billHandler = new BillHandler(this);
     private CottageHandler cottageHandler = new CottageHandler(this, mokki);
     private CustomerHandler customerHandler = new CustomerHandler(this);
@@ -44,7 +46,9 @@ public class Main extends Application {
         Button asiakasNappi = new Button("Asiakkaat");
         Button alueNappi = new Button("Alueet");
         Button palveluNappi = new Button("Palvelut");
-        paneeliKeskiNapeille.getChildren().addAll(laskujenKatsomisNappi, mokkiNappi, asiakasNappi, alueNappi, palveluNappi);
+        Button varauksetNappi = new Button("Varaukset");
+        paneeliKeskiNapeille.getChildren().addAll(laskujenKatsomisNappi, mokkiNappi, asiakasNappi, alueNappi, palveluNappi,
+                varauksetNappi);
         paneeliAloitusNaytolle.setCenter(paneeliKeskiNapeille);
         paneeliAloitusNaytolle.setLeft(kotiNappain(primaryStage));
         laskujenKatsomisNappi.setOnAction(e->{
@@ -61,6 +65,9 @@ public class Main extends Application {
         });
         palveluNappi.setOnAction(e->{
             palveluHandler.palveluMetodi(primaryStage, connect.executeQuery("SELECT palvelu_id FROM palvelu ORDER BY palvelu_id"));
+        });
+        varauksetNappi.setOnAction(e->{
+            varausHandler.varausMetodi(primaryStage, connect.executeQuery("SELECT varaus_id FROM varaus ORDER BY varaus_id"));
         });
 
         Scene scene = new Scene(paneeliAloitusNaytolle);
