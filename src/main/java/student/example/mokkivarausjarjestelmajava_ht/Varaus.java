@@ -3,6 +3,7 @@ package student.example.mokkivarausjarjestelmajava_ht;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Varaus {
     private Main main;
@@ -36,9 +37,14 @@ public class Varaus {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        String formatoituVarausAika = SQLvarattupvm.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        String formatoituVahvistusAika = SQLvahvistuspvm.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        String formatoituAlkupvm = SQLalkupvm.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        String formatoituloppupvm = SQLloppupvm.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        System.out.println(formatoituAlkupvm);
         String kokoTeksti = ("Varaus id: " + indeksi + "\nAsiakas id: " + SQLasiakas + "\nMökki id: " + SQLmokki +
-                "\nVarausaika: " + SQLvarattupvm + "\nVahvistusaika: " + SQLvahvistuspvm + "\nVarauksen alku: " +
-                SQLalkupvm + "\nVarauksen loppu: " + SQLloppupvm);
+                "\nVarauspäivä: " + formatoituVarausAika + "\nVahvistuspäivä: " + formatoituVahvistusAika + "\nVarauksen alku: " +
+                formatoituAlkupvm + " klo 15.00\nVarauksen loppu: " + formatoituloppupvm + " klo 12.00");
         return kokoTeksti;
     }
 
