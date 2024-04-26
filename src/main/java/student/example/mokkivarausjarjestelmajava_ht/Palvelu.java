@@ -15,7 +15,7 @@ public class Palvelu {
     Double hinta;
     Double alv = 0.1;
     public String SQLToString(String nimi){
-        String query = ("SELECT * FROM palvelu WHERE nimi = '" + nimi + "'");
+        String query = ("SELECT * FROM palvelu WHERE nimi = " + nimi);
         int SQLalue_id = 0;
         String SQLnimi = null;
         String SQLkuvaus = null;

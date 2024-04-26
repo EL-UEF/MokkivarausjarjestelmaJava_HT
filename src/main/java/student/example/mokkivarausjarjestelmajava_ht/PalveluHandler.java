@@ -60,7 +60,7 @@ public class PalveluHandler extends Application {
         ListView<String> palveluLista = new ListView<>();
         palveluLista.setItems(FXCollections.observableArrayList(palveluNimiLista));
         palveluLista.getSelectionModel().selectedItemProperty().addListener(ov->{
-            valittuNimi= palveluLista.getSelectionModel().getSelectedItem();
+            valittuNimi= ("'" + palveluLista.getSelectionModel().getSelectedItem() + "'");
             aluePalveluidenTiedoille.setText(palvelu.SQLToString(valittuNimi));
         });
         Button kotiNappi = main.kotiNappain(palveluStage);
@@ -152,7 +152,7 @@ public class PalveluHandler extends Application {
         Stage popUpStage = new Stage();
         Scene popUpScene = new Scene(varoitusPaneeli);
         haluanPoistaa.setOnAction(e->{
-            main.connect.deleteStuff("palvelu", "palvelu_id", valittuNimi);
+            main.connect.deleteStuff("palvelu", "nimi", valittuNimi);
             System.out.println("palvelu poistettu onnistuneesti");
             popUpStage.close();
         });
@@ -183,15 +183,15 @@ public class PalveluHandler extends Application {
         Button tallennusNappi = new Button("Tallenna");
         tallennusNappi.setOnAction(e->{
             if (!alueTF.getText().isEmpty())
-                main.connect.updateTable("palvelu", "alue_id", alueTF.getText(), ("palvelu_id = " + valittuNimi));
+                main.connect.updateTable("palvelu", "alue_id", alueTF.getText(), ("nimi = " + valittuNimi));
             if (!nimiTF.getText().isEmpty())
-                main.connect.updateTable("palvelu", "nimi", ("\"" + nimiTF.getText()) + "\"", ("palvelu_id = " + valittuNimi));
+                main.connect.updateTable("palvelu", "nimi", ("\"" + nimiTF.getText()) + "\"", ("nimi = " + valittuNimi));
             if (!kuvausTF.getText().isEmpty())
-                main.connect.updateTable("palvelu", "kuvaus", ("\"" + kuvausTF.getText()) + "\"", ("palvelu_id = " + valittuNimi));
+                main.connect.updateTable("palvelu", "kuvaus", ("\"" + kuvausTF.getText()) + "\"", ("nimi = " + valittuNimi));
             if (!hintaTF.getText().isEmpty())
-                main.connect.updateTable("palvelu", "hinta", hintaTF.getText(), ("palvelu_id = " + valittuNimi));
+                main.connect.updateTable("palvelu", "hinta", hintaTF.getText(), ("nimi = " + valittuNimi));
             if (!alvTF.getText().isEmpty())
-                main.connect.updateTable("palvelu", "alv", alvTF.getText(), ("palvelu_id = " + valittuNimi));
+                main.connect.updateTable("palvelu", "alv", alvTF.getText(), ("nimi = " + valittuNimi));
             System.out.println("toimii ehkä?");
         });
         paneeliMuokattavilleTiedoille.getChildren().addAll(muokattavapalvelu, alueMuokkausTeksti, alueTF, nimiTeksti, nimiTF, hintaTeksti,
@@ -213,9 +213,9 @@ public class PalveluHandler extends Application {
         Text alkuHopina = new Text("Kirjoita haluamasi kriteerit alla oleviin kenttiin.\nVoit jättää kentän tyhjäksi jos et halua käyttää kyseistä kriteeriä");
         Text hakuSanaKriteeri = new Text("Hakusana");
         TextField hakuSanaTF = new TextField();
-        Text alueKriteeri = new Text("Alueen ID, jolla mökki sijaitsee");
+        Text alueKriteeri = new Text("Alueen ID, jolla palvelu sijaitsee");
         TextField alueTF = new TextField();
-        Text hinnat = new Text("Mökin minimi ja maksimi hinta");
+        Text hinnat = new Text("palvelun minimi ja maksimi hinta");
         HBox paneeliHinnoille = new HBox(10);
         TextField minimiHinta = new TextField();
         TextField maksimiHinta = new TextField();
