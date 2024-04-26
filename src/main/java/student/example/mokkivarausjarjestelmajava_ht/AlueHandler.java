@@ -2,7 +2,6 @@ package student.example.mokkivarausjarjestelmajava_ht;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -16,12 +15,11 @@ import javafx.stage.Stage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class AlueHandler extends Application {
     private Main main;
     Alue alue;
-    String valittuIndeksi;
+    String valittuNimi;
 
     public AlueHandler(Main main, Alue alue) {
         this.main = main;
@@ -43,8 +41,8 @@ public class AlueHandler extends Application {
         ListView<String> alueLista = new ListView<>();
         alueLista.setItems(FXCollections.observableArrayList(alueNimiLista));
         alueLista.getSelectionModel().selectedItemProperty().addListener(ov->{
-            valittuIndeksi= alueLista.getSelectionModel().getSelectedItem();
-            alueAlueidenTiedoille.setText(alue.SQLToStringAlue(valittuIndeksi));
+            valittuNimi = alueLista.getSelectionModel().getSelectedItem();
+            alueAlueidenTiedoille.setText(alue.SQLToStringAlue(valittuNimi));
         });
         Button uusiAlue = new Button("Lisää uusi alue");
         Button muokkausNappi = new Button("Muokkaa valittua aluetta");
@@ -100,12 +98,12 @@ public class AlueHandler extends Application {
         BPAlueenMuokkaamiselle.setPrefSize(400, 400);
         VBox paneeliMuokattavilleTiedoille = new VBox(10);
         paneeliMuokattavilleTiedoille.setAlignment(Pos.CENTER);
-        Text nimiTeksti = new Text("Anna alueen " +alue.SQLToStringAlue(valittuIndeksi) + " uusi nimi");
+        Text nimiTeksti = new Text("Anna alueen " +alue.SQLToStringAlue(valittuNimi) + " uusi nimi");
         TextField nimiTF = new TextField();
         Button tallenna = new Button("Tallenna");
         tallenna.setOnAction(e->{
             String uusiNimi = nimiTF.getText();
-            main.connect.updateTable("alue","nimi","\"" + uusiNimi + "\"",("nimi = "+"\"" + valittuIndeksi + "\""));
+            main.connect.updateTable("alue","nimi","\"" + uusiNimi + "\"",("nimi = "+"\"" + valittuNimi + "\""));
         });
         Button kotiNappula = main.kotiNappain(muokkausStage);
         paneeliMuokattavilleTiedoille.getChildren().addAll(nimiTeksti, nimiTF, tallenna, kotiNappula);

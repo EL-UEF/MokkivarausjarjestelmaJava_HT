@@ -24,15 +24,15 @@ public class Mokki {
     }
 
     /**
-     * etsii mökki_id:n perusteella mökin tiedot SQL tietokannasta ja palauttaa ne String tyyppisenä
-     * @param valittuID mökin id, jonka tiedot halutaan palauttaa
+     * etsii mökkinimi:n perusteella mökin tiedot SQL tietokannasta ja palauttaa ne String tyyppisenä
+     * @param valittuNimi mökin nimi, jonka tiedot halutaan palauttaa
      * @return String, jossa valitun mökin tiedot
      */
-    public String SQLToString(int valittuID){
-        String query = ("SELECT * FROM mokki WHERE mokki_id = " + valittuID);
+    public String SQLToString(String valittuNimi){
+        String query = ("SELECT * FROM mokki WHERE mokkinimi = '" + valittuNimi + "'");
+        int SQLmokki_id = 0;
         int SQLalue_id = 0;
         int SQLpostinro = 0;
-        String SQLnimi = null;
         String SQLkatuosoite = null;
         Double SQLhinta = null;
         String SQLkuvaus = null;
@@ -43,7 +43,7 @@ public class Mokki {
             rs.next();
             SQLalue_id = rs.getInt("alue_id");
             SQLpostinro = rs.getInt("postinro");
-            SQLnimi = rs.getString("mokkinimi");
+            SQLmokki_id = rs.getInt("mokki_id");
             SQLkatuosoite = rs.getString("katuosoite");
             SQLhinta = rs.getDouble("hinta");
             SQLkuvaus = rs.getString("kuvaus");
@@ -52,7 +52,7 @@ public class Mokki {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        String kokoTeksti = ("Mokki " + SQLnimi + "\nmökin id: " + valittuID + "\nalue: " + SQLalue_id + "\nPostinumero: " + SQLpostinro + "\nosoite: " + SQLkatuosoite +
+        String kokoTeksti = ("Mokki " + valittuNimi + "\nmökin id: " + SQLmokki_id + "\nalue: " + SQLalue_id + "\nPostinumero: " + SQLpostinro + "\nosoite: " + SQLkatuosoite +
                 "\nhinta/yö: " + SQLhinta + "\nmökin kuvaus: " + SQLkuvaus + "\nhenkilömäärä: " + SQLhenkilomaara + "\nmökin varustelu: " + SQLvarustelu);
         return kokoTeksti;
     }

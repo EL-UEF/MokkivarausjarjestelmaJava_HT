@@ -2,7 +2,6 @@ package student.example.mokkivarausjarjestelmajava_ht;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -46,7 +45,7 @@ public class CottageHandler extends Application {
      * Indeksi, joka kertoo mikä mökki on valittuna tällä hetkellä listViewissä.
      * Alustettu olemaan -1 jotta ei voida vahingossa muokata minkään mökin tietoja valitsematta mökkiä
      */
-    int valittuIndeksi=-1;
+    String valittuNimi;
 
     /**
      * Metodi, jolla voidaan lisätä mökkejä SQL tietokantaan
@@ -152,7 +151,7 @@ public class CottageHandler extends Application {
         ArrayList<String> mokkiNimiLista = new ArrayList<>();
         try {
             while (rs.next())
-                mokkiNimiLista.add(rs.getString("mokki_id"));
+                mokkiNimiLista.add(rs.getString("mokkinimi"));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -160,8 +159,8 @@ public class CottageHandler extends Application {
         ListView<String> mokkiLista = new ListView<>();
         mokkiLista.setItems(FXCollections.observableArrayList(mokkiNimiLista));
         mokkiLista.getSelectionModel().selectedItemProperty().addListener(ov->{
-            valittuIndeksi=Integer.parseInt(mokkiLista.getSelectionModel().getSelectedItem());
-            alueMokkienTiedoille.setText(mokki.SQLToString(valittuIndeksi));
+            valittuNimi =mokkiLista.getSelectionModel().getSelectedItem();
+            alueMokkienTiedoille.setText(mokki.SQLToString(valittuNimi));
         });
         Button kotiNappi = main.kotiNappain(mokkiStage);
         Button lisaysNappi = new Button("Lisää uusi mökki");
@@ -194,7 +193,7 @@ public class CottageHandler extends Application {
         VBox varoitusPaneeli = new VBox(30);
         varoitusPaneeli.setPrefSize(300, 300);
         varoitusPaneeli.setPadding(new Insets(10, 10, 10, 10));
-        Text varoitusTeksti = new Text("Oletko varma että haluat poistaa mökin\n" + mokki.SQLToString(valittuIndeksi));
+        Text varoitusTeksti = new Text("Oletko varma että haluat poistaa mökin\n" + mokki.SQLToString(valittuNimi));
         HBox paneeliValikolle = new HBox(10);
         paneeliValikolle.setAlignment(Pos.CENTER);
         Button haluanPoistaa = new Button("Kyllä");
@@ -204,7 +203,7 @@ public class CottageHandler extends Application {
         Stage popUpStage = new Stage();
         Scene popUpScene = new Scene(varoitusPaneeli);
         haluanPoistaa.setOnAction(e->{
-            main.connect.deleteStuff("mokki", "mokki_id", Integer.toString(valittuIndeksi));
+            main.connect.deleteStuff("mokki", "mokkinimi", valittuNimi);
             System.out.println("mökki poistettu onnistuneesti");
             popUpStage.close();
         });
@@ -302,7 +301,7 @@ public class CottageHandler extends Application {
     public void mokinMuokkausMetodi(Stage muokkausStage){ //TOIMII SQL:SSÄ
         BorderPane BPMokinMuokkaukselle = new BorderPane();
         VBox paneeliMuokattavilleTiedoille = new VBox(10);
-        Text muokattavaMokki = new Text("MUOKATTAVA MÖKKI\n" + mokki.SQLToString(valittuIndeksi));
+        Text muokattavaMokki = new Text("MUOKATTAVA MÖKKI\n" + mokki.SQLToString(valittuNimi));
         Text alueMuokkausTeksti = new Text("Uusi alue id (numero)");
         TextField alueTF = new TextField();
         Text postinroTeksti = new Text("Uusi postinumero");
@@ -329,19 +328,19 @@ public class CottageHandler extends Application {
         tallennusNappi.setOnAction(e->{
             ArrayList<String> kriteeriLista = new ArrayList<>();
             if (!alueTF.getText().isEmpty())
-                main.connect.updateTable("mokki", "alue_id", alueTF.getText(), ("mokki_id = " + valittuIndeksi));
+                main.connect.updateTable("mokki", "alue_id", alueTF.getText(), ("mokki_id = " + valittuNimi));
             if (!postinroTF.getText().isEmpty())
-                main.connect.updateTable("mokki", "postinro", postinroTF.getText(), ("mokki_id = " + valittuIndeksi));
+                main.connect.updateTable("mokki", "postinro", postinroTF.getText(), ("mokki_id = " + valittuNimi));
             if (!nimiTF.getText().isEmpty())
-                main.connect.updateTable("mokki", "mokkinimi", ("\"" + nimiTF.getText()) + "\"", ("mokki_id = " + valittuIndeksi));
+                main.connect.updateTable("mokki", "mokkinimi", ("\"" + nimiTF.getText()) + "\"", ("mokki_id = " + valittuNimi));
             if (!osoiteTF.getText().isEmpty())
-                main.connect.updateTable("mokki", "katuosoite", ("\"" + osoiteTF.getText()) + "\"", ("mokki_id = " + valittuIndeksi));
+                main.connect.updateTable("mokki", "katuosoite", ("\"" + osoiteTF.getText()) + "\"", ("mokki_id = " + valittuNimi));
             if (!hintaTF.getText().isEmpty())
-                main.connect.updateTable("mokki", "hinta", hintaTF.getText(), ("mokki_id = " + valittuIndeksi));
+                main.connect.updateTable("mokki", "hinta", hintaTF.getText(), ("mokki_id = " + valittuNimi));
             if (!kuvausTF.getText().isEmpty())
-                main.connect.updateTable("mokki", "kuvaus", ("\"" + kuvausTF.getText()) + "\"", ("mokki_id = " + valittuIndeksi));
+                main.connect.updateTable("mokki", "kuvaus", ("\"" + kuvausTF.getText()) + "\"", ("mokki_id = " + valittuNimi));
             if (!henkilomaaraTF.getText().isEmpty())
-                main.connect.updateTable("mokki", "henkilomaara", henkilomaaraTF.getText(), ("mokki_id = " + valittuIndeksi));
+                main.connect.updateTable("mokki", "henkilomaara", henkilomaaraTF.getText(), ("mokki_id = " + valittuNimi));
             if (keittio.isSelected()) {
                 kriteeriLista.add("Keittiö");
             }
@@ -355,7 +354,7 @@ public class CottageHandler extends Application {
                 kriteeriLista.add("Hiustenkuivain");
             }
             String kriteerit = ("\"" + String.join(", ", kriteeriLista) + "\"");
-            main.connect.updateTable("mokki", "varustelu", kriteerit, ("mokki_id = " + valittuIndeksi));
+            main.connect.updateTable("mokki", "varustelu", kriteerit, ("mokki_id = " + valittuNimi));
             System.out.println("toimii ehkä?");
         });
         paneeliMuokattavilleTiedoille.getChildren().addAll(muokattavaMokki, alueMuokkausTeksti, alueTF, postinroTeksti,

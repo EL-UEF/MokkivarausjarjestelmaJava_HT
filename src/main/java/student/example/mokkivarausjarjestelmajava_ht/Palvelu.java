@@ -14,8 +14,8 @@ public class Palvelu {
     String kuvaus;
     Double hinta;
     Double alv = 0.1;
-    public String SQLToString(int indeksi){
-        String query = ("SELECT * FROM palvelu WHERE palvelu_id = " + indeksi);
+    public String SQLToString(String nimi){
+        String query = ("SELECT * FROM palvelu WHERE nimi = '" + nimi + "'");
         int SQLalue_id = 0;
         String SQLnimi = null;
         String SQLkuvaus = null;
@@ -32,7 +32,7 @@ public class Palvelu {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        String kokoTeksti = ("Palvelu id: " + indeksi + "\nAlue id: " + SQLalue_id + "\nNimi: " + SQLnimi +
+        String kokoTeksti = ("Palvelu id: " + nimi + "\nAlue id: " + SQLalue_id + "\nNimi: " + SQLnimi +
                 "\nKuvaus: " + SQLkuvaus + "\nHinta: " + SQLhinta + "\nALV: " + SQLalv + " %");
         return kokoTeksti;
     }

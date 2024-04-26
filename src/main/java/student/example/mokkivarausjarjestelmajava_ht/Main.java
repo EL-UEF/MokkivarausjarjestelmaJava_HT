@@ -55,7 +55,7 @@ public class Main extends Application {
             billHandler.laskutusMetodi(primaryStage);
         });
         mokkiNappi.setOnAction(e->{
-            cottageHandler.mokkiMetodi(primaryStage, connect.executeQuery("SELECT mokki_id FROM mokki ORDER BY mokki_id"));
+            cottageHandler.mokkiMetodi(primaryStage, connect.executeQuery("SELECT mokki_id, mokkinimi FROM mokki ORDER BY mokki_id"));
         });
         asiakasNappi.setOnAction(e->{
             customerHandler.asiakasMetodi(primaryStage);
@@ -64,7 +64,7 @@ public class Main extends Application {
             alueHandler.alueMetodi(primaryStage, connect.executeQuery("SELECT alue_id, nimi FROM alue ORDER BY alue_id"));
         });
         palveluNappi.setOnAction(e->{
-            palveluHandler.palveluMetodi(primaryStage, connect.executeQuery("SELECT palvelu_id FROM palvelu ORDER BY palvelu_id"));
+            palveluHandler.palveluMetodi(primaryStage, connect.executeQuery("SELECT palvelu_id, nimi FROM palvelu ORDER BY palvelu_id"));
         });
         varauksetNappi.setOnAction(e->{
             varausHandler.varausMetodi(primaryStage, connect.executeQuery("SELECT varaus_id FROM varaus ORDER BY varaus_id"));

@@ -41,7 +41,7 @@ public class PalveluHandler extends Application {
      * valittuIndeksi pitää kirjaa siitä, minkä palvelun käyttäjä on valinnut
      * Oletuksena -1, jotta käyttäjä ei voi vahingossa muokata tai poistaa palveluita
      */
-    int valittuIndeksi = -1;
+    String valittuNimi = "-1";
     protected void palveluMetodi(Stage palveluStage, ResultSet rs){
         BorderPane BPpalveluille = new BorderPane();
         TextArea aluePalveluidenTiedoille = new TextArea();
@@ -53,16 +53,15 @@ public class PalveluHandler extends Application {
         ArrayList<String> palveluNimiLista = new ArrayList<>();
         try {
             while (rs.next())
-                palveluNimiLista.add(rs.getString("palvelu_id"));
+                palveluNimiLista.add(rs.getString("nimi"));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        System.out.println(palveluNimiLista);
         ListView<String> palveluLista = new ListView<>();
         palveluLista.setItems(FXCollections.observableArrayList(palveluNimiLista));
         palveluLista.getSelectionModel().selectedItemProperty().addListener(ov->{
-            valittuIndeksi=Integer.parseInt(palveluLista.getSelectionModel().getSelectedItem());
-            aluePalveluidenTiedoille.setText(palvelu.SQLToString(valittuIndeksi));
+            valittuNimi= palveluLista.getSelectionModel().getSelectedItem();
+            aluePalveluidenTiedoille.setText(palvelu.SQLToString(valittuNimi));
         });
         Button kotiNappi = main.kotiNappain(palveluStage);
         Button lisaysNappi = new Button("Lisää uusi palvelu");
@@ -143,7 +142,7 @@ public class PalveluHandler extends Application {
         VBox varoitusPaneeli = new VBox(30);
         varoitusPaneeli.setPrefSize(300, 300);
         varoitusPaneeli.setPadding(new Insets(10, 10, 10, 10));
-        Text varoitusTeksti = new Text("Oletko varma että haluat poistaa palvelun\n" + palvelu.SQLToString(valittuIndeksi));
+        Text varoitusTeksti = new Text("Oletko varma että haluat poistaa palvelun\n" + palvelu.SQLToString(valittuNimi));
         HBox paneeliValikolle = new HBox(10);
         paneeliValikolle.setAlignment(Pos.CENTER);
         Button haluanPoistaa = new Button("Kyllä");
@@ -153,7 +152,7 @@ public class PalveluHandler extends Application {
         Stage popUpStage = new Stage();
         Scene popUpScene = new Scene(varoitusPaneeli);
         haluanPoistaa.setOnAction(e->{
-            main.connect.deleteStuff("palvelu", "palvelu_id", Integer.toString(valittuIndeksi));
+            main.connect.deleteStuff("palvelu", "palvelu_id", valittuNimi);
             System.out.println("palvelu poistettu onnistuneesti");
             popUpStage.close();
         });
@@ -169,7 +168,7 @@ public class PalveluHandler extends Application {
     public void palvelunMuokkausMetodi(Stage muokkausStage){ //TOIMII SQL:SSÄ
         BorderPane BPpalvelunMuokkaukselle = new BorderPane();
         VBox paneeliMuokattavilleTiedoille = new VBox(10);
-        Text muokattavapalvelu = new Text("MUOKATTAVA PALVELU:\n" + palvelu.SQLToString(valittuIndeksi));
+        Text muokattavapalvelu = new Text("MUOKATTAVA PALVELU:\n" + palvelu.SQLToString(valittuNimi));
         Text alueMuokkausTeksti = new Text("Uusi alue id (numero)");
         TextField alueTF = new TextField();
         Text nimiTeksti = new Text("Uusi nimi");
@@ -184,15 +183,15 @@ public class PalveluHandler extends Application {
         Button tallennusNappi = new Button("Tallenna");
         tallennusNappi.setOnAction(e->{
             if (!alueTF.getText().isEmpty())
-                main.connect.updateTable("palvelu", "alue_id", alueTF.getText(), ("palvelu_id = " + valittuIndeksi));
+                main.connect.updateTable("palvelu", "alue_id", alueTF.getText(), ("palvelu_id = " + valittuNimi));
             if (!nimiTF.getText().isEmpty())
-                main.connect.updateTable("palvelu", "nimi", ("\"" + nimiTF.getText()) + "\"", ("palvelu_id = " + valittuIndeksi));
+                main.connect.updateTable("palvelu", "nimi", ("\"" + nimiTF.getText()) + "\"", ("palvelu_id = " + valittuNimi));
             if (!kuvausTF.getText().isEmpty())
-                main.connect.updateTable("palvelu", "kuvaus", ("\"" + kuvausTF.getText()) + "\"", ("palvelu_id = " + valittuIndeksi));
+                main.connect.updateTable("palvelu", "kuvaus", ("\"" + kuvausTF.getText()) + "\"", ("palvelu_id = " + valittuNimi));
             if (!hintaTF.getText().isEmpty())
-                main.connect.updateTable("palvelu", "hinta", hintaTF.getText(), ("palvelu_id = " + valittuIndeksi));
+                main.connect.updateTable("palvelu", "hinta", hintaTF.getText(), ("palvelu_id = " + valittuNimi));
             if (!alvTF.getText().isEmpty())
-                main.connect.updateTable("palvelu", "alv", alvTF.getText(), ("palvelu_id = " + valittuIndeksi));
+                main.connect.updateTable("palvelu", "alv", alvTF.getText(), ("palvelu_id = " + valittuNimi));
             System.out.println("toimii ehkä?");
         });
         paneeliMuokattavilleTiedoille.getChildren().addAll(muokattavapalvelu, alueMuokkausTeksti, alueTF, nimiTeksti, nimiTF, hintaTeksti,
