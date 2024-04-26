@@ -29,7 +29,7 @@ public class Mokki {
      * @return String, jossa valitun mökin tiedot
      */
     public String SQLToString(String valittuNimi){
-        String query = ("SELECT * FROM mokki WHERE mokkinimi = '" + valittuNimi + "'");
+        String query = ("SELECT * FROM mokki WHERE mokkinimi = " + valittuNimi);
         int SQLmokki_id = 0;
         int SQLalue_id = 0;
         int SQLpostinro = 0;

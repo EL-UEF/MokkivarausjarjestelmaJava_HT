@@ -159,7 +159,7 @@ public class CottageHandler extends Application {
         ListView<String> mokkiLista = new ListView<>();
         mokkiLista.setItems(FXCollections.observableArrayList(mokkiNimiLista));
         mokkiLista.getSelectionModel().selectedItemProperty().addListener(ov->{
-            valittuNimi =mokkiLista.getSelectionModel().getSelectedItem();
+            valittuNimi =("'" + mokkiLista.getSelectionModel().getSelectedItem() + "'");
             alueMokkienTiedoille.setText(mokki.SQLToString(valittuNimi));
         });
         Button kotiNappi = main.kotiNappain(mokkiStage);
@@ -189,7 +189,7 @@ public class CottageHandler extends Application {
         mokkiStage.setScene(scene);
         mokkiStage.show();
     }
-    public void mokinPoisto(){ //TOIMII SQL:SSÄ
+    public void mokinPoisto(){
         VBox varoitusPaneeli = new VBox(30);
         varoitusPaneeli.setPrefSize(300, 300);
         varoitusPaneeli.setPadding(new Insets(10, 10, 10, 10));
@@ -216,7 +216,7 @@ public class CottageHandler extends Application {
         popUpStage.setTitle("VAROITUS");
         popUpStage.show();
     }
-    protected void mokinEtsintaMetodi(Stage etsintaStage){ //TOIMII SQL:SSÄ
+    protected void mokinEtsintaMetodi(Stage etsintaStage){
         BorderPane BPMokinEtsinnalle = new BorderPane();
         VBox paneeliEtsintaKriteereille = new VBox(10);
         paneeliEtsintaKriteereille.setAlignment(Pos.CENTER);
@@ -251,7 +251,7 @@ public class CottageHandler extends Application {
         etsi.setOnAction(e->{
             List<String> kriteeriLista = new ArrayList<>();
             if (!nimiTF.getText().isEmpty()) {
-                kriteeriLista.add("mokkinimi = \"" + nimiTF.getText() + "\"");
+                kriteeriLista.add("LOWER(mokkinimi) LIKE '%" + nimiTF.getText().toLowerCase() + "%'");
             }
 
             if (!alueTF.getText().isEmpty()) {
@@ -298,7 +298,7 @@ public class CottageHandler extends Application {
         etsintaStage.setScene(scene);
         etsintaStage.show();
     }
-    public void mokinMuokkausMetodi(Stage muokkausStage){ //TOIMII SQL:SSÄ
+    public void mokinMuokkausMetodi(Stage muokkausStage){
         BorderPane BPMokinMuokkaukselle = new BorderPane();
         VBox paneeliMuokattavilleTiedoille = new VBox(10);
         Text muokattavaMokki = new Text("MUOKATTAVA MÖKKI\n" + mokki.SQLToString(valittuNimi));
@@ -328,19 +328,19 @@ public class CottageHandler extends Application {
         tallennusNappi.setOnAction(e->{
             ArrayList<String> kriteeriLista = new ArrayList<>();
             if (!alueTF.getText().isEmpty())
-                main.connect.updateTable("mokki", "alue_id", alueTF.getText(), ("mokki_id = " + valittuNimi));
+                main.connect.updateTable("mokki", "alue_id", alueTF.getText(), ("mokkinimi = " + valittuNimi));
             if (!postinroTF.getText().isEmpty())
-                main.connect.updateTable("mokki", "postinro", postinroTF.getText(), ("mokki_id = " + valittuNimi));
+                main.connect.updateTable("mokki", "postinro", postinroTF.getText(), ("mokkinimi = " + valittuNimi));
             if (!nimiTF.getText().isEmpty())
-                main.connect.updateTable("mokki", "mokkinimi", ("\"" + nimiTF.getText()) + "\"", ("mokki_id = " + valittuNimi));
+                main.connect.updateTable("mokki", "mokkinimi", ("\"" + nimiTF.getText()) + "\"", ("mokkinimi = " + valittuNimi));
             if (!osoiteTF.getText().isEmpty())
-                main.connect.updateTable("mokki", "katuosoite", ("\"" + osoiteTF.getText()) + "\"", ("mokki_id = " + valittuNimi));
+                main.connect.updateTable("mokki", "katuosoite", ("\"" + osoiteTF.getText()) + "\"", ("mokkinimi = " + valittuNimi));
             if (!hintaTF.getText().isEmpty())
-                main.connect.updateTable("mokki", "hinta", hintaTF.getText(), ("mokki_id = " + valittuNimi));
+                main.connect.updateTable("mokki", "hinta", hintaTF.getText(), ("mokkinimi = " + valittuNimi));
             if (!kuvausTF.getText().isEmpty())
-                main.connect.updateTable("mokki", "kuvaus", ("\"" + kuvausTF.getText()) + "\"", ("mokki_id = " + valittuNimi));
+                main.connect.updateTable("mokki", "kuvaus", ("\"" + kuvausTF.getText()) + "\"", ("mokkinimi = " + valittuNimi));
             if (!henkilomaaraTF.getText().isEmpty())
-                main.connect.updateTable("mokki", "henkilomaara", henkilomaaraTF.getText(), ("mokki_id = " + valittuNimi));
+                main.connect.updateTable("mokki", "henkilomaara", henkilomaaraTF.getText(), ("mokkinimi = " + valittuNimi));
             if (keittio.isSelected()) {
                 kriteeriLista.add("Keittiö");
             }
@@ -354,7 +354,7 @@ public class CottageHandler extends Application {
                 kriteeriLista.add("Hiustenkuivain");
             }
             String kriteerit = ("\"" + String.join(", ", kriteeriLista) + "\"");
-            main.connect.updateTable("mokki", "varustelu", kriteerit, ("mokki_id = " + valittuNimi));
+            main.connect.updateTable("mokki", "varustelu", kriteerit, ("mokkinimi = " + valittuNimi));
             System.out.println("toimii ehkä?");
         });
         paneeliMuokattavilleTiedoille.getChildren().addAll(muokattavaMokki, alueMuokkausTeksti, alueTF, postinroTeksti,
