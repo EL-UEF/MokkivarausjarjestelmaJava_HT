@@ -61,7 +61,7 @@ public class Main extends Application {
             customerHandler.asiakasMetodi(primaryStage);
         });
         alueNappi.setOnAction(e->{
-            alueHandler.alueMetodi(primaryStage, connect.executeQuery("SELECT alue_id FROM alue ORDER BY alue_id"));
+            alueHandler.alueMetodi(primaryStage, connect.executeQuery("SELECT alue_id, nimi FROM alue ORDER BY alue_id"));
         });
         palveluNappi.setOnAction(e->{
             palveluHandler.palveluMetodi(primaryStage, connect.executeQuery("SELECT palvelu_id FROM palvelu ORDER BY palvelu_id"));

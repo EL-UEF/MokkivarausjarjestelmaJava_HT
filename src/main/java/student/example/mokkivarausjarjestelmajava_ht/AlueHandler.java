@@ -6,10 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -19,11 +16,12 @@ import javafx.stage.Stage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class AlueHandler extends Application {
     private Main main;
     Alue alue;
-    int valittuIndeksi=-1;
+    String valittuIndeksi;
 
     public AlueHandler(Main main, Alue alue) {
         this.main = main;
@@ -38,14 +36,14 @@ public class AlueHandler extends Application {
         ArrayList<String> alueNimiLista = new ArrayList<>();
         try {
             while (rs.next())
-                alueNimiLista.add(rs.getString("alue_id"));
+                alueNimiLista.add(rs.getString("nimi"));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         ListView<String> alueLista = new ListView<>();
         alueLista.setItems(FXCollections.observableArrayList(alueNimiLista));
         alueLista.getSelectionModel().selectedItemProperty().addListener(ov->{
-            valittuIndeksi=Integer.parseInt(alueLista.getSelectionModel().getSelectedItem());
+            valittuIndeksi= alueLista.getSelectionModel().getSelectedItem();
             alueAlueidenTiedoille.setText(alue.SQLToStringAlue(valittuIndeksi));
         });
         Button uusiAlue = new Button("Lisää uusi alue");
@@ -56,10 +54,14 @@ public class AlueHandler extends Application {
         uusiAlue.setOnAction(e->{
             alueenLisaysMetodi(alueStage);
         });
-
+        Button etsintäNappi = new Button("Etsi alue");
+        etsintäNappi.setOnAction(event -> {
+            alueenEtsintäMetodi(alueStage);
+        });
         Button koti = main.kotiNappain(alueStage);
+
         HBox paneeliAlaValikolle = new HBox(10);
-        paneeliAlaValikolle.getChildren().addAll(koti, muokkausNappi, uusiAlue);
+        paneeliAlaValikolle.getChildren().addAll(koti, muokkausNappi, uusiAlue, etsintäNappi);
         BPAlueille.setLeft(alueLista);
         BPAlueille.setCenter(alueAlueidenTiedoille);
         BPAlueille.setBottom(paneeliAlaValikolle);
@@ -103,7 +105,7 @@ public class AlueHandler extends Application {
         Button tallenna = new Button("Tallenna");
         tallenna.setOnAction(e->{
             String uusiNimi = nimiTF.getText();
-            main.connect.updateTable("alue","nimi","\"" + uusiNimi + "\"",("alue_id = "+valittuIndeksi));
+            main.connect.updateTable("alue","nimi","\"" + uusiNimi + "\"",("nimi = "+"\"" + valittuIndeksi + "\""));
         });
         Button kotiNappula = main.kotiNappain(muokkausStage);
         paneeliMuokattavilleTiedoille.getChildren().addAll(nimiTeksti, nimiTF, tallenna, kotiNappula);
@@ -115,6 +117,29 @@ public class AlueHandler extends Application {
         muokkausStage.setTitle("Muokkaa aluetta");
         muokkausStage.show();
     }
+    protected void alueenEtsintäMetodi(Stage etsintaStage){ //TOIMII SQL:SSÄ
+        BorderPane BPMokinEtsinnalle = new BorderPane();
+        VBox paneeliEtsintaKriteereille = new VBox(10);
+        paneeliEtsintaKriteereille.setAlignment(Pos.CENTER);
+        Text alkuHopina = new Text("Kirjoita haluamasi alueen nimen alla oleviin kenttiin.");
+        Text nimiKriteeri = new Text("Alueen nimi");
+        TextField nimiTF = new TextField();
+        Button etsi = new Button("Etsi");
+        //toiminnallisuus
+        etsi.setOnAction(e->{
+            if (!nimiTF.getText().isEmpty()) {
+            String kriteerit = nimiTF.getText();
+            alueMetodi(etsintaStage, main.connect.searchForStuff("alue", "nimi = "+"\"" + kriteerit + "\""));
+        }});
+        Button kotiNappi = main.kotiNappain(etsintaStage);
+        paneeliEtsintaKriteereille.getChildren().addAll(alkuHopina, nimiKriteeri, nimiTF, etsi);
+        BPMokinEtsinnalle.setCenter(paneeliEtsintaKriteereille);
+        BPMokinEtsinnalle.setLeft(kotiNappi);
+        Scene scene = new Scene(BPMokinEtsinnalle);
+        etsintaStage.setTitle("Alueen haku");
+        etsintaStage.setScene(scene);
+        etsintaStage.show();}
+
 
     public static void main(String[] args) {
         launch(args);

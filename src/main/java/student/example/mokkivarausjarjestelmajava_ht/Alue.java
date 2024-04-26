@@ -13,8 +13,8 @@ public class Alue {
 
     public Alue(Main main) {this.main = main;}
 
-    public String SQLToStringAlue(int valittuId){
-        String query = ("SELECT * FROM alue WHERE alue_id = " + valittuId);
+    public String SQLToStringAlue(String valittuId){
+        String query = ("SELECT * FROM alue WHERE nimi = " + "\"" + valittuId + "\"");
         int SQLalue_id = 0;
         String SQLtoimipaikka = null;
         try {
