@@ -29,7 +29,7 @@ public class CottageHandler extends Application {
     /**
      * Luotu Mokki instance jotta voidaan käyttää Mokkin metodeja
      */
-    Mokki mokki;
+    private Mokki mokki;
 
     /**
      * Alustaja jota Main käyttää

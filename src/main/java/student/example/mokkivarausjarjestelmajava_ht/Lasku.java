@@ -17,43 +17,40 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class Lasku extends Main {
+public class Lasku {
+    private Main main;
     int lasku_id=0;
     int varaus_id=0;
     double summa = 0;
     double alv = 24;
     boolean maksettu = false;
 
-    public String toString(){
-        return ("Lasku id: " + lasku_id + "\nvaraus id: " + varaus_id + "\nSumma: " + summa + "\nalv: " + alv + " % eli " + (summa*alv/100) + " €" + "\nmaksettu: " + maksettu);
+    public String SQLToString(String id){
+        String criteria = ("lasku_id = " + id);
+        int SQLvaraus_id = -1;
+        Double SQLsumma = -1.0;
+        Double SQLalv = -1.0;
+        int SQLmaksettu = -1;
+
+        try {
+            ResultSet rs = main.connect.searchForStuff("lasku", criteria);
+            rs.next();
+            SQLvaraus_id = rs.getInt("varaus_id");
+            SQLsumma = rs.getDouble("summa");
+            SQLalv = rs.getDouble("alv");
+            SQLmaksettu = rs.getInt("maksettu");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return ("Lasku id: " + id + "\nvaraus id: " + SQLvaraus_id + "\nSumma: " + SQLsumma +
+                "\nalv: " + SQLalv + " % eli " + (SQLsumma*SQLalv/100) + " €" +
+                "\nmaksettu: " + SQLmaksettu);
     }
-    public Lasku(){
-        lasku_id=0;
-        varaus_id=0;
-        summa=0;
-        alv=24;
-        maksettu=false;
+    public Lasku(Main main){
+        this.main=main;
     }
-
-    public Lasku(int lasku_id, int varaus_id, double summa, double alv) {
-        this.lasku_id = lasku_id;
-        this.varaus_id = varaus_id;
-        this.summa = summa;
-        this.alv = alv;
-        this.maksettu = false;
-    }
-
-    public static void main(String[] args) {
-        launch(args);
-    }
-
-    @Override
-    public void start(Stage primaryStage) {
-    }
-
-
-
-
 }

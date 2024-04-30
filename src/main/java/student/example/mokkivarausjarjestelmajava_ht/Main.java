@@ -17,8 +17,10 @@ public class Main extends Application {
     private Alue alue = new Alue(this);
     private Palvelu palvelu = new Palvelu(this);
     private Varaus varaus = new Varaus(this);
+    private Lasku lasku = new Lasku(this);
+    private BillPDFer billPDFer = new BillPDFer(this);
     private VarausHandler varausHandler = new VarausHandler(this, varaus);
-    private BillHandler billHandler = new BillHandler(this);
+    private BillHandler billHandler = new BillHandler(this, lasku, billPDFer);
     private CottageHandler cottageHandler = new CottageHandler(this, mokki);
     private CustomerHandler customerHandler = new CustomerHandler(this);
     private AlueHandler alueHandler = new AlueHandler(this, alue);
@@ -52,7 +54,7 @@ public class Main extends Application {
         paneeliAloitusNaytolle.setCenter(paneeliKeskiNapeille);
         paneeliAloitusNaytolle.setLeft(kotiNappain(primaryStage));
         laskujenKatsomisNappi.setOnAction(e->{
-            billHandler.laskutusMetodi(primaryStage);
+            billHandler.laskuMetodi(primaryStage, connect.executeQuery("SELECT lasku_id FROM lasku ORDER BY lasku_id"));
         });
         mokkiNappi.setOnAction(e->{
             cottageHandler.mokkiMetodi(primaryStage, connect.executeQuery("SELECT mokki_id, mokkinimi FROM mokki ORDER BY mokki_id"));
