@@ -30,14 +30,16 @@ public class Mokki {
      */
     public String SQLToString(String valittuNimi){
         String query = ("SELECT * FROM mokki WHERE mokkinimi = " + valittuNimi);
-        int SQLmokki_id = 0;
-        int SQLalue_id = 0;
-        int SQLpostinro = 0;
+        int SQLmokki_id = -1;
+        int SQLalue_id = -1;
+        int SQLpostinro = -1;
         String SQLkatuosoite = null;
         Double SQLhinta = null;
         String SQLkuvaus = null;
-        int SQLhenkilomaara = 0;
+        int SQLhenkilomaara = -1;
         String SQLvarustelu = null;
+        Double SQLalv = -1.0;
+        Double alvEuroina = -1.0;
         try {
             ResultSet rs = main.connect.executeQuery(query);
             rs.next();
@@ -49,11 +51,13 @@ public class Mokki {
             SQLkuvaus = rs.getString("kuvaus");
             SQLhenkilomaara = rs.getInt("henkilomaara");
             SQLvarustelu = rs.getString("varustelu");
+            SQLalv = rs.getDouble("alv");
+            alvEuroina = SQLhinta-(Math.round(SQLhinta)/(1+(SQLalv/100)));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         String kokoTeksti = ("Mokki " + valittuNimi + "\nmökin id: " + SQLmokki_id + "\nalue: " + SQLalue_id + "\nPostinumero: " + SQLpostinro + "\nosoite: " + SQLkatuosoite +
-                "\nhinta/yö: " + SQLhinta + "\nmökin kuvaus: " + SQLkuvaus + "\nhenkilömäärä: " + SQLhenkilomaara + "\nmökin varustelu: " + SQLvarustelu);
+                "\nhinta/yö: " + SQLhinta + "\nmökin kuvaus: " + SQLkuvaus + "\nhenkilömäärä: " + SQLhenkilomaara + "\nmökin varustelu: " + SQLvarustelu + "\nAlv %: " + SQLalv + "\nAlv € :" + Math.round(alvEuroina));
         return kokoTeksti;
     }
 
