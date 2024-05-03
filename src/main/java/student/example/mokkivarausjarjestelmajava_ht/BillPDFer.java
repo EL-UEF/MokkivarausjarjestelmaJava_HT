@@ -72,13 +72,11 @@ public class BillPDFer {
         int laskuID = -1;
         int varausID = -1;
         int asiakasID = -1;
-        String enimi;
-        String snimi;
+        String asiakasNimi;
         String mokkinimi;
         LocalDateTime SQLalkupvm = null;
         LocalDateTime SQLloppupvm = null;
-        Double palveluidenHinta = -1.0;
-        Double mokinHinta = -1.0;
+        String palveluMaara;
         Double kokonaisHinta = -1.0;
         int maksettu = -1;
         //Haetaan laskuun laitettavat tiedot:
@@ -88,14 +86,12 @@ public class BillPDFer {
             laskuID = rs.getInt("lasku_id");
             varausID = rs.getInt("varaus_id");
             asiakasID = rs.getInt("asiakas_id");
-            enimi = rs.getString("etunimi");
-            snimi = rs.getString("sukunimi");
-            mokkinimi = rs.getString("mokkinimi");
+            asiakasNimi = rs.getString("asiakas");
+            mokkinimi = rs.getString("mökki");
             SQLalkupvm = rs.getObject("alkupaiva", LocalDateTime.class);
             SQLloppupvm = rs.getObject("loppupaiva", LocalDateTime.class);
-            palveluidenHinta = rs.getDouble("käytettyjen_palveluiden_hinta");
-            mokinHinta = rs.getDouble("mökin hinta");
-            kokonaisHinta = rs.getDouble("yht");
+            palveluMaara = rs.getString("käytetyt palvelut");
+            kokonaisHinta = rs.getDouble("kokonaishinta");
             maksettu = rs.getInt("maksettu");
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -103,9 +99,9 @@ public class BillPDFer {
         String formatoituAlkupvm = SQLalkupvm.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         String formatoituloppupvm = SQLloppupvm.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
 
-        String laskuString = ("Lasku id: " + laskuID + "\nvaraus id: " + varausID + "\nAsiakas_id: " + asiakasID + "\nAsiakkaan nimi: " + enimi + " " + snimi +
-                "\nvuokrattu mökki: " + mokkinimi + "\nVuokrausaika: " + formatoituAlkupvm + " - " + formatoituloppupvm + "\nLisäpalveluiden hinta: " +
-                palveluidenHinta + "\nMökin hinta: " + mokinHinta + "\nYht: " + kokonaisHinta);
+        String laskuString = ("Lasku id: " + laskuID + "\nvaraus id: " + varausID + "\nAsiakas_id: " + asiakasID + "\nAsiakkaan nimi: " + asiakasNimi +
+                "\nvuokrattu mökki: " + mokkinimi + "\nVuokrausaika: " + formatoituAlkupvm + " - " + formatoituloppupvm + "\nLisäpalveluiden määrä ja nimi: " +
+                palveluMaara + "\nYht: " + kokonaisHinta);
         return laskuString;
     }
 

@@ -33,7 +33,6 @@ public class Lasku {
         String criteria = ("lasku_id = " + id);
         int SQLvaraus_id = -1;
         Double SQLsumma = -1.0;
-        Double SQLalv = -1.0;
         int SQLmaksettu = -1;
 
         try {
@@ -41,14 +40,11 @@ public class Lasku {
             rs.next();
             SQLvaraus_id = rs.getInt("varaus_id");
             SQLsumma = rs.getDouble("summa");
-            SQLalv = rs.getDouble("alv");
             SQLmaksettu = rs.getInt("maksettu");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return ("Lasku id: " + id + "\nvaraus id: " + SQLvaraus_id + "\nSumma: " + SQLsumma +
-                "\nalv: " + SQLalv + " % eli " + (SQLsumma*SQLalv/100) + " €" +
-                "\nmaksettu: " + SQLmaksettu);
+        return ("Lasku id: " + id + "\nvaraus id: " + SQLvaraus_id + "\nSumma: " + SQLsumma + "\nmaksettu: " + SQLmaksettu);
     }
     public Lasku(Main main){
         this.main=main;
