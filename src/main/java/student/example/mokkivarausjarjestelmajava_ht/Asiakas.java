@@ -6,6 +6,7 @@ import javafx.stage.Stage;
 import java.security.PublicKey;
 
 public class Asiakas {
+    Main main;
     int asiakas_id = 0;
     int postinro = 0;
     String etunimi;
@@ -16,6 +17,9 @@ public class Asiakas {
 
     public String toString(){
         return ("Asiakas id: " + asiakas_id + "\npostinumero: " + postinro + "\nEtunimi: " + etunimi + "\nSukunimi: " + sukunimi + "\nOsoite: " + lahiosoite + "\nSähköposti: " + email + "\nPuhelinnumero: " + puhelinnumero);
+    }
+    public String SQLToString(String etunimi){
+        return "lol";
     }
 
     public Asiakas(int asiakas_id, int postinro, String etunimi, String sukunimi, String lahiosoite, String email, String puhelinnumero) {
@@ -28,6 +32,7 @@ public class Asiakas {
         this.puhelinnumero = puhelinnumero;
     }
 
-    public Asiakas() {
+    public Asiakas(Main main) {
+        this.main = main;
     }
 }

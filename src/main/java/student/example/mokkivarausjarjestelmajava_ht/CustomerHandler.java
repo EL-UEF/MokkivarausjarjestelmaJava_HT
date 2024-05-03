@@ -2,7 +2,6 @@ package student.example.mokkivarausjarjestelmajava_ht;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -16,58 +15,72 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class CustomerHandler extends Application {
     private Main main;
-    ArrayList<Asiakas> olemassaolevatAsiakkaat = new ArrayList<>();
+    private Asiakas asiakas;
+    String valittuNimi;
 
-    public CustomerHandler(Main main) {
+    public CustomerHandler(Main main, Asiakas asiakas) {
         this.main = main;
+        this.asiakas=asiakas;
     }
 
-    public void asiakasMetodi(Stage asiakasStage){
-        BorderPane BPAsiakkaille = new BorderPane();
-        //ohjelma lukee tässä aina asiakkaat asiakkaidenluku metodilla, joten sinne tallentamattomat asiakkaat eivät näy listassa!
-        asiakkaidenLuku();
+    protected void asiakasMetodi(Stage mokkiStage, ResultSet rs){
+        BorderPane BPasiakkaille = new BorderPane();
         TextArea alueAsiakkaidenTiedoille = new TextArea();
         alueAsiakkaidenTiedoille.setText("Klikkaa asiakasta nähdäksesi sen tarkemmat tiedot :)");
         alueAsiakkaidenTiedoille.setEditable(false);
-        ObservableList<Asiakas> luettavaAsiakasLista = FXCollections.observableArrayList(olemassaolevatAsiakkaat);
+        /**
+         * Logiikka asiakkaiden indeksien näyttämiselle ListViewissä ja tietojen hakemiselle tietokannasta
+         */
         ArrayList<String> asiakasNimiLista = new ArrayList<>();
-        for (int i=0; i<2; i++){
-            asiakasNimiLista.add(luettavaAsiakasLista.get(i).etunimi + " " + luettavaAsiakasLista.get(i).sukunimi);
+        try {
+            while (rs.next())
+                asiakasNimiLista.add(rs.getString("sukunimi"));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
+        System.out.println(asiakasNimiLista);
         ListView<String> asiakasLista = new ListView<>();
         asiakasLista.setItems(FXCollections.observableArrayList(asiakasNimiLista));
-
         asiakasLista.getSelectionModel().selectedItemProperty().addListener(ov->{
-            alueAsiakkaidenTiedoille.setText(
-                    luettavaAsiakasLista.get(asiakasLista.getSelectionModel().getSelectedIndex()).toString());
+            valittuNimi =("'" + asiakasLista.getSelectionModel().getSelectedItem() + "'");
+            alueAsiakkaidenTiedoille.setText(asiakas.SQLToString(valittuNimi));
         });
-        Button uusiAsiakas = new Button("Lisää uusi asiakas");
-        uusiAsiakas.setOnAction(e->{
-            asiakkaanLisaysMetodi(asiakasStage);
+        Button kotiNappi = main.kotiNappain(mokkiStage);
+        Button lisaysNappi = new Button("Lisää uusi mökki");
+        /*
+        lisaysNappi.setOnAction(e->{
+            mokinLisaysMetodi(mokkiStage);
         });
-        Button koti = main.kotiNappain(asiakasStage);
+        Button poistoNappi = new Button("Poista valittu mökki");
+        poistoNappi.setOnAction(e->{
+            mokinPoisto();
+        });
+        Button muokkausNappi = new Button("Muokkaa valittua mökkiä");
+        muokkausNappi.setOnAction(e->{
+            mokinMuokkausMetodi(mokkiStage);
+        });
+        Button etsintaNappi = new Button("Etsi mökkiä");
+        etsintaNappi.setOnAction(e->{
+            mokinEtsintaMetodi(mokkiStage);
+        });
+         */
         HBox paneeliAlaValikolle = new HBox(10);
-        paneeliAlaValikolle.getChildren().addAll(koti, uusiAsiakas);
-        BPAsiakkaille.setLeft(asiakasLista);
-        BPAsiakkaille.setCenter(alueAsiakkaidenTiedoille);
-        BPAsiakkaille.setBottom(paneeliAlaValikolle);
-        Scene scene = new Scene(BPAsiakkaille);
-        asiakasStage.setScene(scene);
-        asiakasStage.setTitle("Asiakkaat");
-        asiakasStage.show();
+        paneeliAlaValikolle.getChildren().addAll(kotiNappi, lisaysNappi);//, muokkausNappi, etsintaNappi, poistoNappi);
+        BPasiakkaille.setBottom(paneeliAlaValikolle);
+        BPasiakkaille.setLeft(asiakasLista);
+        BPasiakkaille.setCenter(alueAsiakkaidenTiedoille);
+        Scene scene = new Scene(BPasiakkaille);
+        mokkiStage.setTitle("Mökit");
+        mokkiStage.setScene(scene);
+        mokkiStage.show();
     }
-    public void asiakkaidenLuku(){
-        Asiakas asiakas1 = new Asiakas(1, 70200, "Nuutti", "Niiranen", "Kelkkailijantie 4", "Nuutti23@gmail.com", "+358407330654");
-        Asiakas asiakas2 = new Asiakas(2, 70200, "Saaga", "Turtiainen", "Kelkkailijantie 4", "sähköposti", "numeroita");
-
-        olemassaolevatAsiakkaat.add(asiakas1);
-        olemassaolevatAsiakkaat.add(asiakas2);
-    }
-    public void asiakkaanLisaysMetodi(Stage lisaysStage){
+    /*public void asiakkaanLisaysMetodi(Stage lisaysStage){
         BorderPane paneeliAsiakkaidenLisääntymiselle = new BorderPane();
         paneeliAsiakkaidenLisääntymiselle.setPrefSize(500, 500);
         paneeliAsiakkaidenLisääntymiselle.setPadding(new Insets(10, 10, 10, 10));
@@ -110,6 +123,8 @@ public class CustomerHandler extends Application {
         lisaysStage.show();
     }
 
+
+     */
 
 
 
