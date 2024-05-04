@@ -52,14 +52,18 @@ public class AlueHandler extends Application {
         uusiAlue.setOnAction(e->{
             alueenLisaysMetodi(alueStage);
         });
-        Button etsintäNappi = new Button("Etsi alue");
-        etsintäNappi.setOnAction(event -> {
+        Button etsintaNappi = new Button("Etsi alue");
+        etsintaNappi.setOnAction(event -> {
             alueenEtsintäMetodi(alueStage);
         });
         Button koti = main.kotiNappain(alueStage);
+        Button poistoNappi = new Button("Poista valittu alue");
+        poistoNappi.setOnAction(e->{
+            alueenPoisto();
+        });
 
         HBox paneeliAlaValikolle = new HBox(10);
-        paneeliAlaValikolle.getChildren().addAll(koti, muokkausNappi, uusiAlue, etsintäNappi);
+        paneeliAlaValikolle.getChildren().addAll(koti, muokkausNappi, uusiAlue, etsintaNappi, poistoNappi);
         BPAlueille.setLeft(alueLista);
         BPAlueille.setCenter(alueAlueidenTiedoille);
         BPAlueille.setBottom(paneeliAlaValikolle);
@@ -115,7 +119,7 @@ public class AlueHandler extends Application {
         muokkausStage.setTitle("Muokkaa aluetta");
         muokkausStage.show();
     }
-    protected void alueenEtsintäMetodi(Stage etsintaStage){ //TOIMII SQL:SSÄ
+    protected void alueenEtsintäMetodi(Stage etsintaStage){
         BorderPane BPMokinEtsinnalle = new BorderPane();
         VBox paneeliEtsintaKriteereille = new VBox(10);
         paneeliEtsintaKriteereille.setAlignment(Pos.CENTER);
@@ -127,7 +131,7 @@ public class AlueHandler extends Application {
         etsi.setOnAction(e->{
             if (!nimiTF.getText().isEmpty()) {
             String kriteerit = nimiTF.getText();
-            alueMetodi(etsintaStage, main.connect.searchForStuff("alue", "nimi = "+"\"" + kriteerit + "\""));
+            alueMetodi(etsintaStage, main.connect.searchForStuff("alue", "LOWER(nimi) LIKE '%" + kriteerit.toLowerCase() + "%'"));
         }});
         Button kotiNappi = main.kotiNappain(etsintaStage);
         paneeliEtsintaKriteereille.getChildren().addAll(alkuHopina, nimiKriteeri, nimiTF, etsi);
@@ -136,7 +140,35 @@ public class AlueHandler extends Application {
         Scene scene = new Scene(BPMokinEtsinnalle);
         etsintaStage.setTitle("Alueen haku");
         etsintaStage.setScene(scene);
-        etsintaStage.show();}
+        etsintaStage.show();
+    }
+    public void alueenPoisto(){
+        VBox varoitusPaneeli = new VBox(30);
+        varoitusPaneeli.setPrefSize(300, 300);
+        varoitusPaneeli.setPadding(new Insets(10, 10, 10, 10));
+        Text varoitusTeksti = new Text("Oletko varma että haluat poistaa alueen\n" + alue.SQLToStringAlue(valittuNimi));
+        HBox paneeliValikolle = new HBox(10);
+        paneeliValikolle.setAlignment(Pos.CENTER);
+        Button haluanPoistaa = new Button("Kyllä");
+        Button enHalua = new Button("Ei");
+        paneeliValikolle.getChildren().addAll(haluanPoistaa, enHalua);
+        varoitusPaneeli.getChildren().addAll(varoitusTeksti, paneeliValikolle);
+        Stage popUpStage = new Stage();
+        Scene popUpScene = new Scene(varoitusPaneeli);
+        haluanPoistaa.setOnAction(e->{
+            main.connect.deleteStuff("alue", "nimi", ("'" + valittuNimi + "'"));
+            System.out.println("Alue poistettu onnistuneesti");
+            popUpStage.close();
+        });
+        enHalua.setOnAction(e->{
+            System.out.println("Aluetta ei poistettu");
+            popUpStage.close();
+        });
+
+        popUpStage.setScene(popUpScene);
+        popUpStage.setTitle("VAROITUS");
+        popUpStage.show();
+    }
 
 
     public static void main(String[] args) {
