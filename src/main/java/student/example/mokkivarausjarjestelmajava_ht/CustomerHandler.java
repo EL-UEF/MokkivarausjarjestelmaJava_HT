@@ -2,13 +2,9 @@ package student.example.mokkivarausjarjestelmajava_ht;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -29,7 +25,7 @@ public class CustomerHandler extends Application {
         this.asiakas=asiakas;
     }
 
-    protected void asiakasMetodi(Stage mokkiStage, ResultSet rs){
+    protected void asiakasMetodi(Stage asiakasStage, ResultSet rs){
         BorderPane BPasiakkaille = new BorderPane();
         TextArea alueAsiakkaidenTiedoille = new TextArea();
         alueAsiakkaidenTiedoille.setText("Klikkaa asiakasta nähdäksesi sen tarkemmat tiedot :)");
@@ -51,23 +47,23 @@ public class CustomerHandler extends Application {
             valittuNimi =("'" + asiakasLista.getSelectionModel().getSelectedItem() + "'");
             alueAsiakkaidenTiedoille.setText(asiakas.SQLToString(valittuNimi));
         });
-        Button kotiNappi = main.kotiNappain(mokkiStage);
-        Button lisaysNappi = new Button("Lisää uusi mökki");
-        /*
+        Button kotiNappi = main.kotiNappain(asiakasStage);
+        Button lisaysNappi = new Button("Lisää uusi asiakas");
         lisaysNappi.setOnAction(e->{
-            mokinLisaysMetodi(mokkiStage);
+            asiakkaanLisaysMetodi(asiakasStage);
         });
+        /*
         Button poistoNappi = new Button("Poista valittu mökki");
         poistoNappi.setOnAction(e->{
             mokinPoisto();
         });
         Button muokkausNappi = new Button("Muokkaa valittua mökkiä");
         muokkausNappi.setOnAction(e->{
-            mokinMuokkausMetodi(mokkiStage);
+            mokinMuokkausMetodi(asiakasStage);
         });
         Button etsintaNappi = new Button("Etsi mökkiä");
         etsintaNappi.setOnAction(e->{
-            mokinEtsintaMetodi(mokkiStage);
+            mokinEtsintaMetodi(asiakasStage);
         });
          */
         HBox paneeliAlaValikolle = new HBox(10);
@@ -76,57 +72,62 @@ public class CustomerHandler extends Application {
         BPasiakkaille.setLeft(asiakasLista);
         BPasiakkaille.setCenter(alueAsiakkaidenTiedoille);
         Scene scene = new Scene(BPasiakkaille);
-        mokkiStage.setTitle("Mökit");
-        mokkiStage.setScene(scene);
-        mokkiStage.show();
+        asiakasStage.setTitle("Asiakkaat");
+        asiakasStage.setScene(scene);
+        asiakasStage.show();
     }
-    /*public void asiakkaanLisaysMetodi(Stage lisaysStage){
-        BorderPane paneeliAsiakkaidenLisääntymiselle = new BorderPane();
-        paneeliAsiakkaidenLisääntymiselle.setPrefSize(500, 500);
-        paneeliAsiakkaidenLisääntymiselle.setPadding(new Insets(10, 10, 10, 10));
-
-        VBox paneeliAsiakkaanTiedoille = new VBox(10);
-        Text uusiPostiNumero = new Text("Anna asiakkaan postinumero");
-        TextField postiNroTF = new TextField();
-        Text uusiEtunimi = new Text("Asiakkaan etunimi");
+    protected void asiakkaanLisaysMetodi(Stage asiakasStage){
+        /**
+         * graafisia komponentteja ja niiden sijoittelua
+         */
+        BorderPane BPAsiakkaanLisaamiselle = new BorderPane();
+        VBox paneeliUudenAsiakkaanTiedoille = new VBox(10);
+        Text annaAlue = new Text("Asiakkaan osoite ja postinumero");
+        TextField postinroTF = new TextField();
+        TextField katuosoiteTF = new TextField();
+        HBox paneeliAlueelle = new HBox(10);
+        paneeliAlueelle.getChildren().addAll(katuosoiteTF, postinroTF);
+        Text etuNimi = new Text("Etunimi");
         TextField etunimiTF = new TextField();
-        Text uusiSukunimi = new Text("Asiakkaan sukunimi");
+        Text sukuNimi = new Text("Sukunimi");
         TextField sukunimiTF = new TextField();
-        Text uusiOsoite = new Text("Asiakkaan lähiosoite");
-        TextField osoiteTF = new TextField();
-        Text uusiSposti = new Text("Asiakkaan sähköpostiosoite");
+        Text spostiOsoite = new Text("Email");
         TextField spostiTF = new TextField();
-        Text uusiPuhNro = new Text("Asiakkaan puhelinnumero");
-        TextField puhelinnumeroTF = new TextField();
+        Text puhelinnumeroTeksti = new Text("Puhelinnumero");
+        TextField puhnroTF = new TextField();
         Button tallennusNappi = new Button("Tallenna");
-
+        tallennusNappi.setAlignment(Pos.CENTER);
+        Button kotiNappi = main.kotiNappain(asiakasStage);
+        BPAsiakkaanLisaamiselle.setBottom(kotiNappi);
+        paneeliUudenAsiakkaanTiedoille.getChildren().addAll(annaAlue, paneeliAlueelle, etuNimi, etunimiTF, sukuNimi, sukunimiTF, spostiOsoite, spostiTF,
+                puhelinnumeroTeksti, puhnroTF, tallennusNappi);
+        paneeliUudenAsiakkaanTiedoille.setAlignment(Pos.CENTER);
+        /**
+         * Toiminnallisuus tallennusnappiin.
+         * hakee tiedot kaikista textFieldeistä ja lisää mökin niiden perusteella
+         */
         tallennusNappi.setOnAction(e->{
-            int uusiID = olemassaolevatAsiakkaat.size()+1;
-            int uusiPostinro = Integer.parseInt(postiNroTF.getText());
-            String lisattavaEtunimi = etunimiTF.getText();
-            String lisattavaSukunimi = sukunimiTF.getText();
-            String lisattavaOsoite = osoiteTF.getText();
-            String lisattavaSposti = spostiTF.getText();
-            String lisattavaNro = puhelinnumeroTF.getText();
-            Asiakas uusiLisattavaAsiakas = new Asiakas(uusiID, uusiPostinro, lisattavaEtunimi, lisattavaSukunimi, lisattavaOsoite, lisattavaSposti, lisattavaNro);
-            olemassaolevatAsiakkaat.add(uusiLisattavaAsiakas);
-            System.out.println(uusiLisattavaAsiakas);
+            String lisattavanKatuosoite = katuosoiteTF.getText();
+            String lisattavanPostinro = postinroTF.getText();
+            String lisattavanEtunimi = etunimiTF.getText();
+            String lisattavanEmail = spostiTF.getText();
+            String lisattavanSukunimi = sukunimiTF.getText();
+            String lisattavanSposti = spostiTF.getText();
+            String lisattavanPuhnro = puhnroTF.getText();
+            /**
+             * Käytetään main instanssissa olemassa olevaa connectionia SQL tietojen muokkaamiseen
+             */
+            main.connect.insertData("asiakas",
+                    "postinro, etunimi, sukunimi, lahiosoite, email, puhelinnro",
+                    ("\"" + lisattavanPostinro + "\", \"" + lisattavanEtunimi + "\", \"" +
+                            lisattavanSukunimi + "\", \"" + lisattavanKatuosoite + "\", \"" +
+                            lisattavanEmail + "\", \"" + lisattavanPuhnro + "\""));
         });
-        Button kotiNappi = main.kotiNappain(lisaysStage);
-        paneeliAsiakkaidenLisääntymiselle.setLeft(kotiNappi);
-        paneeliAsiakkaanTiedoille.getChildren().addAll(uusiPostiNumero, postiNroTF, uusiEtunimi, etunimiTF, uusiSukunimi, sukunimiTF, uusiOsoite, osoiteTF, uusiSposti, spostiTF, uusiPuhNro, puhelinnumeroTF, tallennusNappi);
-        paneeliAsiakkaanTiedoille.setAlignment(Pos.CENTER);
-        paneeliAsiakkaidenLisääntymiselle.setCenter(paneeliAsiakkaanTiedoille);
-        Scene scene = new Scene(paneeliAsiakkaidenLisääntymiselle);
-        lisaysStage.setScene(scene);
-        lisaysStage.setTitle("Uuden asiakkaan lisääminen");
-        lisaysStage.show();
+        BPAsiakkaanLisaamiselle.setCenter(paneeliUudenAsiakkaanTiedoille);
+        Scene lisaysScene = new Scene(BPAsiakkaanLisaamiselle);
+        asiakasStage.setScene(lisaysScene);
+        asiakasStage.show();
     }
-
-
-     */
-
-
 
     public static void main(String[] args) {
         launch(args);
