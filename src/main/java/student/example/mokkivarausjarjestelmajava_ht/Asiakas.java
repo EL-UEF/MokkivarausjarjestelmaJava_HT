@@ -4,6 +4,8 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 import java.security.PublicKey;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class Asiakas {
     Main main;
@@ -18,8 +20,30 @@ public class Asiakas {
     public String toString(){
         return ("Asiakas id: " + asiakas_id + "\npostinumero: " + postinro + "\nEtunimi: " + etunimi + "\nSukunimi: " + sukunimi + "\nOsoite: " + lahiosoite + "\nSähköposti: " + email + "\nPuhelinnumero: " + puhelinnumero);
     }
-    public String SQLToString(String etunimi){
-        return "lol";
+    public String SQLToString(String id){
+        String query = ("SELECT * FROM asiakas WHERE asiakas_id = " + id);
+        String SQLpostinro = null;
+        String SQLetunimi = null;
+        String SQLsukunimi = null;
+        String SQLlahiosoite = null;
+        String SQLsposti = null;
+        String SQLpuhnro = null;
+        try {
+            ResultSet rs = main.connect.executeQuery(query);
+            rs.next();
+            SQLpostinro = rs.getString("postinro");
+            SQLetunimi = rs.getString("etunimi");
+            SQLsukunimi = rs.getString("sukunimi");
+            SQLlahiosoite = rs.getString("lahiosoite");
+            SQLsposti = rs.getString("email");
+            SQLpuhnro = rs.getString("puhelinnro");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        String kokoTeksti = ("asiakas id: " + id + "\npostinumero: " + SQLpostinro + "\nNimi: " + SQLetunimi +
+                " " + SQLsukunimi + "\nLähiosoite: " + SQLlahiosoite + "\nSähköposti: " + SQLsposti +
+                "\nPuhelinnumero: " + SQLpuhnro);
+        return kokoTeksti;
     }
 
     public Asiakas(int asiakas_id, int postinro, String etunimi, String sukunimi, String lahiosoite, String email, String puhelinnumero) {

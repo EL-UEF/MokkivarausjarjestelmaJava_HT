@@ -2,6 +2,7 @@ package student.example.mokkivarausjarjestelmajava_ht;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -14,11 +15,12 @@ import javafx.stage.Stage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class CustomerHandler extends Application {
     private Main main;
     private Asiakas asiakas;
-    String valittuNimi;
+    String valittuID;
 
     public CustomerHandler(Main main, Asiakas asiakas) {
         this.main = main;
@@ -36,7 +38,7 @@ public class CustomerHandler extends Application {
         ArrayList<String> asiakasNimiLista = new ArrayList<>();
         try {
             while (rs.next())
-                asiakasNimiLista.add(rs.getString("sukunimi"));
+                asiakasNimiLista.add(rs.getString("asiakas_id"));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -44,30 +46,28 @@ public class CustomerHandler extends Application {
         ListView<String> asiakasLista = new ListView<>();
         asiakasLista.setItems(FXCollections.observableArrayList(asiakasNimiLista));
         asiakasLista.getSelectionModel().selectedItemProperty().addListener(ov->{
-            valittuNimi =("'" + asiakasLista.getSelectionModel().getSelectedItem() + "'");
-            alueAsiakkaidenTiedoille.setText(asiakas.SQLToString(valittuNimi));
+            valittuID =(asiakasLista.getSelectionModel().getSelectedItem());
+            alueAsiakkaidenTiedoille.setText(asiakas.SQLToString(valittuID));
         });
         Button kotiNappi = main.kotiNappain(asiakasStage);
         Button lisaysNappi = new Button("Lisää uusi asiakas");
         lisaysNappi.setOnAction(e->{
             asiakkaanLisaysMetodi(asiakasStage);
         });
-        /*
-        Button poistoNappi = new Button("Poista valittu mökki");
+        Button poistoNappi = new Button("Poista valittu asiakas");
         poistoNappi.setOnAction(e->{
-            mokinPoisto();
+            asiakkaanPoisto();
         });
-        Button muokkausNappi = new Button("Muokkaa valittua mökkiä");
+        Button muokkausNappi = new Button("Muokkaa valittua asiakasta");
         muokkausNappi.setOnAction(e->{
-            mokinMuokkausMetodi(asiakasStage);
+            asiakkaanMuokkausMetodi(asiakasStage);
         });
-        Button etsintaNappi = new Button("Etsi mökkiä");
+        Button etsintaNappi = new Button("Etsi asiakasta");
         etsintaNappi.setOnAction(e->{
-            mokinEtsintaMetodi(asiakasStage);
+            asiakkaanEtsintaMetodi(asiakasStage);
         });
-         */
         HBox paneeliAlaValikolle = new HBox(10);
-        paneeliAlaValikolle.getChildren().addAll(kotiNappi, lisaysNappi);//, muokkausNappi, etsintaNappi, poistoNappi);
+        paneeliAlaValikolle.getChildren().addAll(kotiNappi, lisaysNappi, etsintaNappi, muokkausNappi, poistoNappi);
         BPasiakkaille.setBottom(paneeliAlaValikolle);
         BPasiakkaille.setLeft(asiakasLista);
         BPasiakkaille.setCenter(alueAsiakkaidenTiedoille);
@@ -81,12 +81,12 @@ public class CustomerHandler extends Application {
          * graafisia komponentteja ja niiden sijoittelua
          */
         BorderPane BPAsiakkaanLisaamiselle = new BorderPane();
+        BPAsiakkaanLisaamiselle.setPrefSize(400, 400);
         VBox paneeliUudenAsiakkaanTiedoille = new VBox(10);
-        Text annaAlue = new Text("Asiakkaan osoite ja postinumero");
+        Text annaAlue = new Text("Asiakkaan postinumero");
         TextField postinroTF = new TextField();
+        Text annaOsoite = new Text("Asiakkaan katuosoite");
         TextField katuosoiteTF = new TextField();
-        HBox paneeliAlueelle = new HBox(10);
-        paneeliAlueelle.getChildren().addAll(katuosoiteTF, postinroTF);
         Text etuNimi = new Text("Etunimi");
         TextField etunimiTF = new TextField();
         Text sukuNimi = new Text("Sukunimi");
@@ -99,7 +99,7 @@ public class CustomerHandler extends Application {
         tallennusNappi.setAlignment(Pos.CENTER);
         Button kotiNappi = main.kotiNappain(asiakasStage);
         BPAsiakkaanLisaamiselle.setBottom(kotiNappi);
-        paneeliUudenAsiakkaanTiedoille.getChildren().addAll(annaAlue, paneeliAlueelle, etuNimi, etunimiTF, sukuNimi, sukunimiTF, spostiOsoite, spostiTF,
+        paneeliUudenAsiakkaanTiedoille.getChildren().addAll(annaAlue, postinroTF, annaOsoite, katuosoiteTF, etuNimi, etunimiTF, sukuNimi, sukunimiTF, spostiOsoite, spostiTF,
                 puhelinnumeroTeksti, puhnroTF, tallennusNappi);
         paneeliUudenAsiakkaanTiedoille.setAlignment(Pos.CENTER);
         /**
@@ -112,7 +112,6 @@ public class CustomerHandler extends Application {
             String lisattavanEtunimi = etunimiTF.getText();
             String lisattavanEmail = spostiTF.getText();
             String lisattavanSukunimi = sukunimiTF.getText();
-            String lisattavanSposti = spostiTF.getText();
             String lisattavanPuhnro = puhnroTF.getText();
             /**
              * Käytetään main instanssissa olemassa olevaa connectionia SQL tietojen muokkaamiseen
@@ -129,6 +128,138 @@ public class CustomerHandler extends Application {
         asiakasStage.show();
     }
 
+    public void asiakkaanPoisto(){
+        VBox varoitusPaneeli = new VBox(30);
+        varoitusPaneeli.setPrefSize(300, 300);
+        varoitusPaneeli.setPadding(new Insets(10, 10, 10, 10));
+        Text varoitusTeksti = new Text("Oletko varma että haluat poistaa asiakkaan\n" + asiakas.SQLToString(valittuID));
+        HBox paneeliValikolle = new HBox(10);
+        paneeliValikolle.setAlignment(Pos.CENTER);
+        Button haluanPoistaa = new Button("Kyllä");
+        Button enHalua = new Button("Ei");
+        paneeliValikolle.getChildren().addAll(haluanPoistaa, enHalua);
+        varoitusPaneeli.getChildren().addAll(varoitusTeksti, paneeliValikolle);
+        Stage popUpStage = new Stage();
+        Scene popUpScene = new Scene(varoitusPaneeli);
+        haluanPoistaa.setOnAction(e->{
+            main.connect.deleteStuff("asiakas", "asiakas_id", valittuID);
+            System.out.println("Asiakas poistettu onnistuneesti");
+            popUpStage.close();
+        });
+        enHalua.setOnAction(e->{
+            System.out.println("Asiakasta ei poistettu");
+            popUpStage.close();
+        });
+
+        popUpStage.setScene(popUpScene);
+        popUpStage.setTitle("VAROITUS");
+        popUpStage.show();
+    }
+    protected void asiakkaanEtsintaMetodi(Stage etsintaStage){
+        BorderPane BPAsiakkaanEtsinnalle = new BorderPane();
+        VBox paneeliEtsintaKriteereille = new VBox(10);
+        paneeliEtsintaKriteereille.setAlignment(Pos.CENTER);
+        Text alkuHopina = new Text("Kirjoita haluamasi kriteerit alla oleviin kenttiin.\nVoit jättää kentän tyhjäksi jos et halua käyttää kyseistä kriteeriä");
+        Text etunimiKriteeri = new Text("Asiakkaan etunimi");
+        TextField etunimiTF = new TextField();
+        Text sukunimiKriteeri = new Text("Asiakkaan sukunimi");
+        TextField sukunimiTF = new TextField();
+        Text postinroKriteeri = new Text("Asiakkaan postinumero");
+        TextField postinroTF = new TextField();
+        Text lahiosoiteKriteeri = new Text("Asiakkaan lähiosoite");
+        TextField lahiosoiteTF = new TextField();
+        Text emailKriteeri = new Text("Asiakkaan sähköposti");
+        TextField emailTF = new TextField();
+        Text puhelinnumeroKriteeri = new Text("Asiakkaan puhelinnumero");
+        TextField puhelinnumeroTF = new TextField();
+        Button etsi = new Button("Etsi");
+        //toiminnallisuus
+        etsi.setOnAction(e->{
+            List<String> kriteeriLista = new ArrayList<>();
+            if (!etunimiTF.getText().isEmpty()) {
+                kriteeriLista.add("LOWER(etunimi) LIKE '%" + etunimiTF.getText().toLowerCase() + "%'");
+            }
+
+            if (!sukunimiTF.getText().isEmpty()) {
+                kriteeriLista.add("LOWER(sukunimi) LIKE '%" + sukunimiTF.getText().toLowerCase() + "%'");
+            }
+
+            if (!postinroTF.getText().isEmpty()) {
+                kriteeriLista.add("postinro LIKE '%" + postinroTF.getText() + "%'");
+            }
+
+            if (!lahiosoiteTF.getText().isEmpty()) {
+                kriteeriLista.add("LOWER(lahiosoite) LIKE '%" + lahiosoiteTF.getText().toLowerCase() + "%'");
+            }
+            if (!emailTF.getText().isEmpty()) {
+                kriteeriLista.add("LOWER(email) LIKE '%" + emailTF.getText().toLowerCase() + "%'");
+            }
+            if (!puhelinnumeroTF.getText().isEmpty()) {
+                kriteeriLista.add("LOWER(puhelinnro) LIKE '%" + puhelinnumeroTF.getText().toLowerCase() + "%'");
+            }
+
+            String kriteerit = String.join(" AND ", kriteeriLista);
+            asiakasMetodi(etsintaStage, main.connect.searchForStuff("asiakas", kriteerit));
+        });
+        Button kotiNappi = main.kotiNappain(etsintaStage);
+        paneeliEtsintaKriteereille.getChildren().addAll(alkuHopina, postinroKriteeri, postinroTF,
+                etunimiKriteeri, etunimiTF, sukunimiKriteeri, sukunimiTF, lahiosoiteKriteeri, lahiosoiteTF,
+                emailKriteeri, emailTF, puhelinnumeroKriteeri, puhelinnumeroTF, etsi);
+        BPAsiakkaanEtsinnalle.setCenter(paneeliEtsintaKriteereille);
+        BPAsiakkaanEtsinnalle.setLeft(kotiNappi);
+        Scene scene = new Scene(BPAsiakkaanEtsinnalle);
+        etsintaStage.setTitle("Asiakkaan haku");
+        etsintaStage.setScene(scene);
+        etsintaStage.show();
+    }
+    public void asiakkaanMuokkausMetodi(Stage muokkausStage){
+        BorderPane BPAsiakkaanMuokkaukselle = new BorderPane();
+        VBox paneeliMuokattavilleTiedoille = new VBox(10);
+        Text muokattavaAsiakas = new Text("MUOKATTAVA MÖKKI\n" + asiakas.SQLToString(valittuID));
+        Text postinroTeksti = new Text("Uusi postinumero");
+        TextField postinroTF = new TextField();
+        Text etunimiTeksti = new Text("Uusi etunimi");
+        TextField etunimiTF = new TextField();
+        Text sukunimiTeksti = new Text("Uusi sukunimi");
+        TextField sukunimiTF = new TextField();
+        Text osoiteTeksti = new Text("Uusi osoite.");
+        TextField osoiteTF = new TextField();
+        Text emailTeksti = new Text("Uusi sähköpostiosoite");
+        TextField emailTF = new TextField();
+        Text puhnroTeksti = new Text("Uusi puhelinnumero");
+        TextField puhnroTF = new TextField();
+        Button tallennusNappi = new Button("Tallenna");
+        tallennusNappi.setOnAction(e->{
+            if (!postinroTF.getText().isEmpty())
+                main.connect.updateTable("asiakas", "postinro", postinroTF.getText(), ("asiakas_id = " + valittuID));
+            if (!etunimiTF.getText().isEmpty())
+                main.connect.updateTable("asiakas", "etunimi", ("\"" + etunimiTF.getText() + "\""), ("asiakas_id = " + valittuID));
+            if (!sukunimiTF.getText().isEmpty())
+                main.connect.updateTable("asiakas", "sukunimi", ("\"" + sukunimiTF.getText() + "\""), ("asiakas_id = " + valittuID));
+            if (!osoiteTF.getText().isEmpty())
+                main.connect.updateTable("asiakas", "lahiosoite", ("\"" + osoiteTF.getText() + "\""), ("asiakas_id = " + valittuID));
+            if (!emailTF.getText().isEmpty())
+                main.connect.updateTable("asiakas", "email", "\"" + emailTF.getText() + "\"", "asiakas_id = " + valittuID);
+            if (!puhnroTF.getText().isEmpty())
+                main.connect.updateTable("asiakas", "puhelinnro", ("\"" + puhnroTF.getText()) + "\"", ("asiakas_id = " + valittuID));
+            System.out.println("toimii ehkä?");
+        });
+        paneeliMuokattavilleTiedoille.getChildren().addAll(
+                muokattavaAsiakas, postinroTeksti,
+                postinroTF, etunimiTeksti, etunimiTF,
+                sukunimiTeksti, sukunimiTF,
+                osoiteTeksti, osoiteTF, emailTeksti,
+                emailTF, puhnroTeksti, puhnroTF, tallennusNappi);
+        Button kotiNappula = main.kotiNappain(muokkausStage);
+        BPAsiakkaanMuokkaukselle.setLeft(kotiNappula);
+        paneeliMuokattavilleTiedoille.setAlignment(Pos.CENTER);
+        paneeliMuokattavilleTiedoille.setPadding(new Insets(10, 10, 10, 10));
+        BPAsiakkaanMuokkaukselle.setCenter(paneeliMuokattavilleTiedoille);
+        Scene scene = new Scene(BPAsiakkaanMuokkaukselle);
+        muokkausStage.setTitle("Asiakkaan tietojen muokkaus");
+        muokkausStage.setScene(scene);
+        muokkausStage.show();
+    }
     public static void main(String[] args) {
         launch(args);
     }

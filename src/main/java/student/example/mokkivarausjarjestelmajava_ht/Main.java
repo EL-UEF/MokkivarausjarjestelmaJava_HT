@@ -64,7 +64,7 @@ public class Main extends Application {
             cottageHandler.mokkiMetodi(primaryStage, connect.executeQuery("SELECT mokki_id, mokkinimi FROM mokki ORDER BY mokki_id"));
         });
         asiakasNappi.setOnAction(e->{
-            customerHandler.asiakasMetodi(primaryStage, connect.executeQuery("SELECT sukunimi FROM asiakas ORDER BY sukunimi"));
+            customerHandler.asiakasMetodi(primaryStage, connect.executeQuery("SELECT asiakas_id FROM asiakas ORDER BY asiakas_id"));
         });
         alueNappi.setOnAction(e->{
             alueHandler.alueMetodi(primaryStage, connect.executeQuery("SELECT alue_id, nimi FROM alue ORDER BY alue_id"));
