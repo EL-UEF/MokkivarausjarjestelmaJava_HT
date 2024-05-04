@@ -19,6 +19,8 @@ import javafx.stage.Stage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class Lasku {
@@ -32,19 +34,37 @@ public class Lasku {
     public String SQLToString(String id){
         String criteria = ("lasku_id = " + id);
         int SQLvaraus_id = -1;
-        Double SQLsumma = -1.0;
-        int SQLmaksettu = -1;
+        int asiakas_id = -1;
+        String asiakasNimi = null;
+        String mokkiNimi = null;
+        LocalDateTime alkuPaiva = null;
+        LocalDateTime loppuPaiva = null;
+        String kaytetytPalvelut = null;
+        int kokonaisHinta = -1;
+        int maksettu = -1;
+        String formatoituAlkuPaiva;
+        String formatoituLoppuPaiva;
 
         try {
-            ResultSet rs = main.connect.searchForStuff("lasku", criteria);
+            ResultSet rs = main.connect.searchForStuff("laskutustiedot", criteria);
             rs.next();
             SQLvaraus_id = rs.getInt("varaus_id");
-            SQLsumma = rs.getDouble("summa");
-            SQLmaksettu = rs.getInt("maksettu");
+            asiakas_id = rs.getInt("asiakas_id");
+            asiakasNimi = rs.getString("asiakas");
+            mokkiNimi = rs.getString("mökki");
+            alkuPaiva = rs.getObject("alkupaiva", LocalDateTime.class);
+            loppuPaiva = rs.getObject("loppupaiva", LocalDateTime.class);
+            kaytetytPalvelut = rs.getString("käytetyt palvelut");
+            kokonaisHinta = rs.getInt("kokonaishinta");
+            maksettu = rs.getInt("maksettu");
+            formatoituAlkuPaiva = alkuPaiva.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+            formatoituLoppuPaiva = loppuPaiva.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return ("Lasku id: " + id + "\nvaraus id: " + SQLvaraus_id + "\nSumma: " + SQLsumma + "\nmaksettu: " + SQLmaksettu);
+        return ("Lasku id: " + id + "\nvaraus id: " + SQLvaraus_id + "\nAsiakas id: " + asiakas_id + "\nAsiakkaan nimi: " +
+                asiakasNimi + "\nMökki: " + mokkiNimi + "\nVarauksen alku: " + formatoituAlkuPaiva + "\nVarauksen loppu: " +
+                formatoituLoppuPaiva + "\nKäytetyt palvelut: " + kaytetytPalvelut + "\nSumma: " + kokonaisHinta + "\nOnko maksettu: " + maksettu);
     }
     public Lasku(Main main){
         this.main=main;
