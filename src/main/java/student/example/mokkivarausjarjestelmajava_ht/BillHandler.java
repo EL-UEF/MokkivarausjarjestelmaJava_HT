@@ -2,12 +2,17 @@ package student.example.mokkivarausjarjestelmajava_ht;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.sql.ResultSet;
@@ -49,11 +54,11 @@ public class BillHandler extends Application {
         });
         Button kotiNappi = main.kotiNappain(laskuStage);
         Button pdfer = new Button("Luo pdf");
-        /*
-        Button lisaysNappi = new Button("Lisää uusi mökki");
+        Button lisaysNappi = new Button("Uusi lasku");
         lisaysNappi.setOnAction(e->{
-            mokinLisaysMetodi(laskuStage);
+            laskunLisaysMetodi(laskuStage);
         });
+        /*
         Button poistoNappi = new Button("Poista valittu mökki");
         poistoNappi.setOnAction(e->{
             mokinPoisto();
@@ -71,7 +76,7 @@ public class BillHandler extends Application {
             billPdfer.createBillPDF(valittuNimi);
         });
         HBox paneeliAlaValikolle = new HBox(10);
-        paneeliAlaValikolle.getChildren().addAll(kotiNappi, pdfer);//, lisaysNappi, muokkausNappi, etsintaNappi, poistoNappi);
+        paneeliAlaValikolle.getChildren().addAll(kotiNappi, pdfer, lisaysNappi);//, lisaysNappi, muokkausNappi, etsintaNappi, poistoNappi);
         BPlaskuille.setBottom(paneeliAlaValikolle);
         BPlaskuille.setLeft(laskuLista);
         BPlaskuille.setCenter(alueLaskujenTiedoille);
@@ -79,6 +84,28 @@ public class BillHandler extends Application {
         laskuStage.setTitle("Laskut");
         laskuStage.setScene(scene);
         laskuStage.show();
+    }
+    public void laskunLisaysMetodi(Stage alueenLisaysStage){
+        BorderPane BPlaskujenLisaamiselle = new BorderPane();
+        BPlaskujenLisaamiselle.setPrefSize(400, 400);
+        BPlaskujenLisaamiselle.setPadding(new Insets(10, 10, 10, 10));
+
+        VBox paneeliUudenLaskunTiedoille = new VBox(10);
+        Text alkuHopina = new Text("Laskun tiedot täytetään automaattisesti. Syötä laskutettavan varauksen id");
+        TextField laskutettavaIdTF = new TextField();
+        Button lisaysNappi = new Button("Lisää");
+        lisaysNappi.setOnAction(e->{
+            int uudenLaskunVarausId = Integer.parseInt(laskutettavaIdTF.getText());
+            main.connect.executeQuery("CALL create_lasku(" + uudenLaskunVarausId + ");");
+        });
+        Button kotiNappula = main.kotiNappain(alueenLisaysStage);
+        paneeliUudenLaskunTiedoille.setAlignment(Pos.CENTER);
+        paneeliUudenLaskunTiedoille.getChildren().addAll(alkuHopina, laskutettavaIdTF, lisaysNappi, kotiNappula);
+        BPlaskujenLisaamiselle.setCenter(paneeliUudenLaskunTiedoille);
+        Scene scene = new Scene(BPlaskujenLisaamiselle);
+        alueenLisaysStage.setScene(scene);
+        alueenLisaysStage.setTitle("Lisää uusi alue");
+        alueenLisaysStage.show();
     }
 
     public static void main(String[] args) {
