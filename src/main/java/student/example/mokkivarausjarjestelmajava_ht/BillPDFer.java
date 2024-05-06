@@ -21,8 +21,6 @@ LAITA TIEDOSTO PAIKKAAN, JOSTA LÖYDÄT SEN
 INTELLIJ:SSÄ
 FILE->PROJECT STRUCTURE->LIBRARIES->+ NAPPI->JAVA->ITEXT JAR FILE JONKA LATASIT
 JA ADD TO PROJECT
-
-TÄMÄN JÄLKEEN TÄMÄN LUOKAN PITÄISI TEHDÄ PDF JOKA SANOO "HELLO WORLD"
  */
 
 public class BillPDFer {
@@ -34,22 +32,14 @@ public class BillPDFer {
         PdfWriter pdfWriter = null;
 
         try {
-            // Creating FileOutputStream for output file
             fileOutputStream = new FileOutputStream("lasku.pdf");
-
-            // Creating PdfWriter that links the Document to the FileOutputStream
             pdfWriter = PdfWriter.getInstance(lasku, fileOutputStream);
-
-            // Opening the Document
             lasku.open();
-
-            // Adding content to the Document
             lasku.add(new Paragraph(laskuString));
 
         } catch (FileNotFoundException | DocumentException e) {
             throw new RuntimeException("Failed to create PDF: ", e);
         } finally {
-            // Ensure Document is closed and resources are released
             if (lasku.isOpen()) {
                 lasku.close();
             }
@@ -76,7 +66,6 @@ public class BillPDFer {
         LocalDateTime SQLloppupvm = null;
         String palveluMaara;
         Double kokonaisHinta = -1.0;
-        int maksettu = -1;
         //Haetaan laskuun laitettavat tiedot:
         try {
             ResultSet rs = main.connect.searchForStuff("laskutustiedot", ("lasku_id = " + lasku_id));
@@ -90,7 +79,6 @@ public class BillPDFer {
             SQLloppupvm = rs.getObject("loppupaiva", LocalDateTime.class);
             palveluMaara = rs.getString("käytetyt palvelut");
             kokonaisHinta = rs.getDouble("kokonaishinta");
-            maksettu = rs.getInt("maksettu");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -99,38 +87,9 @@ public class BillPDFer {
 
         String laskuString = ("Lasku id: " + laskuID + "\nvaraus id: " + varausID + "\nAsiakas_id: " + asiakasID + "\nAsiakkaan nimi: " + asiakasNimi +
                 "\nvuokrattu mökki: " + mokkinimi + "\nVuokrausaika: " + formatoituAlkupvm + " - " + formatoituloppupvm + "\nLisäpalveluiden määrä ja nimi: " +
-                palveluMaara + "\nYht: " + kokonaisHinta);
+                palveluMaara + "\nYht: " + kokonaisHinta + "\nTilinumero: FI75 1065 5000 3130 63\nMaksathan laskun ennen vuokrauksen alkua!");
         return laskuString;
     }
-
-    public void createHelloWorldPDF(String outputPath) {
-        Document document = new Document(PageSize.A4);
-        FileOutputStream outputStream = null;
-
-        try {
-            outputStream = new FileOutputStream(outputPath);
-
-            document.open();
-            document.add(new Paragraph("Hello World"));
-
-        } catch (IOException e) {
-            System.err.println("Error creating PDF: " + e.getMessage());
-        } catch (DocumentException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (document.isOpen()) {
-                document.close();
-            }
-            if (outputStream != null) {
-                try {
-                    outputStream.close();
-                } catch (IOException e) {
-                    System.err.println("Error closing FileOutputStream: " + e.getMessage());
-                }
-            }
-        }
-    }
-
     public BillPDFer(Main main) {
         this.main = main;
     }
