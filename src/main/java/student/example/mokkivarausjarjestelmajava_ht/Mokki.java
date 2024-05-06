@@ -29,9 +29,9 @@ public class Mokki {
      * @return String, jossa valitun mökin tiedot
      */
     public String SQLToString(String valittuNimi){
-        String query = ("SELECT * FROM mokki WHERE mokkinimi = " + valittuNimi);
+        String query = ("SELECT * FROM mokkialue WHERE mokkinimi = " + valittuNimi);
         int SQLmokki_id = -1;
-        int SQLalue_id = -1;
+        String SQLalue_id;
         int SQLpostinro = -1;
         String SQLkatuosoite = null;
         Double SQLhinta = null;
@@ -39,11 +39,11 @@ public class Mokki {
         int SQLhenkilomaara = -1;
         String SQLvarustelu = null;
         Double SQLalv = -1.0;
-        Double alvEuroina = -1.0;
+        int alvEuroina = -1;
         try {
             ResultSet rs = main.connect.executeQuery(query);
             rs.next();
-            SQLalue_id = rs.getInt("alue_id");
+            SQLalue_id = rs.getString("nimi");
             SQLpostinro = rs.getInt("postinro");
             SQLmokki_id = rs.getInt("mokki_id");
             SQLkatuosoite = rs.getString("katuosoite");
@@ -52,12 +52,12 @@ public class Mokki {
             SQLhenkilomaara = rs.getInt("henkilomaara");
             SQLvarustelu = rs.getString("varustelu");
             SQLalv = rs.getDouble("alv");
-            alvEuroina = SQLhinta-(Math.round(SQLhinta)/(1+(SQLalv/100)));
+            alvEuroina = (int)Math.round((SQLhinta)*(SQLalv/100));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         String kokoTeksti = ("Mokki " + valittuNimi + "\nmökin id: " + SQLmokki_id + "\nalue: " + SQLalue_id + "\nPostinumero: " + SQLpostinro + "\nosoite: " + SQLkatuosoite +
-                "\nhinta/yö: " + SQLhinta + "\nmökin kuvaus: " + SQLkuvaus + "\nhenkilömäärä: " + SQLhenkilomaara + "\nmökin varustelu: " + SQLvarustelu + "\nAlv %: " + SQLalv);
+                "\nhinta/yö: " + SQLhinta + "\nmökin kuvaus: " + SQLkuvaus + "\nhenkilömäärä: " + SQLhenkilomaara + "\nmökin varustelu: " + SQLvarustelu + "\nAlv %: " + SQLalv + "\nAlv €: " + alvEuroina);
         return kokoTeksti;
     }
 
