@@ -41,7 +41,6 @@ public class Varaus {
         String formatoituVahvistusAika = SQLvahvistuspvm.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         String formatoituAlkupvm = SQLalkupvm.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         String formatoituloppupvm = SQLloppupvm.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-        System.out.println(formatoituAlkupvm);
         String kokoTeksti = ("Varaus id: " + indeksi + "\nAsiakas id: " + SQLasiakas + "\nMökki id: " + SQLmokki +
                 "\nVarauspäivä: " + formatoituVarausAika + "\nVahvistuspäivä: " + formatoituVahvistusAika + "\nVarauksen alku: " +
                 formatoituAlkupvm + " klo 15.00\nVarauksen loppu: " + formatoituloppupvm + " klo 12.00");

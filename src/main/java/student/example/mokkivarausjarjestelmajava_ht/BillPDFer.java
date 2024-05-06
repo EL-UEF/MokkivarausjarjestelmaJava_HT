@@ -46,8 +46,6 @@ public class BillPDFer {
             // Adding content to the Document
             lasku.add(new Paragraph(laskuString));
 
-            System.out.println("PDF created successfully at: lasku.pdf");
-
         } catch (FileNotFoundException | DocumentException e) {
             throw new RuntimeException("Failed to create PDF: ", e);
         } finally {
@@ -114,8 +112,6 @@ public class BillPDFer {
 
             document.open();
             document.add(new Paragraph("Hello World"));
-
-            System.out.println("PDF created successfully at: " + outputPath);
 
         } catch (IOException e) {
             System.err.println("Error creating PDF: " + e.getMessage());

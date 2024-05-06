@@ -42,7 +42,6 @@ public class CustomerHandler extends Application {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        System.out.println(asiakasNimiLista);
         ListView<String> asiakasLista = new ListView<>();
         asiakasLista.setItems(FXCollections.observableArrayList(asiakasNimiLista));
         asiakasLista.getSelectionModel().selectedItemProperty().addListener(ov->{
@@ -242,7 +241,6 @@ public class CustomerHandler extends Application {
                 main.connect.updateTable("asiakas", "email", "\"" + emailTF.getText() + "\"", "asiakas_id = " + valittuID);
             if (!puhnroTF.getText().isEmpty())
                 main.connect.updateTable("asiakas", "puhelinnro", ("\"" + puhnroTF.getText()) + "\"", ("asiakas_id = " + valittuID));
-            System.out.println("toimii ehkä?");
         });
         paneeliMuokattavilleTiedoille.getChildren().addAll(
                 muokattavaAsiakas, postinroTeksti,

@@ -192,7 +192,6 @@ public class PalveluHandler extends Application {
                 main.connect.updateTable("palvelu", "hinta", hintaTF.getText(), ("nimi = " + valittuNimi));
             if (!alvTF.getText().isEmpty())
                 main.connect.updateTable("palvelu", "alv", alvTF.getText(), ("nimi = " + valittuNimi));
-            System.out.println("toimii ehkä?");
         });
         paneeliMuokattavilleTiedoille.getChildren().addAll(muokattavapalvelu, alueMuokkausTeksti, alueTF, nimiTeksti, nimiTF, hintaTeksti,
                 hintaTF, kuvausTeksti, kuvausTF, alvTeksti, alvTF, tallennusNappi);

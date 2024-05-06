@@ -55,13 +55,14 @@ public class SqlConnect {
             System.out.println("Connection successful!");
             return this.con;
         } catch (ClassNotFoundException | SQLException e) {
-            throw new RuntimeException("Failed to create database connection", e);
+            main.errorPopUp("Failed to create database connection" + e);
         }
+        return con;
     }
 
     public ResultSet executeQuery(String query) {
         if (this.con == null) {
-            throw new IllegalStateException("Connection not established. Call createConnection() first.");
+            main.errorPopUp("Tietokantaa ei yhdistetty. Ota yhteyttä ryhmään 5");
         }
         try {
             Statement stmt = con.createStatement();
@@ -69,8 +70,8 @@ public class SqlConnect {
             return rs;
         } catch (SQLException e) {
             main.errorPopUp("Failed to execute query" + e);
-            throw new RuntimeException("Failed to execute query", e);
         }
+        return null;
     }
     public void closeResources() {
         try {
@@ -84,26 +85,24 @@ public class SqlConnect {
                 this.con.close();
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error closing resources: ", e);
+            main.errorPopUp("Error closing resources: " + e);
         }
     }
     public void insertData(String table, String values, String data){
         String query = "INSERT INTO "+table+"("+values+")"+
                 " VALUES (" + data + ")";
-        System.out.println(query);
         try {
             this.stmt = con.createStatement();
             this.stmt.executeUpdate(query);
             this.con.close();
         } catch (SQLException e) {
-            main.errorPopUp("Virhe! Tarkista syötteet!");
+            main.errorPopUp("Virhe! Tarkista syötteet!" + e);
         }
     }
     public ResultSet searchForStuff(String table, String criteria){
         String query = "SELECT * FROM " + table + " WHERE " + criteria + ";";
-        System.out.println(query);
         if (this.con == null) {
-            main.errorPopUp("Connection not established. Call createConnection() first.");
+            main.errorPopUp("Tietokantaa ei yhdistetty, ota yhteyttä ryhmään 5!");
         }
         try {
             Statement stmt = con.createStatement();
@@ -112,24 +111,22 @@ public class SqlConnect {
         } catch (SQLException e) {
             main.errorPopUp("Failed to execute query " + e);
         }
-        return rs;
+        return null;
     }
     public void updateTable (String table, String rivi, String data, String where) {
         String query = "UPDATE " + table + " SET " + rivi + " = " + data + " WHERE " + where + ";";
-        System.out.println(query);
         if (this.con == null) {
-            throw new IllegalStateException("Connection not established. Call createConnection() first.");
+            main.errorPopUp("Tietokantaa ei yhdistetty, ota yhteyttä ryhmään 5!");
         }
         try {
             Statement stmt = con.createStatement();
             stmt.executeUpdate(query);
         } catch (SQLException e) {
-            main.errorPopUp("Virhe! Ota yhteyttä ryhmään 5");
+            main.errorPopUp("Virhe! Ota yhteyttä ryhmään 5" + e);
         }
     }
     public void deleteStuff (String table, String minkaMukaanPoistetaan, String poistettavaArvo) {
         String query = "DELETE FROM " + table + " WHERE " + minkaMukaanPoistetaan + " = " + poistettavaArvo;
-        System.out.println(query);
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             this.con = DriverManager.getConnection("jdbc:mysql://localhost:3306/vn", this.user, this.password);
@@ -137,7 +134,7 @@ public class SqlConnect {
             this.stmt.executeUpdate(query);
             this.con.close();
         } catch (ClassNotFoundException | SQLException e) {
-            main.errorPopUp("Virhe, ota yhteyttä ryhmään 5!");
+            main.errorPopUp("Virhe, ota yhteyttä ryhmään 5!" + e);
         }
     }
 

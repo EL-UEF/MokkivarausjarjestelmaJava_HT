@@ -44,7 +44,6 @@ public class VarausHandler extends Application {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        System.out.println(varausNimiLista);
         ListView<String> varausLista = new ListView<>();
         varausLista.setItems(FXCollections.observableArrayList(varausNimiLista));
         varausLista.getSelectionModel().selectedItemProperty().addListener(ov->{

@@ -46,7 +46,6 @@ public class BillHandler extends Application {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        System.out.println(laskuNimiLista);
         ListView<String> laskuLista = new ListView<>();
         laskuLista.setItems(FXCollections.observableArrayList(laskuNimiLista));
         laskuLista.getSelectionModel().selectedItemProperty().addListener(ov->{

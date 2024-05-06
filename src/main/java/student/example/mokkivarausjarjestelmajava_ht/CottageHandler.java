@@ -177,7 +177,6 @@ public class CottageHandler extends Application {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        System.out.println(mokkiNimiLista);
         ListView<String> mokkiLista = new ListView<>();
         mokkiLista.setItems(FXCollections.observableArrayList(mokkiNimiLista));
         mokkiLista.getSelectionModel().selectedItemProperty().addListener(ov->{
@@ -391,7 +390,6 @@ public class CottageHandler extends Application {
             }
             String kriteerit = ("\"" + String.join(", ", kriteeriLista) + "\"");
             main.connect.updateTable("mokki", "varustelu", kriteerit, ("mokkinimi = " + valittuNimi));
-            System.out.println("toimii ehkä?");
         });
         paneeliMuokattavilleTiedoille.getChildren().addAll(muokattavaMokki, alueMuokkausTeksti, alueTF, postinroTeksti,
                 postinroTF, nimiTeksti, nimiTF, osoiteTeksti, osoiteTF, hintaTeksti,
