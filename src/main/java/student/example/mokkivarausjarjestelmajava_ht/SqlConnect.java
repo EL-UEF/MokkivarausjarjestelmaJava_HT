@@ -112,6 +112,7 @@ public class SqlConnect {
         } catch (SQLException e) {
             main.errorPopUp("Failed to execute query " + e);
         }
+        return rs;
     }
     public void updateTable (String table, String rivi, String data, String where) {
         String query = "UPDATE " + table + " SET " + rivi + " = " + data + " WHERE " + where + ";";
