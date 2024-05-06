@@ -93,40 +93,61 @@ public class CottageHandler extends Application {
          * hakee tiedot kaikista textFieldeistä ja lisää mökin niiden perusteella
          */
         tallennusNappi.setOnAction(e->{
-            String mokinAlue = alueTF.getText();
-            String mokinPostinumero = postinroTF.getText();
-            String lisattavanMokinNimi = nimiTF.getText();
-            String lisattavaOsoite = katuosoiteTF.getText();
-            String lisattavaHinta = hintaTF.getText();
-            String lisattavaKuvaus = kuvausTF.getText();
-            String lisattavaHenkilomaara = henkiloTF.getText();
-            String lisattavatVarusteet = "";
-            if (keittio.isSelected())
-                lisattavatVarusteet+="Keittiö";
-            if (sauna.isSelected()) {
-                if (!lisattavatVarusteet.isEmpty()) {
-                    lisattavatVarusteet += ", ";
+            boolean virheSyotteessa = false;
+            String mokinAlue = null;
+            String mokinPostinumero = null;
+            String lisattavanMokinNimi = null;
+            String lisattavaOsoite = null;
+            String lisattavaHinta = null;
+            String lisattavaKuvaus = null;
+            String lisattavaHenkilomaara = null;
+            String lisattavatVarusteet = null;
+            try {
+                mokinAlue = alueTF.getText();
+                mokinPostinumero = postinroTF.getText();
+                lisattavanMokinNimi = nimiTF.getText();
+                lisattavaOsoite = katuosoiteTF.getText();
+                lisattavaHinta = hintaTF.getText();
+                lisattavaKuvaus = kuvausTF.getText();
+                lisattavaHenkilomaara = henkiloTF.getText();
+                lisattavatVarusteet = "";
+                if (keittio.isSelected())
+                    lisattavatVarusteet+="Keittiö";
+                if (sauna.isSelected()) {
+                    if (!lisattavatVarusteet.isEmpty()) {
+                        lisattavatVarusteet += ", ";
+                    }
+                    lisattavatVarusteet += "Sauna";
                 }
-                lisattavatVarusteet += "Sauna";
-            }
-            if (latu.isSelected()) {
-                if (!lisattavatVarusteet.isEmpty()) {
-                    lisattavatVarusteet += ", ";
+                if (latu.isSelected()) {
+                    if (!lisattavatVarusteet.isEmpty()) {
+                        lisattavatVarusteet += ", ";
+                    }
+                    lisattavatVarusteet += "Hiihtolatu lähellä mökkiä";
                 }
-                lisattavatVarusteet += "Hiihtolatu lähellä mökkiä";
-            }
-            if (kuivain.isSelected()) {
-                if (!lisattavatVarusteet.isEmpty()) {
-                    lisattavatVarusteet += ", ";
+                if (kuivain.isSelected()) {
+                    if (!lisattavatVarusteet.isEmpty()) {
+                        lisattavatVarusteet += ", ";
+                    }
+                    lisattavatVarusteet += "Hiustenkuivain";
                 }
-                lisattavatVarusteet += "Hiustenkuivain";
+            } catch (Exception ex) {
+                virheSyotteessa=true;
+                main.errorPopUp("Virhe!\nTarkista, että kaikki kentät on täytetty oikein!");
             }
             /**
              * Käytetään main instanssissa olemassa olevaa connectionia SQL tietojen muokkaamiseen
              */
-            main.connect.insertData("mokki", "alue_id, postinro, mokkinimi, katuosoite, hinta, kuvaus, henkilomaara, varustelu",
-                    (mokinAlue + ", " + mokinPostinumero + ", \"" + lisattavanMokinNimi + "\", \"" + lisattavaOsoite + "\", " + lisattavaHinta +
-                            ", \"" + lisattavaKuvaus + "\", " + lisattavaHenkilomaara + ", \""+ lisattavatVarusteet + "\""));
+            if (mokinAlue.isEmpty()||mokinPostinumero.isEmpty()||lisattavanMokinNimi.isEmpty()||lisattavaOsoite.isEmpty()&&
+                    lisattavaHinta.isEmpty()||lisattavaKuvaus.isEmpty()||lisattavaHenkilomaara.isEmpty()){
+                main.errorPopUp("Tarkista, että kaikki kentät on täytetty!");
+            } else if (mokinPostinumero.length()>5) {
+                main.errorPopUp("Tarkista postinumero");
+            } else if (!virheSyotteessa) {
+                main.connect.insertData("mokki", "alue_id, postinro, mokkinimi, katuosoite, hinta, kuvaus, henkilomaara, varustelu",
+                        (mokinAlue + ", " + mokinPostinumero + ", \"" + lisattavanMokinNimi + "\", \"" + lisattavaOsoite + "\", " + lisattavaHinta +
+                                ", \"" + lisattavaKuvaus + "\", " + lisattavaHenkilomaara + ", \""+ lisattavatVarusteet + "\""));
+            }
         });
         BPMokinLisaamiselle.setCenter(paneeliUudenMokinTiedoille);
         Scene lisaysScene = new Scene(BPMokinLisaamiselle);
