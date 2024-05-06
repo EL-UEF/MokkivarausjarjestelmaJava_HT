@@ -136,6 +136,7 @@ public class CottageHandler extends Application {
                 main.errorPopUp("Virhe!\nTarkista, että kaikki kentät on täytetty oikein!");
             }
             /**
+             * Tarkistetaan, että kaikki kentät on täytetty oikein ja
              * Käytetään main instanssissa olemassa olevaa connectionia SQL tietojen muokkaamiseen
              */
             if (mokinAlue.isEmpty()||mokinPostinumero.isEmpty()||lisattavanMokinNimi.isEmpty()||lisattavaOsoite.isEmpty()&&
@@ -183,6 +184,9 @@ public class CottageHandler extends Application {
             valittuNimi =("'" + mokkiLista.getSelectionModel().getSelectedItem() + "'");
             alueMokkienTiedoille.setText(mokki.SQLToString(valittuNimi));
         });
+        /**
+         * Alavalikon käyttöliittymä mökkien hallintaa varten
+         */
         Button kotiNappi = main.kotiNappain(mokkiStage);
         Button lisaysNappi = new Button("Lisää uusi mökki");
         lisaysNappi.setOnAction(e->{
@@ -210,6 +214,11 @@ public class CottageHandler extends Application {
         mokkiStage.setScene(scene);
         mokkiStage.show();
     }
+
+    /**
+     * Metodi luo popup ikkunan, missä varmistetaan että käyttäjä haluaa poistaa valitun mökin
+     * ja poistaa valitun mökin jos käyttäjä painaa "Kyllä"
+     */
     public void mokinPoisto(){
         VBox varoitusPaneeli = new VBox(30);
         varoitusPaneeli.setPrefSize(300, 300);
@@ -237,12 +246,17 @@ public class CottageHandler extends Application {
         popUpStage.setTitle("VAROITUS");
         popUpStage.show();
     }
+
+    /**
+     * Luodaan käyttöliittymä mökkien etsinnälle ja toiminnallisuus sitä varten
+     * @param etsintaStage on Stage, jossa käyttöliittymä näytetään
+     */
     protected void mokinEtsintaMetodi(Stage etsintaStage){
         BorderPane BPMokinEtsinnalle = new BorderPane();
         VBox paneeliEtsintaKriteereille = new VBox(10);
         paneeliEtsintaKriteereille.setAlignment(Pos.CENTER);
         Text alkuHopina = new Text("Kirjoita haluamasi kriteerit alla oleviin kenttiin.\nVoit jättää kentän tyhjäksi jos et halua käyttää kyseistä kriteeriä");
-        Text nimiKriteeri = new Text("Mökin nimi");
+        Text nimiKriteeri = new Text("Hakusana");
         TextField nimiTF = new TextField();
         Text alueKriteeri = new Text("Alueen ID, jolla mökki sijaitsee");
         TextField alueTF = new TextField();
@@ -272,7 +286,7 @@ public class CottageHandler extends Application {
         etsi.setOnAction(e->{
             List<String> kriteeriLista = new ArrayList<>();
             if (!nimiTF.getText().isEmpty()) {
-                kriteeriLista.add("LOWER(mokkinimi) LIKE '%" + nimiTF.getText().toLowerCase() + "%'");
+                kriteeriLista.add("LOWER(mokkinimi) LIKE '%" + nimiTF.getText().toLowerCase() + "%' OR LOWER(kuvaus) LIKE '%" + nimiTF.getText().toLowerCase() + "%' OR LOWER(katuosoite) LIKE '%" + nimiTF.getText().toLowerCase() + "%'");
             }
 
             if (!alueTF.getText().isEmpty()) {
