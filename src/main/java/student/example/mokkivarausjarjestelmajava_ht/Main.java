@@ -27,7 +27,7 @@ public class Main extends Application {
     private AlueHandler alueHandler = new AlueHandler(this, alue);
     private PalveluHandler palveluHandler = new PalveluHandler(this, palvelu);
 
-    private SqlConnect connect = new SqlConnect("Test_user", "1234", this);
+    public SqlConnect connect = new SqlConnect("Test_user", "1234", this);
     public Main() {
     }
 
