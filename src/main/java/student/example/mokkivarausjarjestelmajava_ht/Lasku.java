@@ -44,6 +44,7 @@ public class Lasku {
         int maksettu = -1;
         String formatoituAlkuPaiva;
         String formatoituLoppuPaiva;
+        String maksuStatus = "ei";
 
         try {
             ResultSet rs = main.connect.searchForStuff("laskutustiedot", criteria);
@@ -62,9 +63,11 @@ public class Lasku {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        if (maksettu==1)
+            maksuStatus="kyllä";
         return ("Lasku id: " + id + "\nvaraus id: " + SQLvaraus_id + "\nAsiakas id: " + asiakas_id + "\nAsiakkaan nimi: " +
                 asiakasNimi + "\nMökki: " + mokkiNimi + "\nVarauksen alku: " + formatoituAlkuPaiva + "\nVarauksen loppu: " +
-                formatoituLoppuPaiva + "\nKäytetyt palvelut: " + kaytetytPalvelut + "\nSumma: " + kokonaisHinta + "\nOnko maksettu: " + maksettu);
+                formatoituLoppuPaiva + "\nKäytetyt palvelut: " + kaytetytPalvelut + "\nSumma: " + kokonaisHinta + "\nOnko maksettu: " + maksuStatus);
     }
     public Lasku(Main main){
         this.main=main;

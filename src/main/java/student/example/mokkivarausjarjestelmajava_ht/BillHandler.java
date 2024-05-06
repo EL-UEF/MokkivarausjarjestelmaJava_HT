@@ -58,11 +58,12 @@ public class BillHandler extends Application {
         lisaysNappi.setOnAction(e->{
             laskunLisaysMetodi(laskuStage);
         });
-        /*
-        Button poistoNappi = new Button("Poista valittu mökki");
-        poistoNappi.setOnAction(e->{
-            mokinPoisto();
+
+        Button maksettuNappi = new Button("Merkkaa lasku maksetuksi");
+        maksettuNappi.setOnAction(e->{
+            asetaMaksetuksi(laskuStage);
         });
+        /*
         Button muokkausNappi = new Button("Muokkaa valittua mökkiä");
         muokkausNappi.setOnAction(e->{
             mokinMuokkausMetodi(laskuStage);
@@ -76,7 +77,7 @@ public class BillHandler extends Application {
             billPdfer.createBillPDF(valittuNimi);
         });
         HBox paneeliAlaValikolle = new HBox(10);
-        paneeliAlaValikolle.getChildren().addAll(kotiNappi, pdfer, lisaysNappi);//, lisaysNappi, muokkausNappi, etsintaNappi, poistoNappi);
+        paneeliAlaValikolle.getChildren().addAll(kotiNappi, pdfer, lisaysNappi, maksettuNappi);//, lisaysNappi, muokkausNappi, etsintaNappi
         BPlaskuille.setBottom(paneeliAlaValikolle);
         BPlaskuille.setLeft(laskuLista);
         BPlaskuille.setCenter(alueLaskujenTiedoille);
@@ -106,6 +107,10 @@ public class BillHandler extends Application {
         alueenLisaysStage.setScene(scene);
         alueenLisaysStage.setTitle("Lisää uusi alue");
         alueenLisaysStage.show();
+    }
+    public void asetaMaksetuksi(Stage primaryStage){
+        main.connect.updateTable("lasku", "maksettu", "1", ("lasku_id = " + valittuNimi));
+        laskuMetodi(primaryStage, main.connect.executeQuery("SELECT lasku_id FROM lasku ORDER BY lasku_id"));
     }
 
     public static void main(String[] args) {

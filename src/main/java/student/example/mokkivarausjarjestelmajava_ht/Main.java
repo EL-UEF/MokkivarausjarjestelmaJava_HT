@@ -58,7 +58,7 @@ public class Main extends Application {
         paneeliAloitusNaytolle.setCenter(paneeliKeskiNapeille);
         paneeliAloitusNaytolle.setLeft(kotiNappain(primaryStage));
         laskujenKatsomisNappi.setOnAction(e->{
-            billHandler.laskuMetodi(primaryStage, connect.executeQuery("SELECT lasku_id FROM lasku ORDER BY lasku_id"));
+            billHandler.laskuMetodi(primaryStage, connect.executeQuery("SELECT lasku_id FROM laskutustiedot ORDER BY lasku_id"));
         });
         mokkiNappi.setOnAction(e->{
             cottageHandler.mokkiMetodi(primaryStage, connect.executeQuery("SELECT mokki_id, mokkinimi FROM mokki ORDER BY mokki_id"));
