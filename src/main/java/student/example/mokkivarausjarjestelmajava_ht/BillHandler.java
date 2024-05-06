@@ -63,11 +63,11 @@ public class BillHandler extends Application {
         maksettuNappi.setOnAction(e->{
             asetaMaksetuksi(laskuStage);
         });
-        /*
-        Button muokkausNappi = new Button("Muokkaa valittua mökkiä");
-        muokkausNappi.setOnAction(e->{
-            mokinMuokkausMetodi(laskuStage);
+        Button maksamattomatNappi = new Button("Näytä avoimet laskut");
+        maksamattomatNappi.setOnAction(e->{
+            naytaAvoimetLaskut(laskuStage);
         });
+        /*
         Button etsintaNappi = new Button("Etsi mökkiä");
         etsintaNappi.setOnAction(e->{
             mokinEtsintaMetodi(laskuStage);
@@ -77,7 +77,7 @@ public class BillHandler extends Application {
             billPdfer.createBillPDF(valittuNimi);
         });
         HBox paneeliAlaValikolle = new HBox(10);
-        paneeliAlaValikolle.getChildren().addAll(kotiNappi, pdfer, lisaysNappi, maksettuNappi);//, lisaysNappi, muokkausNappi, etsintaNappi
+        paneeliAlaValikolle.getChildren().addAll(kotiNappi, pdfer, lisaysNappi, maksettuNappi, maksamattomatNappi);//, lisaysNappi, maksamattomatNappi, etsintaNappi
         BPlaskuille.setBottom(paneeliAlaValikolle);
         BPlaskuille.setLeft(laskuLista);
         BPlaskuille.setCenter(alueLaskujenTiedoille);
@@ -85,6 +85,9 @@ public class BillHandler extends Application {
         laskuStage.setTitle("Laskut");
         laskuStage.setScene(scene);
         laskuStage.show();
+    }
+    public void naytaAvoimetLaskut(Stage primaryStage){
+        laskuMetodi(primaryStage, main.connect.executeQuery("SELECT lasku_id FROM laskutustiedot WHERE maksettu = 0 ORDER BY lasku_id"));
     }
     public void laskunLisaysMetodi(Stage alueenLisaysStage){
         BorderPane BPlaskujenLisaamiselle = new BorderPane();
