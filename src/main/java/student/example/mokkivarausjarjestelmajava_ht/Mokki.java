@@ -57,7 +57,7 @@ public class Mokki {
             throw new RuntimeException(e);
         }
         String kokoTeksti = ("Mokki " + valittuNimi + "\nmökin id: " + SQLmokki_id + "\nalue: " + SQLalue_id + "\nPostinumero: " + SQLpostinro + "\nosoite: " + SQLkatuosoite +
-                "\nhinta/yö: " + SQLhinta + "\nmökin kuvaus: " + SQLkuvaus + "\nhenkilömäärä: " + SQLhenkilomaara + "\nmökin varustelu: " + SQLvarustelu + "\nAlv %: " + SQLalv + "\nAlv € :" + Math.round(alvEuroina));
+                "\nhinta/yö: " + SQLhinta + "\nmökin kuvaus: " + SQLkuvaus + "\nhenkilömäärä: " + SQLhenkilomaara + "\nmökin varustelu: " + SQLvarustelu + "\nAlv %: " + SQLalv);
         return kokoTeksti;
     }
 

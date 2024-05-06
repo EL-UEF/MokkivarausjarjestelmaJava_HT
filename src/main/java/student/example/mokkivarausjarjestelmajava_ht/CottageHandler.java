@@ -257,7 +257,7 @@ public class CottageHandler extends Application {
         Label maksimiLabel = new Label("Max", maksimiHinta);
         maksimiLabel.setContentDisplay(ContentDisplay.RIGHT);
         paneeliHinnoille.getChildren().addAll(minimiLabel, minimiHinta, maksimiLabel, maksimiHinta);
-        Text henkilomaaraKriteeri = new Text("Minimi henkilömäärä");
+        Text henkilomaaraKriteeri = new Text("Maksimi henkilömäärä");
         TextField henkilomaaraTF = new TextField();
         Text varusteetKriteeri = new Text("Varusteet");
         VBox paneeliCheckBoxeille = new VBox(10);
@@ -322,7 +322,8 @@ public class CottageHandler extends Application {
     public void mokinMuokkausMetodi(Stage muokkausStage){
         BorderPane BPMokinMuokkaukselle = new BorderPane();
         VBox paneeliMuokattavilleTiedoille = new VBox(10);
-        Text muokattavaMokki = new Text("MUOKATTAVA MÖKKI\n" + mokki.SQLToString(valittuNimi));
+        Text muokattavaMokki = new Text("MUOKATTAVA MÖKKI\n" + mokki.SQLToString(valittuNimi) + "\n\nVoit jättää kentän tyhjäksi, jos et halua muokata" +
+                " sen tietoja\n");
         Text alueMuokkausTeksti = new Text("Uusi alue id (numero)");
         TextField alueTF = new TextField();
         Text postinroTeksti = new Text("Uusi postinumero");
