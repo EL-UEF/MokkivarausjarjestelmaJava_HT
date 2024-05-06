@@ -14,6 +14,7 @@ import java.sql.*;
  *
  */
 public class SqlConnect {
+    Main main;
     private String user;
     private String password;
 
@@ -67,6 +68,7 @@ public class SqlConnect {
             ResultSet rs = stmt.executeQuery(query);
             return rs;
         } catch (SQLException e) {
+            main.errorPopUp("Failed to execute query" + e);
             throw new RuntimeException("Failed to execute query", e);
         }
     }
@@ -94,6 +96,7 @@ public class SqlConnect {
             this.stmt.executeUpdate(query);
             this.con.close();
         } catch (SQLException e) {
+            main.errorPopUp("Virhe! Ota yhteyttä ryhmään 5");
             throw new RuntimeException(e);
         }
     }
@@ -101,6 +104,7 @@ public class SqlConnect {
         String query = "SELECT * FROM " + table + " WHERE " + criteria + ";";
         System.out.println(query);
         if (this.con == null) {
+            main.errorPopUp("Connection not established. Call createConnection() first.");
             throw new IllegalStateException("Connection not established. Call createConnection() first.");
         }
         try {
@@ -108,6 +112,7 @@ public class SqlConnect {
             ResultSet rs = stmt.executeQuery(query);
             return rs;
         } catch (SQLException e) {
+            main.errorPopUp("Failed to execute query " + e);
             throw new RuntimeException("Failed to execute query", e);
         }
     }
@@ -121,6 +126,7 @@ public class SqlConnect {
             Statement stmt = con.createStatement();
             stmt.executeUpdate(query);
         } catch (SQLException e) {
+            main.errorPopUp("Virhe! Ota yhteyttä ryhmään 5");
             throw new RuntimeException(e);
         }
     }
@@ -134,6 +140,7 @@ public class SqlConnect {
             this.stmt.executeUpdate(query);
             this.con.close();
         } catch (ClassNotFoundException | SQLException e) {
+            main.errorPopUp("Virhe, ota yhteyttä ryhmään 5!");
             throw new RuntimeException(e);
         }
     }
@@ -143,9 +150,10 @@ public class SqlConnect {
          * @param user Käyttäjä, jos haluaa pelleillä niiden kanssa niin eiku vaan, default "root"
          * @param password :I mulla default "1234", pitää olla Stringinä
          */
-    public SqlConnect(String user, String password) {
+    public SqlConnect(String user, String password, Main main) {
             this.user = user;
             this.password = password;
+            this.main = main;
         }
 
 }
