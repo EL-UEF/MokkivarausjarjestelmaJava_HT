@@ -1,6 +1,5 @@
 package student.example.mokkivarausjarjestelmajava_ht;
 
-import com.itextpdf.text.TabStop;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -11,8 +10,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
-
-import java.sql.ResultSet;
 
 
 public class Main extends Application {

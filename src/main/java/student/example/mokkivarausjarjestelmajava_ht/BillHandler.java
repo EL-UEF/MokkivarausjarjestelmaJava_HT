@@ -5,10 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -17,13 +14,17 @@ import javafx.stage.Stage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 
 public class BillHandler extends Application {
     private Lasku lasku;
     private Main main;
     String valittuNimi = "-1";
     BillPDFer billPdfer;
+    DateTimeFormatter sqlKoodiksiFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public BillHandler(Main main, Lasku lasku, BillPDFer billPdfer) {
         this.main = main;
@@ -67,17 +68,15 @@ public class BillHandler extends Application {
         maksamattomatNappi.setOnAction(e->{
             naytaAvoimetLaskut(laskuStage);
         });
-        /*
-        Button etsintaNappi = new Button("Etsi mökkiä");
+        Button etsintaNappi = new Button("Etsi laskua");
         etsintaNappi.setOnAction(e->{
-            mokinEtsintaMetodi(laskuStage);
+            laskunEtsintaMetodi(laskuStage);
         });
-         */
         pdfer.setOnAction(e->{
             billPdfer.createBillPDF(valittuNimi);
         });
         HBox paneeliAlaValikolle = new HBox(10);
-        paneeliAlaValikolle.getChildren().addAll(kotiNappi, pdfer, lisaysNappi, maksettuNappi, maksamattomatNappi);//, lisaysNappi, maksamattomatNappi, etsintaNappi
+        paneeliAlaValikolle.getChildren().addAll(kotiNappi, pdfer, lisaysNappi, maksettuNappi, maksamattomatNappi, etsintaNappi);
         BPlaskuille.setBottom(paneeliAlaValikolle);
         BPlaskuille.setLeft(laskuLista);
         BPlaskuille.setCenter(alueLaskujenTiedoille);
@@ -114,6 +113,73 @@ public class BillHandler extends Application {
     public void asetaMaksetuksi(Stage primaryStage){
         main.connect.updateTable("lasku", "maksettu", "1", ("lasku_id = " + valittuNimi));
         laskuMetodi(primaryStage, main.connect.executeQuery("SELECT lasku_id FROM lasku ORDER BY lasku_id"));
+    }
+    protected void laskunEtsintaMetodi(Stage etsintaStage){
+        BorderPane BPLaskunEtsinnalle = new BorderPane();
+        VBox paneeliEtsintaKriteereille = new VBox(10);
+        paneeliEtsintaKriteereille.setAlignment(Pos.CENTER);
+        Text alkuHopina = new Text("Kirjoita haluamasi kriteerit alla oleviin kenttiin.\nVoit jättää kentän tyhjäksi jos et halua käyttää kyseistä kriteeriä");
+        Text varausidKriteeri = new Text("Varaus id");
+        TextField varausidTF = new TextField();
+        Text asiakasidKriteeri = new Text("Asiakas id");
+        TextField asiakasidTF = new TextField();
+        Text asiakasnimiKriteeri = new Text("Asiakkaan nimi");
+        TextField asiakasnimiTF = new TextField();
+        Text mokinNimiKriteeri = new Text("Mökin nimi");
+        TextField mokinNimiTF = new TextField();
+        HBox paneeliVarauksenAlulle = new HBox(10);
+        Text alkuPrompt = new Text("etsittävä alkupvm muodossa pp.kk.vvvv");
+        TextField TFAlkuVuosille = new TextField();
+        TextField TFAlkuKuukausille = new TextField();
+        TextField TFAlkuPaivalle = new TextField();
+        paneeliVarauksenAlulle.getChildren().addAll(TFAlkuPaivalle, TFAlkuKuukausille, TFAlkuVuosille);
+        HBox paneeliVarauksenLopulle = new HBox(10);
+        Text loppuPrompt = new Text("etsittävä loppumispvm muodossa pp.kk.vvvv");
+        TextField TFLoppuVuosille = new TextField();
+        TextField TFLoppuKuukausille = new TextField();
+        TextField TFLoppuPaivalle = new TextField();
+        paneeliVarauksenLopulle.getChildren().addAll(TFLoppuPaivalle, TFLoppuKuukausille, TFLoppuVuosille);
+        Button etsi = new Button("Etsi");
+        //toiminnallisuus
+        etsi.setOnAction(e->{
+            List<String> kriteeriLista = new ArrayList<>();
+            if (!varausidTF.getText().isEmpty()) {
+                kriteeriLista.add("varaus_id = " + varausidTF.getText().toLowerCase());
+            }
+
+            if (!asiakasidTF.getText().isEmpty()) {
+                kriteeriLista.add("asiakas_id = " + asiakasidTF.getText());
+            }
+
+            if (!asiakasnimiTF.getText().isEmpty()) {
+                kriteeriLista.add("LOWER(asiakas) LIKE '%" + asiakasnimiTF.getText().toLowerCase() + "%'");
+            }
+
+            if (!mokinNimiTF.getText().isEmpty()) {
+                kriteeriLista.add("LOWER(mökki) LIKE '%" + mokinNimiTF.getText().toLowerCase() + "%'");
+            }
+            if (!TFAlkuVuosille.getText().isEmpty()){
+                LocalDateTime alkupvm = LocalDateTime.parse(TFAlkuVuosille.getText() + "-" + TFAlkuKuukausille.getText() + "-" + TFAlkuPaivalle.getText() + " 15:00:00", sqlKoodiksiFormatter);
+                String formatoituAlkuPaiva = ("'" + alkupvm.format(sqlKoodiksiFormatter) + "'");
+                kriteeriLista.add("alkupaiva >= " + formatoituAlkuPaiva);
+            }
+            if (!TFLoppuVuosille.getText().isEmpty()){
+                LocalDateTime loppupvm = LocalDateTime.parse(TFLoppuVuosille.getText() + "-" + TFLoppuKuukausille.getText() + "-" + TFLoppuPaivalle.getText() + " 12:00:00", sqlKoodiksiFormatter);
+                String formatoituLoppuPaiva = ("'" + loppupvm.format(sqlKoodiksiFormatter) + "'");
+                kriteeriLista.add("loppupaiva <= " + formatoituLoppuPaiva);
+            }
+            String kriteerit = String.join(" AND ", kriteeriLista);
+            laskuMetodi(etsintaStage, main.connect.searchForStuff("laskutustiedot", kriteerit));
+        });
+        Button kotiNappi = main.kotiNappain(etsintaStage);
+        paneeliEtsintaKriteereille.getChildren().addAll(alkuHopina, varausidKriteeri, varausidTF, asiakasidKriteeri, asiakasidTF, asiakasnimiKriteeri, asiakasnimiTF,
+                mokinNimiKriteeri, mokinNimiTF, alkuPrompt, paneeliVarauksenAlulle, loppuPrompt, paneeliVarauksenLopulle, etsi);
+        BPLaskunEtsinnalle.setCenter(paneeliEtsintaKriteereille);
+        BPLaskunEtsinnalle.setLeft(kotiNappi);
+        Scene scene = new Scene(BPLaskunEtsinnalle);
+        etsintaStage.setTitle("Mökin haku");
+        etsintaStage.setScene(scene);
+        etsintaStage.show();
     }
 
     public static void main(String[] args) {
