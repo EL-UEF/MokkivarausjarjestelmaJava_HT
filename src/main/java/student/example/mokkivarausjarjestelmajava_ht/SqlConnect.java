@@ -96,8 +96,7 @@ public class SqlConnect {
             this.stmt.executeUpdate(query);
             this.con.close();
         } catch (SQLException e) {
-            main.errorPopUp("Virhe! Ota yhteyttä ryhmään 5");
-            throw new RuntimeException(e);
+            main.errorPopUp("Virhe! Tarkista syötteet!");
         }
     }
     public ResultSet searchForStuff(String table, String criteria){
@@ -105,7 +104,6 @@ public class SqlConnect {
         System.out.println(query);
         if (this.con == null) {
             main.errorPopUp("Connection not established. Call createConnection() first.");
-            throw new IllegalStateException("Connection not established. Call createConnection() first.");
         }
         try {
             Statement stmt = con.createStatement();
@@ -113,7 +111,6 @@ public class SqlConnect {
             return rs;
         } catch (SQLException e) {
             main.errorPopUp("Failed to execute query " + e);
-            throw new RuntimeException("Failed to execute query", e);
         }
     }
     public void updateTable (String table, String rivi, String data, String where) {
@@ -127,7 +124,6 @@ public class SqlConnect {
             stmt.executeUpdate(query);
         } catch (SQLException e) {
             main.errorPopUp("Virhe! Ota yhteyttä ryhmään 5");
-            throw new RuntimeException(e);
         }
     }
     public void deleteStuff (String table, String minkaMukaanPoistetaan, String poistettavaArvo) {
@@ -141,7 +137,6 @@ public class SqlConnect {
             this.con.close();
         } catch (ClassNotFoundException | SQLException e) {
             main.errorPopUp("Virhe, ota yhteyttä ryhmään 5!");
-            throw new RuntimeException(e);
         }
     }
 
