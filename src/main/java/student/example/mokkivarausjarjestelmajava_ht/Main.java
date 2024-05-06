@@ -39,6 +39,10 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
         connect.createConnection();
         //TEEN ALOITUSNÄYTÖN KÄYTTÖLIITTYMÄN TÄHÄN
+        mainMenuMaker(primaryStage);
+    }
+
+    private void mainMenuMaker(Stage primaryStage) {
         BorderPane paneeliAloitusNaytolle = new BorderPane();
         paneeliAloitusNaytolle.setPrefSize(500, 500);
         paneeliAloitusNaytolle.setPadding(new Insets(10, 10, 10, 10));
@@ -78,6 +82,7 @@ public class Main extends Application {
         primaryStage.setTitle("Mökkienvarausohjelma 1.0");
         primaryStage.show();
     }
+
     public void errorPopUp(String prompt){
         BorderPane paneeliPopUpille = new BorderPane();
         Text errori = new Text(prompt);
@@ -98,7 +103,7 @@ public class Main extends Application {
     public Button kotiNappain(Stage primaryStage){
         Button kotiNappi = new Button("Koti");
         kotiNappi.setOnAction(e->{
-            start(primaryStage);
+            mainMenuMaker(primaryStage);
         });
         return kotiNappi;
     }
