@@ -258,7 +258,7 @@ public class CottageHandler extends Application {
         Text alkuHopina = new Text("Kirjoita haluamasi kriteerit alla oleviin kenttiin.\nVoit jättää kentän tyhjäksi jos et halua käyttää kyseistä kriteeriä");
         Text nimiKriteeri = new Text("Hakusana");
         TextField nimiTF = new TextField();
-        Text alueKriteeri = new Text("Alueen ID, jolla mökki sijaitsee");
+        Text alueKriteeri = new Text("Alue");
         TextField alueTF = new TextField();
         Text osoiteKriteeri = new Text("Mökin katuosoite");
         TextField osoiteTF = new TextField();
@@ -290,7 +290,7 @@ public class CottageHandler extends Application {
             }
 
             if (!alueTF.getText().isEmpty()) {
-                kriteeriLista.add("alue_id = " + alueTF.getText());
+                kriteeriLista.add("LOWER(nimi) LIKE '%" + alueTF.getText().toLowerCase() + "%'");
             }
 
             if (!osoiteTF.getText().isEmpty()) {
@@ -322,7 +322,7 @@ public class CottageHandler extends Application {
                 kriteeriLista.add("varustelu LIKE '%Hiustenkuivain%'");
             }
             String kriteerit = String.join(" AND ", kriteeriLista);
-            mokkiMetodi(etsintaStage, main.connect.searchForStuff("mokki", kriteerit));
+            mokkiMetodi(etsintaStage, main.connect.searchForStuff("mokkialue", kriteerit));
         });
         Button kotiNappi = main.kotiNappain(etsintaStage);
         paneeliEtsintaKriteereille.getChildren().addAll(alkuHopina, nimiKriteeri, nimiTF, alueKriteeri, alueTF, osoiteKriteeri, osoiteTF, hinnat, paneeliHinnoille, henkilomaaraKriteeri, henkilomaaraTF, varusteetKriteeri, paneeliCheckBoxeille, etsi);
