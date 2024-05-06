@@ -27,7 +27,7 @@ public class Main extends Application {
     private AlueHandler alueHandler = new AlueHandler(this, alue);
     private PalveluHandler palveluHandler = new PalveluHandler(this, palvelu);
 
-    public SqlConnect connect = new SqlConnect("Test_user", "1234", this);
+    private SqlConnect connect = new SqlConnect("Test_user", "1234", this);
     public Main() {
     }
 
@@ -35,13 +35,23 @@ public class Main extends Application {
         launch(args);
     }
 
+    /**
+     * Käynnistää ohjelman
+     * @param primaryStage Stage, jossa käyttöliittymä pyörii
+     */
     @Override
     public void start(Stage primaryStage) {
+        /**
+         * Luodaan yhteys tietokantaan ja käynnistetään main menu
+         */
         connect.createConnection();
-        //TEEN ALOITUSNÄYTÖN KÄYTTÖLIITTYMÄN TÄHÄN
         mainMenuMaker(primaryStage);
     }
 
+    /**
+     * Luo main menun ohjelmalle tai palauttaa ohjelman alkutilanteeseen.
+     * @param primaryStage Stage, jossa käyttöliittymä pyörii
+     */
     private void mainMenuMaker(Stage primaryStage) {
         BorderPane paneeliAloitusNaytolle = new BorderPane();
         paneeliAloitusNaytolle.setPrefSize(500, 500);
@@ -58,6 +68,10 @@ public class Main extends Application {
                 varauksetNappi);
         paneeliAloitusNaytolle.setCenter(paneeliKeskiNapeille);
         paneeliAloitusNaytolle.setLeft(kotiNappain(primaryStage));
+        /**
+         * Tehdään toiminnallisuus nappeihin, kaikki napit muuttavat stagen oman handlerinsa mukaiseen stageen
+         * ja hakee tiedot siihen SQL tietokannasta
+         */
         laskujenKatsomisNappi.setOnAction(e->{
             billHandler.laskuMetodi(primaryStage, connect.executeQuery("SELECT lasku_id FROM laskutustiedot ORDER BY lasku_id"));
         });
@@ -83,8 +97,14 @@ public class Main extends Application {
         primaryStage.show();
     }
 
+    /**
+     * Metodi, jolla pystyy helposti tekemään popup ilmoituksia virheestä
+     * @param prompt virheviesti, joka käyttäjälle näytetään
+     */
     public void errorPopUp(String prompt){
         BorderPane paneeliPopUpille = new BorderPane();
+        paneeliPopUpille.setPrefSize(300, 300);
+        paneeliPopUpille.setPadding(new Insets(10, 10, 10, 10));
         Text errori = new Text(prompt);
         errori.setTextAlignment(TextAlignment.CENTER);
         Button okNappi = new Button("OK");
