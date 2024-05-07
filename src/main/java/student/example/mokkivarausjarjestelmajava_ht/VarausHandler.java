@@ -97,7 +97,7 @@ public class VarausHandler extends Application {
         BorderPane BPvarauksenLisaamiselle = new BorderPane();
         BPvarauksenLisaamiselle.setPrefSize(400, 400);
         VBox paneeliUudenVarauksenTiedoille = new VBox(10);
-        Text annaAsiakas = new Text("Asiakkaan id");
+        Text annaAsiakas = new Text("Uuden varauksen lisääminen:\nKAIKKI KENTÄT TÄYTETTÄVÄ!\nAsiakkaan id");
         TextField asiakasidTF = new TextField();
         Text varattavaMokki = new Text("Varattavan mökin id");
         TextField mokkiTF = new TextField();
@@ -207,13 +207,23 @@ public class VarausHandler extends Application {
             if (!uusiMokkiTF.getText().isEmpty())
                 main.connect.updateTable("varaus", "mokki_id", ("\"" + uusiMokkiTF.getText()) + "\"", ("varaus_id = " + valittuIndeksi));
             if (!TFAlkuVuosille.getText().isEmpty()){
-                LocalDateTime alkupvm = LocalDateTime.parse(TFAlkuVuosille.getText() + "-" + TFAlkuKuukausille.getText() + "-" + TFAlkuPaivalle.getText() + " 15:00:00", sqlKoodiksiFormatter);
-                String formatoituAlkuPaiva = ("'" + alkupvm.format(sqlKoodiksiFormatter) + "'");
+                String formatoituAlkuPaiva = null;
+                try {
+                    LocalDateTime alkupvm = LocalDateTime.parse(TFAlkuVuosille.getText() + "-" + TFAlkuKuukausille.getText() + "-" + TFAlkuPaivalle.getText() + " 15:00:00", sqlKoodiksiFormatter);
+                    formatoituAlkuPaiva = ("'" + alkupvm.format(sqlKoodiksiFormatter) + "'");
+                } catch (Exception ex) {
+                    main.errorPopUp("Virhe alkupäivämäärän kanssa. Tarkista syötteet!\n" + ex);
+                }
                 main.connect.updateTable("varaus", "varattu_alkupvm", formatoituAlkuPaiva, "varaus_id = " + valittuIndeksi);
             }
             if (!TFLoppuVuosille.getText().isEmpty()){
-                LocalDateTime loppupvm = LocalDateTime.parse(TFLoppuVuosille.getText() + "-" + TFLoppuKuukausille.getText() + "-" + TFLoppuPaivalle.getText() + " 12:00:00", sqlKoodiksiFormatter);
-                String formatoituLoppuPaiva = ("'" + loppupvm.format(sqlKoodiksiFormatter) + "'");
+                String formatoituLoppuPaiva = null;
+                try {
+                    LocalDateTime loppupvm = LocalDateTime.parse(TFLoppuVuosille.getText() + "-" + TFLoppuKuukausille.getText() + "-" + TFLoppuPaivalle.getText() + " 12:00:00", sqlKoodiksiFormatter);
+                    formatoituLoppuPaiva = ("'" + loppupvm.format(sqlKoodiksiFormatter) + "'");
+                } catch (Exception ex) {
+                    main.errorPopUp("Virhe loppupäivämäärän kanssa. Tarkista syötteet!\n" + ex);
+                }
                 main.connect.updateTable("varaus", "varattu_loppupvm", formatoituLoppuPaiva, "varaus_id = " + valittuIndeksi);
             }
             main.mainMenuMaker(muokkausStage);
@@ -263,13 +273,23 @@ public class VarausHandler extends Application {
                 kriteeriLista.add("mokki_id = " + mokkiTF.getText());
             }
             if (!TFAlkuVuosille.getText().isEmpty()){
-                LocalDateTime alkupvm = LocalDateTime.parse(TFAlkuVuosille.getText() + "-" + TFAlkuKuukausille.getText() + "-" + TFAlkuPaivalle.getText() + " 15:00:00", sqlKoodiksiFormatter);
-                String formatoituAlkuPaiva = ("'" + alkupvm.format(sqlKoodiksiFormatter) + "'");
+                String formatoituAlkuPaiva = null;
+                try {
+                    LocalDateTime alkupvm = LocalDateTime.parse(TFAlkuVuosille.getText() + "-" + TFAlkuKuukausille.getText() + "-" + TFAlkuPaivalle.getText() + " 15:00:00", sqlKoodiksiFormatter);
+                    formatoituAlkuPaiva = ("'" + alkupvm.format(sqlKoodiksiFormatter) + "'");
+                } catch (Exception ex) {
+                    main.errorPopUp("Virhe alkupäivämäärän kanssa. Tarkista syötteet!\n" + ex);
+                }
                 kriteeriLista.add("varattu_alkupvm >= " + formatoituAlkuPaiva);
             }
             if (!TFLoppuVuosille.getText().isEmpty()){
-                LocalDateTime loppupvm = LocalDateTime.parse(TFLoppuVuosille.getText() + "-" + TFLoppuKuukausille.getText() + "-" + TFLoppuPaivalle.getText() + " 12:00:00", sqlKoodiksiFormatter);
-                String formatoituLoppuPaiva = ("'" + loppupvm.format(sqlKoodiksiFormatter) + "'");
+                String formatoituLoppuPaiva = null;
+                try {
+                    LocalDateTime loppupvm = LocalDateTime.parse(TFLoppuVuosille.getText() + "-" + TFLoppuKuukausille.getText() + "-" + TFLoppuPaivalle.getText() + " 12:00:00", sqlKoodiksiFormatter);
+                    formatoituLoppuPaiva = ("'" + loppupvm.format(sqlKoodiksiFormatter) + "'");
+                } catch (Exception ex) {
+                    main.errorPopUp("Virhe loppupäivämäärän kanssa. Tarkista syötteet!\n" + ex);
+                }
                 kriteeriLista.add("varattu_loppupvm <= " + formatoituLoppuPaiva);
             }
             String kriteerit = String.join(" AND ", kriteeriLista);
