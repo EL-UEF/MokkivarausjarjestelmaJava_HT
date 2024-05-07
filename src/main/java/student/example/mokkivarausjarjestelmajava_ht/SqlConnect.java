@@ -55,7 +55,7 @@ public class SqlConnect {
             System.out.println("Connection successful!");
             return this.con;
         } catch (ClassNotFoundException | SQLException e) {
-            main.errorPopUp("Failed to create database connection" + e);
+            main.errorPopUp("Virhe tietokantaan yhdistämisessä\n" + e);
         }
         return con;
     }
@@ -69,7 +69,7 @@ public class SqlConnect {
             ResultSet rs = stmt.executeQuery(query);
             return rs;
         } catch (SQLException e) {
-            main.errorPopUp("Failed to execute query" + e);
+            main.errorPopUp("Virhe SQL komennossa\nOta yhteyttä ryhmään 5!\n" + e);
         }
         return null;
     }
@@ -85,7 +85,7 @@ public class SqlConnect {
                 this.con.close();
             }
         } catch (SQLException e) {
-            main.errorPopUp("Error closing resources: " + e);
+            main.errorPopUp("Virhe! Ota yhteyttä ryhmään 5!" + e);
         }
     }
     public void insertData(String table, String values, String data){
@@ -109,7 +109,7 @@ public class SqlConnect {
             ResultSet rs = stmt.executeQuery(query);
             return rs;
         } catch (SQLException e) {
-            main.errorPopUp("Failed to execute query " + e);
+            main.errorPopUp("Virhe tietojen hakemisessa tietokannasta\n " + e);
         }
         return null;
     }
@@ -122,7 +122,7 @@ public class SqlConnect {
             Statement stmt = con.createStatement();
             stmt.executeUpdate(query);
         } catch (SQLException e) {
-            main.errorPopUp("Virhe! Ota yhteyttä ryhmään 5" + e);
+            main.errorPopUp("Virhe tietokannan päivittämisessä\nOta yhteyttä ryhmään 5!" + e);
         }
     }
     public void deleteStuff (String table, String minkaMukaanPoistetaan, String poistettavaArvo) {
@@ -134,7 +134,7 @@ public class SqlConnect {
             this.stmt.executeUpdate(query);
             this.con.close();
         } catch (ClassNotFoundException | SQLException e) {
-            main.errorPopUp("Virhe, ota yhteyttä ryhmään 5!" + e);
+            main.errorPopUp("Virhe tietojen poistamisessa!\nOta yhteyttä ryhmään 5!" + e);
         }
     }
 

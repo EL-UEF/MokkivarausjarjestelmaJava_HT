@@ -42,9 +42,8 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         /**
-         * Luodaan yhteys tietokantaan ja käynnistetään main menu
+         * Käynnistetään main menu
          */
-        connect.createConnection();
         mainMenuMaker(primaryStage);
     }
 
@@ -53,6 +52,7 @@ public class Main extends Application {
      * @param primaryStage Stage, jossa käyttöliittymä pyörii
      */
     private void mainMenuMaker(Stage primaryStage) {
+        connect.createConnection();
         BorderPane paneeliAloitusNaytolle = new BorderPane();
         paneeliAloitusNaytolle.setPrefSize(500, 500);
         paneeliAloitusNaytolle.setPadding(new Insets(10, 10, 10, 10));
@@ -120,6 +120,12 @@ public class Main extends Application {
         popUpStage.setScene(scene);
         popUpStage.show();
     }
+
+    /**
+     * Luo napin, josta painamalla pääsee aloitusnäyttöön
+     * @param primaryStage Stage, jota muokataan
+     * @return Nappi, jossa lukee "koti" ja on toiminnallisuus
+     */
     public Button kotiNappain(Stage primaryStage){
         Button kotiNappi = new Button("Koti");
         kotiNappi.setOnAction(e->{

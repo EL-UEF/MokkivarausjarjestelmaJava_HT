@@ -26,12 +26,26 @@ public class AlueHandler extends Application {
         this.alue = alue;
     }
 
+    /**
+     * Alueisiin liittyvä näyttö, joka näyttää alueet listViewissä ja käyttäjän valitseman alueen tarkemmat tiedot
+     * TextAreassa jota ei voi muokata. Tämän näytön alareunassa on napit alueiden hallintaa varten.
+     * @param alueStage Stage, jossa käyttöliittymä pyörii
+     * @param rs SQL tietokannasta tulevat tiedot
+     */
     public void alueMetodi(Stage alueStage, ResultSet rs){
+        /**
+         * Käyttöliittymän luominen alueiden käsittelyä varten
+         */
         BorderPane BPAlueille = new BorderPane();
         TextArea alueAlueidenTiedoille = new TextArea();
         alueAlueidenTiedoille.setText("Klikkaa aluetta nähdäksesi sen tarkemmat tiedot :)");
         alueAlueidenTiedoille.setEditable(false);
         ArrayList<String> alueNimiLista = new ArrayList<>();
+        /**
+         * Haetaan alueet SQL tietokannasta nimen perusteella
+         * näytetään tiedot listViewissä
+         * Tässä valittuNimi pitää kirjaa siitä, mikä alue käyttäjällä on valittuna
+         */
         try {
             while (rs.next())
                 alueNimiLista.add(rs.getString("nimi"));
@@ -44,6 +58,9 @@ public class AlueHandler extends Application {
             valittuNimi = alueLista.getSelectionModel().getSelectedItem();
             alueAlueidenTiedoille.setText(alue.SQLToStringAlue(valittuNimi));
         });
+        /**
+         * Alavalikon luonti alueiden hallintaa varten ja sen toiminnallisuus
+         */
         Button uusiAlue = new Button("Lisää uusi alue");
         Button muokkausNappi = new Button("Muokkaa valittua aluetta");
         muokkausNappi.setOnAction(e->{
@@ -61,9 +78,12 @@ public class AlueHandler extends Application {
         poistoNappi.setOnAction(e->{
             alueenPoisto();
         });
-
+        Button palvelunLisaysNappi = new Button("Lisää palvelu valitulle alueelle");
+        palvelunLisaysNappi.setOnAction(e->{
+            palvelunLisaysMetodi(alueStage);
+        });
         HBox paneeliAlaValikolle = new HBox(10);
-        paneeliAlaValikolle.getChildren().addAll(koti, muokkausNappi, uusiAlue, etsintaNappi, poistoNappi);
+        paneeliAlaValikolle.getChildren().addAll(koti, muokkausNappi, uusiAlue, etsintaNappi, poistoNappi, palvelunLisaysNappi);
         BPAlueille.setLeft(alueLista);
         BPAlueille.setCenter(alueAlueidenTiedoille);
         BPAlueille.setBottom(paneeliAlaValikolle);
@@ -73,8 +93,14 @@ public class AlueHandler extends Application {
         alueStage.show();
     }
 
-
+    /**
+     * Metodi, jolla voi lisätä alueita. SQL tietokanta lisää alue_id:n automaattisesti.
+     * @param alueenLisaysStage Stage, jossa käyttöliittymä pyörii
+     */
     public void alueenLisaysMetodi(Stage alueenLisaysStage){
+        /**
+         * Luodaan käyttöliittymä alueiden lisäämiselle ja toiminnallisuus siihen
+         */
         BorderPane BPAlueidenLisaamiselle = new BorderPane();
         BPAlueidenLisaamiselle.setPrefSize(400, 400);
         BPAlueidenLisaamiselle.setPadding(new Insets(10, 10, 10, 10));
@@ -85,6 +111,9 @@ public class AlueHandler extends Application {
         Button lisaysNappi = new Button("Lisää");
         lisaysNappi.setOnAction(e->{
             String uusiNimi = nimiTF.getText();
+            /**
+             * Tiedot tallennetaan SQL tietokantaan main.connectin kautta
+             */
             main.connect.insertData("alue", "nimi","\"" + uusiNimi + "\"");
         });
         Button kotiNappula = main.kotiNappain(alueenLisaysStage);
@@ -97,6 +126,10 @@ public class AlueHandler extends Application {
         alueenLisaysStage.show();
     }
 
+    /**
+     * Metodi alueen tietojen muokkaamiselle. Alueen nimi on ainoa muokattavissa oleva tieto
+     * @param muokkausStage
+     */
     public void alueenMuokkausMetodi(Stage muokkausStage){
         BorderPane BPAlueenMuokkaamiselle = new BorderPane();
         BPAlueenMuokkaamiselle.setPrefSize(400, 400);
@@ -168,6 +201,50 @@ public class AlueHandler extends Application {
         popUpStage.setScene(popUpScene);
         popUpStage.setTitle("VAROITUS");
         popUpStage.show();
+    }
+    protected void palvelunLisaysMetodi(Stage palveluStage){
+        /**
+         * graafisia komponentteja ja niiden sijoittelua
+         */
+        BorderPane BPPalvelunLisaamiselle = new BorderPane();
+        BPPalvelunLisaamiselle.setPrefSize(400, 400);
+        VBox paneeliUudenPalvelunTiedoille = new VBox(10);
+        Text palvelunNimi = new Text("Palvelun nimi");
+        TextField nimiTF = new TextField();
+        Text kuvausTeksti = new Text("Millainen palvelu on kyseessä?");
+        TextField kuvausTF = new TextField();
+        Text hintaTeksti = new Text("Ja paljonkos lysti kustantaa?");
+        TextField hintaTF = new TextField();
+        Text alvTeksti = new Text("Montako prosenttia valtio vetää välistä?");
+        TextField alvTF = new TextField();
+        Button tallennusNappi = new Button("Tallenna");
+        tallennusNappi.setAlignment(Pos.CENTER);
+        Button kotiNappi = main.kotiNappain(palveluStage);
+        BPPalvelunLisaamiselle.setBottom(kotiNappi);
+        paneeliUudenPalvelunTiedoille.getChildren().addAll(palvelunNimi, nimiTF,
+                kuvausTeksti, kuvausTF, hintaTeksti, hintaTF,
+                alvTeksti, alvTF, tallennusNappi);
+        paneeliUudenPalvelunTiedoille.setAlignment(Pos.CENTER);
+        /**
+         * Toiminnallisuus tallennusnappiin.
+         * hakee tiedot kaikista textFieldeistä ja lisää palvelun niiden perusteella
+         */
+        tallennusNappi.setOnAction(e->{
+            String lisattavanPalvelunNimi = nimiTF.getText();
+            String lisattavaKuvaus = kuvausTF.getText();
+            String lisattavaHinta = hintaTF.getText();
+            String lisattavaALV = alvTF.getText();
+            /**
+             * Käytetään main instanssissa olemassa olevaa connectionia SQL tietojen muokkaamiseen
+             */
+            main.connect.insertData("palvelu", "alue_id, nimi, kuvaus, hinta, alv",
+                    ("(SELECT alue_id FROM alue WHERE nimi = '" + valittuNimi + "')" + ", \"" + lisattavanPalvelunNimi + "\", \"" + lisattavaKuvaus + "\", " + lisattavaHinta +
+                            ", " + lisattavaALV));
+        });
+        BPPalvelunLisaamiselle.setCenter(paneeliUudenPalvelunTiedoille);
+        Scene lisaysScene = new Scene(BPPalvelunLisaamiselle);
+        palveluStage.setScene(lisaysScene);
+        palveluStage.show();
     }
 
 

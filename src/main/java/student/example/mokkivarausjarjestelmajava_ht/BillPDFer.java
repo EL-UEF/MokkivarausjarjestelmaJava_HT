@@ -86,7 +86,7 @@ public class BillPDFer {
         String formatoituloppupvm = SQLloppupvm.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
 
         String laskuString = ("Lasku id: " + laskuID + "\nvaraus id: " + varausID + "\nAsiakas_id: " + asiakasID + "\nAsiakkaan nimi: " + asiakasNimi +
-                "\nvuokrattu mökki: " + mokkinimi + "\nVuokrausaika: " + formatoituAlkupvm + " - " + formatoituloppupvm + "\nLisäpalveluiden määrä ja nimi: " +
+                "\nVuokrattu mökki: " + mokkinimi + "\nVuokrausaika: " + formatoituAlkupvm + " - " + formatoituloppupvm + "\nLisäpalveluiden summa: " +
                 palveluMaara + "\nYht: " + kokonaisHinta + "\nTilinumero: FI75 1065 5000 3130 63\nMaksathan laskun ennen vuokrauksen alkua!");
         return laskuString;
     }
