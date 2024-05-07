@@ -111,7 +111,7 @@ public class BillHandler extends Application {
     }
     public void asetaMaksetuksi(Stage primaryStage){
         main.connect.updateTable("lasku", "maksettu", "1", ("lasku_id = " + valittuNimi));
-        laskuMetodi(primaryStage, main.connect.executeQuery("SELECT lasku_id FROM lasku ORDER BY lasku_id"));
+        main.mainMenuMaker(primaryStage);
     }
     protected void laskunEtsintaMetodi(Stage etsintaStage){
         BorderPane BPLaskunEtsinnalle = new BorderPane();
@@ -141,6 +141,7 @@ public class BillHandler extends Application {
         Button etsi = new Button("Etsi");
         //toiminnallisuus
         etsi.setOnAction(e->{
+            boolean wirhe = false;
             List<String> kriteeriLista = new ArrayList<>();
             if (!varausidTF.getText().isEmpty()) {
                 kriteeriLista.add("varaus_id = " + varausidTF.getText().toLowerCase());
@@ -158,17 +159,31 @@ public class BillHandler extends Application {
                 kriteeriLista.add("LOWER(mökki) LIKE '%" + mokinNimiTF.getText().toLowerCase() + "%'");
             }
             if (!TFAlkuVuosille.getText().isEmpty()){
-                LocalDateTime alkupvm = LocalDateTime.parse(TFAlkuVuosille.getText() + "-" + TFAlkuKuukausille.getText() + "-" + TFAlkuPaivalle.getText() + " 15:00:00", sqlKoodiksiFormatter);
-                String formatoituAlkuPaiva = ("'" + alkupvm.format(sqlKoodiksiFormatter) + "'");
+                String formatoituAlkuPaiva = null;
+                try {
+                    LocalDateTime alkupvm = LocalDateTime.parse(TFAlkuVuosille.getText() + "-" + TFAlkuKuukausille.getText() + "-" + TFAlkuPaivalle.getText() + " 15:00:00", sqlKoodiksiFormatter);
+                    formatoituAlkuPaiva = ("'" + alkupvm.format(sqlKoodiksiFormatter) + "'");
+                } catch (Exception ex) {
+                    main.errorPopUp("Tarkista varauksen alkupäivä!");
+                    wirhe=true;
+                }
                 kriteeriLista.add("alkupaiva >= " + formatoituAlkuPaiva);
             }
             if (!TFLoppuVuosille.getText().isEmpty()){
-                LocalDateTime loppupvm = LocalDateTime.parse(TFLoppuVuosille.getText() + "-" + TFLoppuKuukausille.getText() + "-" + TFLoppuPaivalle.getText() + " 12:00:00", sqlKoodiksiFormatter);
-                String formatoituLoppuPaiva = ("'" + loppupvm.format(sqlKoodiksiFormatter) + "'");
+                String formatoituLoppuPaiva = null;
+                try {
+                    LocalDateTime loppupvm = LocalDateTime.parse(TFLoppuVuosille.getText() + "-" + TFLoppuKuukausille.getText() + "-" + TFLoppuPaivalle.getText() + " 12:00:00", sqlKoodiksiFormatter);
+                    formatoituLoppuPaiva = ("'" + loppupvm.format(sqlKoodiksiFormatter) + "'");
+                } catch (Exception ex) {
+                    main.errorPopUp("Tarkista varauksen loppumispäivä!");
+                    wirhe=true;
+                }
                 kriteeriLista.add("loppupaiva <= " + formatoituLoppuPaiva);
             }
-            String kriteerit = String.join(" AND ", kriteeriLista);
-            laskuMetodi(etsintaStage, main.connect.searchForStuff("laskutustiedot", kriteerit));
+            if (!wirhe) {
+                String kriteerit = String.join(" AND ", kriteeriLista);
+                laskuMetodi(etsintaStage, main.connect.searchForStuff("laskutustiedot", kriteerit));
+            }
         });
         Button kotiNappi = main.kotiNappain(etsintaStage);
         paneeliEtsintaKriteereille.getChildren().addAll(alkuHopina, varausidKriteeri, varausidTF, asiakasidKriteeri, asiakasidTF, asiakasnimiKriteeri, asiakasnimiTF,
