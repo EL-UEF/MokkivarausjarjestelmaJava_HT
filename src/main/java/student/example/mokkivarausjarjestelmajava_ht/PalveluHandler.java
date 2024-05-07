@@ -70,7 +70,7 @@ public class PalveluHandler extends Application {
         });
         Button poistoNappi = new Button("Poista valittu palvelu");
         poistoNappi.setOnAction(e->{
-            palvelunPoisto();
+            palvelunPoisto(palveluStage);
         });
         Button muokkausNappi = new Button("Muokkaa valittua palvelua");
         muokkausNappi.setOnAction(e->{
@@ -132,13 +132,14 @@ public class PalveluHandler extends Application {
             main.connect.insertData("palvelu", "alue_id, nimi, kuvaus, hinta, alv",
                     (palvelunAlue + ", \"" + lisattavanPalvelunNimi + "\", \"" + lisattavaKuvaus + "\", " + lisattavaHinta +
                             ", " + lisattavaALV));
+            main.mainMenuMaker(palveluStage);
         });
         BPPalvelunLisaamiselle.setCenter(paneeliUudenPalvelunTiedoille);
         Scene lisaysScene = new Scene(BPPalvelunLisaamiselle);
         palveluStage.setScene(lisaysScene);
         palveluStage.show();
     }
-    public void palvelunPoisto(){
+    public void palvelunPoisto(Stage palveluStage){
         VBox varoitusPaneeli = new VBox(30);
         varoitusPaneeli.setPrefSize(300, 300);
         varoitusPaneeli.setPadding(new Insets(10, 10, 10, 10));
@@ -155,6 +156,7 @@ public class PalveluHandler extends Application {
             main.connect.deleteStuff("palvelu", "nimi", valittuNimi);
             System.out.println("palvelu poistettu onnistuneesti");
             popUpStage.close();
+            main.mainMenuMaker(palveluStage);
         });
         enHalua.setOnAction(e->{
             System.out.println("palvelua ei poistettu");
@@ -165,7 +167,7 @@ public class PalveluHandler extends Application {
         popUpStage.setTitle("VAROITUS");
         popUpStage.show();
     }
-    public void palvelunMuokkausMetodi(Stage muokkausStage){ //TOIMII SQL:SSÄ
+    public void palvelunMuokkausMetodi(Stage muokkausStage){
         BorderPane BPpalvelunMuokkaukselle = new BorderPane();
         VBox paneeliMuokattavilleTiedoille = new VBox(10);
         Text muokattavapalvelu = new Text("MUOKATTAVA PALVELU:\n" + palvelu.SQLToString(valittuNimi));
@@ -192,6 +194,7 @@ public class PalveluHandler extends Application {
                 main.connect.updateTable("palvelu", "hinta", hintaTF.getText(), ("nimi = " + valittuNimi));
             if (!alvTF.getText().isEmpty())
                 main.connect.updateTable("palvelu", "alv", alvTF.getText(), ("nimi = " + valittuNimi));
+            main.mainMenuMaker(muokkausStage);
         });
         paneeliMuokattavilleTiedoille.getChildren().addAll(muokattavapalvelu, alueMuokkausTeksti, alueTF, nimiTeksti, nimiTF, hintaTeksti,
                 hintaTF, kuvausTeksti, kuvausTF, alvTeksti, alvTF, tallennusNappi);
@@ -231,7 +234,7 @@ public class PalveluHandler extends Application {
                 /**
                  * Tässä muutetaan käyttäjän syöte pieniksi kirjaimiksi ja haetaan tietokannasta kuvaus-kentästä pelkästään pienillä kirjaimilla
                  */
-                kriteeriLista.add("LOWER(kuvaus) LIKE '%" + hakuSanaTF.getText().toLowerCase() + "%'");
+                kriteeriLista.add("LOWER(kuvaus) LIKE '%" + hakuSanaTF.getText().toLowerCase() + "%' OR LOWER(nimi) LIKE '%" + hakuSanaTF.getText().toLowerCase() + "%'");
             }
 
             if (!alueTF.getText().isEmpty()) {

@@ -16,23 +16,23 @@ public class Palvelu {
     Double alv = 0.1;
     public String SQLToString(String nimi){
         String query = ("SELECT * FROM palvelu WHERE nimi = " + nimi);
+        String SQLpalvelu_id = null;
         int SQLalue_id = 0;
-        String SQLnimi = null;
         String SQLkuvaus = null;
         Double SQLhinta = null;
         Double SQLalv = null;
         try {
             ResultSet rs = main.connect.executeQuery(query);
             rs.next();
+            SQLpalvelu_id = rs.getString("palvelu_id");
             SQLalue_id = rs.getInt("alue_id");
-            SQLnimi = rs.getString("nimi");
             SQLkuvaus = rs.getString("kuvaus");
             SQLhinta = rs.getDouble("hinta");
             SQLalv = rs.getDouble("alv");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        String kokoTeksti = ("Palvelu id: " + nimi + "\nAlue id: " + SQLalue_id + "\nNimi: " + SQLnimi +
+        String kokoTeksti = ("Palvelu id: " + SQLpalvelu_id + "\nAlue id: " + SQLalue_id + "\nNimi: " + nimi +
                 "\nKuvaus: " + SQLkuvaus + "\nHinta: " + SQLhinta + "\nALV: " + SQLalv + " %");
         return kokoTeksti;
     }
