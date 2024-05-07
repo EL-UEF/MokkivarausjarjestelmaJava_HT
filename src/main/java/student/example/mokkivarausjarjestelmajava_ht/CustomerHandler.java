@@ -55,7 +55,7 @@ public class CustomerHandler extends Application {
         });
         Button poistoNappi = new Button("Poista valittu asiakas");
         poistoNappi.setOnAction(e->{
-            asiakkaanPoisto();
+            asiakkaanPoisto(asiakasStage);
         });
         Button muokkausNappi = new Button("Muokkaa valittua asiakasta");
         muokkausNappi.setOnAction(e->{
@@ -115,11 +115,14 @@ public class CustomerHandler extends Application {
             /**
              * Käytetään main instanssissa olemassa olevaa connectionia SQL tietojen muokkaamiseen
              */
-            main.connect.insertData("asiakas",
-                    "postinro, etunimi, sukunimi, lahiosoite, email, puhelinnro",
-                    ("\"" + lisattavanPostinro + "\", \"" + lisattavanEtunimi + "\", \"" +
-                            lisattavanSukunimi + "\", \"" + lisattavanKatuosoite + "\", \"" +
-                            lisattavanEmail + "\", \"" + lisattavanPuhnro + "\""));
+            if (lisattavanPostinro.length()==5) {
+                main.connect.insertData("asiakas",
+                        "postinro, etunimi, sukunimi, lahiosoite, email, puhelinnro",
+                        ("\"" + lisattavanPostinro + "\", \"" + lisattavanEtunimi + "\", \"" +
+                                lisattavanSukunimi + "\", \"" + lisattavanKatuosoite + "\", \"" +
+                                lisattavanEmail + "\", \"" + lisattavanPuhnro + "\""));
+                main.mainMenuMaker(asiakasStage);
+            } else main.errorPopUp("Tarkista postinumero");
         });
         BPAsiakkaanLisaamiselle.setCenter(paneeliUudenAsiakkaanTiedoille);
         Scene lisaysScene = new Scene(BPAsiakkaanLisaamiselle);
@@ -127,7 +130,7 @@ public class CustomerHandler extends Application {
         asiakasStage.show();
     }
 
-    public void asiakkaanPoisto(){
+    public void asiakkaanPoisto(Stage asiakasStage){
         VBox varoitusPaneeli = new VBox(30);
         varoitusPaneeli.setPrefSize(300, 300);
         varoitusPaneeli.setPadding(new Insets(10, 10, 10, 10));
@@ -144,6 +147,7 @@ public class CustomerHandler extends Application {
             main.connect.deleteStuff("asiakas", "asiakas_id", valittuID);
             System.out.println("Asiakas poistettu onnistuneesti");
             popUpStage.close();
+            main.mainMenuMaker(asiakasStage);
         });
         enHalua.setOnAction(e->{
             System.out.println("Asiakasta ei poistettu");
@@ -183,8 +187,11 @@ public class CustomerHandler extends Application {
                 kriteeriLista.add("LOWER(sukunimi) LIKE '%" + sukunimiTF.getText().toLowerCase() + "%'");
             }
 
-            if (!postinroTF.getText().isEmpty()) {
+            if (postinroTF.getText().length()==5) {
                 kriteeriLista.add("postinro LIKE '%" + postinroTF.getText() + "%'");
+            }
+            else if (!postinroTF.getText().isEmpty()){
+                main.errorPopUp("Tarkista postinumero!");
             }
 
             if (!lahiosoiteTF.getText().isEmpty()) {
@@ -198,7 +205,9 @@ public class CustomerHandler extends Application {
             }
 
             String kriteerit = String.join(" AND ", kriteeriLista);
-            asiakasMetodi(etsintaStage, main.connect.searchForStuff("asiakas", kriteerit));
+            if (!kriteerit.isEmpty()) {
+                asiakasMetodi(etsintaStage, main.connect.searchForStuff("asiakas", kriteerit));
+            }
         });
         Button kotiNappi = main.kotiNappain(etsintaStage);
         paneeliEtsintaKriteereille.getChildren().addAll(alkuHopina, postinroKriteeri, postinroTF,
@@ -214,8 +223,8 @@ public class CustomerHandler extends Application {
     public void asiakkaanMuokkausMetodi(Stage muokkausStage){
         BorderPane BPAsiakkaanMuokkaukselle = new BorderPane();
         VBox paneeliMuokattavilleTiedoille = new VBox(10);
-        Text muokattavaAsiakas = new Text("MUOKATTAVA MÖKKI\n" + asiakas.SQLToString(valittuID));
-        Text postinroTeksti = new Text("Uusi postinumero");
+        Text muokattavaAsiakas = new Text("ASIAKKAAN TIEDOT\n" + asiakas.SQLToString(valittuID));
+        Text postinroTeksti = new Text("\nJÄTÄ KENTTÄ TYHÄKSI JOS ET HALUA MUOKATA SITÄ\nUusi postinumero");
         TextField postinroTF = new TextField();
         Text etunimiTeksti = new Text("Uusi etunimi");
         TextField etunimiTF = new TextField();
@@ -229,18 +238,37 @@ public class CustomerHandler extends Application {
         TextField puhnroTF = new TextField();
         Button tallennusNappi = new Button("Tallenna");
         tallennusNappi.setOnAction(e->{
-            if (!postinroTF.getText().isEmpty())
+            boolean muokkausOnnistui = false;
+            if (postinroTF.getText().length()==5) {
                 main.connect.updateTable("asiakas", "postinro", postinroTF.getText(), ("asiakas_id = " + valittuID));
-            if (!etunimiTF.getText().isEmpty())
+                muokkausOnnistui=true;
+            }
+            else if (!postinroTF.getText().isEmpty()) {
+                main.errorPopUp("Tarkista postinumero!");
+            }
+            if (!etunimiTF.getText().isEmpty()){
                 main.connect.updateTable("asiakas", "etunimi", ("\"" + etunimiTF.getText() + "\""), ("asiakas_id = " + valittuID));
-            if (!sukunimiTF.getText().isEmpty())
+                muokkausOnnistui=true;
+            }
+            if (!sukunimiTF.getText().isEmpty()) {
                 main.connect.updateTable("asiakas", "sukunimi", ("\"" + sukunimiTF.getText() + "\""), ("asiakas_id = " + valittuID));
-            if (!osoiteTF.getText().isEmpty())
+                muokkausOnnistui=true;
+            }
+            if (!osoiteTF.getText().isEmpty()) {
                 main.connect.updateTable("asiakas", "lahiosoite", ("\"" + osoiteTF.getText() + "\""), ("asiakas_id = " + valittuID));
-            if (!emailTF.getText().isEmpty())
+                muokkausOnnistui = true;
+            }
+            if (!emailTF.getText().isEmpty()){
                 main.connect.updateTable("asiakas", "email", "\"" + emailTF.getText() + "\"", "asiakas_id = " + valittuID);
-            if (!puhnroTF.getText().isEmpty())
+                muokkausOnnistui=true;
+            }
+            if (!puhnroTF.getText().isEmpty()){
                 main.connect.updateTable("asiakas", "puhelinnro", ("\"" + puhnroTF.getText()) + "\"", ("asiakas_id = " + valittuID));
+                muokkausOnnistui=true;
+            }
+            if (muokkausOnnistui) {
+                main.mainMenuMaker(muokkausStage);
+            }
         });
         paneeliMuokattavilleTiedoille.getChildren().addAll(
                 muokattavaAsiakas, postinroTeksti,
