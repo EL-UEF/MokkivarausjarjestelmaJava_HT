@@ -51,7 +51,7 @@ public class Main extends Application {
      * Luo main menun ohjelmalle tai palauttaa ohjelman alkutilanteeseen.
      * @param primaryStage Stage, jossa käyttöliittymä pyörii
      */
-    private void mainMenuMaker(Stage primaryStage) {
+    public void mainMenuMaker(Stage primaryStage) {
         connect.createConnection();
         BorderPane paneeliAloitusNaytolle = new BorderPane();
         paneeliAloitusNaytolle.setPrefSize(500, 500);

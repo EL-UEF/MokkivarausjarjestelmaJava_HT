@@ -23,10 +23,20 @@ public class VarausHandler extends Application {
     private Main main;
     private Varaus varaus;
     int valittuIndeksi=-1;
+
+    /**
+     * Alustaja, joka luo varausHandlerin. Tähän tuodaan pääohjelmasta main ja varaus metodien käyttämistä varten
+     * @param main Pääohjelman instanssi metodien käyttämistä varten
+     * @param varaus Pääohjelman varaus instanssi metodien käyttämistä varten
+     */
     public VarausHandler(Main main, Varaus varaus){
         this.main=main;
         this.varaus=varaus;
     }
+
+    /**
+     * Formatoi käyttäjän antaman päivämäärän SQL:n hyväksymään muotoon
+     */
     DateTimeFormatter sqlKoodiksiFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     protected void varausMetodi(Stage varausStage, ResultSet rs){
@@ -59,7 +69,7 @@ public class VarausHandler extends Application {
 
         Button poistoNappi = new Button("Poista valittu varaus");
         poistoNappi.setOnAction(e->{
-            varauksenPoisto();
+            varauksenPoisto(varausStage);
         });
 
         Button muokkausNappi = new Button("Muokkaa valittua varausta");
@@ -80,7 +90,7 @@ public class VarausHandler extends Application {
         varausStage.setScene(scene);
         varausStage.show();
     }
-    protected void varauksenLisaysMetodi(Stage palveluStage){
+    protected void varauksenLisaysMetodi(Stage varausStage){
         /**
          * graafisia komponentteja ja niiden sijoittelua
          */
@@ -103,11 +113,9 @@ public class VarausHandler extends Application {
         TextField TFLoppuKuukausille = new TextField();
         TextField TFLoppuPaivalle = new TextField();
         paneeliVarauksenLopulle.getChildren().addAll(TFLoppuPaivalle, TFLoppuKuukausille, TFLoppuVuosille);
-
-
         Button tallennusNappi = new Button("Tallenna");
         tallennusNappi.setAlignment(Pos.CENTER);
-        Button kotiNappi = main.kotiNappain(palveluStage);
+        Button kotiNappi = main.kotiNappain(varausStage);
         BPvarauksenLisaamiselle.setBottom(kotiNappi);
         paneeliUudenVarauksenTiedoille.getChildren().addAll(annaAsiakas, asiakasidTF, varattavaMokki, mokkiTF, alkuPrompt, paneeliVarauksenAlulle,
                 loppuPrompt, paneeliVarauksenLopulle, tallennusNappi);
@@ -120,23 +128,30 @@ public class VarausHandler extends Application {
         tallennusNappi.setOnAction(e->{
             String asiakkaanID = asiakasidTF.getText();
             String varattavanMokinID = mokkiTF.getText();
-            LocalDateTime alkupvm = LocalDateTime.parse(TFAlkuVuosille.getText() + "-" + TFAlkuKuukausille.getText() + "-" + TFAlkuPaivalle.getText() + " 15:00:00", sqlKoodiksiFormatter);
-            LocalDateTime loppupvm = LocalDateTime.parse(TFLoppuVuosille.getText() + "-" + TFLoppuKuukausille.getText() + "-" + TFLoppuPaivalle.getText() + " 12:00:00", sqlKoodiksiFormatter);
+            String formatoituAlkuPaiva = null;
+            String formatoituLoppuPaiva = null;
+            try {
+                LocalDateTime alkupvm = LocalDateTime.parse(TFAlkuVuosille.getText() + "-" + TFAlkuKuukausille.getText() + "-" + TFAlkuPaivalle.getText() + " 15:00:00", sqlKoodiksiFormatter);
+                LocalDateTime loppupvm = LocalDateTime.parse(TFLoppuVuosille.getText() + "-" + TFLoppuKuukausille.getText() + "-" + TFLoppuPaivalle.getText() + " 12:00:00", sqlKoodiksiFormatter);
 
-            String formatoituAlkuPaiva = alkupvm.format(sqlKoodiksiFormatter);
-            String formatoituLoppuPaiva = loppupvm.format(sqlKoodiksiFormatter);
+                formatoituAlkuPaiva = alkupvm.format(sqlKoodiksiFormatter);
+                formatoituLoppuPaiva = loppupvm.format(sqlKoodiksiFormatter);
+            } catch (Exception ex) {
+                main.errorPopUp("Virhe päivämäärien tallentamisessa.\nVarmista, että olet syöttänyt päivämäärät oikein ja kokonaan\nEli 1.1.2024->01.01.2024");
+            }
             /**
              * Käytetään main instanssissa olemassa olevaa connectionia SQL tietojen muokkaamiseen
              */
             main.connect.insertData("varaus", "asiakas_id, mokki_id, varattu_pvm, vahvistus_pvm, varattu_alkupvm, varattu_loppupvm",
                     (asiakkaanID + ", " + varattavanMokinID + ", " + "NOW()" + ", NOW(), " + "'" + formatoituAlkuPaiva + "'" + ", " + "'" + formatoituLoppuPaiva + "'"));
+            main.mainMenuMaker(varausStage);
         });
         BPvarauksenLisaamiselle.setCenter(paneeliUudenVarauksenTiedoille);
         Scene lisaysScene = new Scene(BPvarauksenLisaamiselle);
-        palveluStage.setScene(lisaysScene);
-        palveluStage.show();
+        varausStage.setScene(lisaysScene);
+        varausStage.show();
     }
-    public void varauksenPoisto(){
+    public void varauksenPoisto(Stage varausStage){
         VBox varoitusPaneeli = new VBox(30);
         varoitusPaneeli.setPrefSize(300, 300);
         varoitusPaneeli.setPadding(new Insets(10, 10, 10, 10));
@@ -153,6 +168,7 @@ public class VarausHandler extends Application {
             main.connect.deleteStuff("varaus", "varaus_id", Integer.toString(valittuIndeksi));
             System.out.println("varaus poistettu onnistuneesti");
             popUpStage.close();
+            main.mainMenuMaker(varausStage);
         });
         enHalua.setOnAction(e->{
             System.out.println("varausta ei poistettu");
@@ -200,6 +216,7 @@ public class VarausHandler extends Application {
                 String formatoituLoppuPaiva = ("'" + loppupvm.format(sqlKoodiksiFormatter) + "'");
                 main.connect.updateTable("varaus", "varattu_loppupvm", formatoituLoppuPaiva, "varaus_id = " + valittuIndeksi);
             }
+            main.mainMenuMaker(muokkausStage);
         });
         paneeliMuokattavilleTiedoille.getChildren().addAll(muokattavaVaraus, asiakkaanIdMuokkausTeksti, asiakkaanIdTF, uusiMokkiTeksti, uusiMokkiTF,
                 alkuPrompt, paneeliVarauksenAlulle, loppuPrompt, paneeliVarauksenLopulle, tallennusNappi);
