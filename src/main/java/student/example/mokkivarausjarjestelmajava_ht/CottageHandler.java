@@ -148,6 +148,7 @@ public class CottageHandler extends Application {
                 main.connect.insertData("mokki", "alue_id, postinro, mokkinimi, katuosoite, hinta, kuvaus, henkilomaara, varustelu",
                         (mokinAlue + ", " + mokinPostinumero + ", \"" + lisattavanMokinNimi + "\", \"" + lisattavaOsoite + "\", " + lisattavaHinta +
                                 ", \"" + lisattavaKuvaus + "\", " + lisattavaHenkilomaara + ", \""+ lisattavatVarusteet + "\""));
+                main.mainMenuMaker(mokkiStage);
             }
         });
         BPMokinLisaamiselle.setCenter(paneeliUudenMokinTiedoille);
@@ -193,7 +194,7 @@ public class CottageHandler extends Application {
         });
         Button poistoNappi = new Button("Poista valittu mökki");
         poistoNappi.setOnAction(e->{
-            mokinPoisto();
+            mokinPoisto(mokkiStage);
         });
         Button muokkausNappi = new Button("Muokkaa valittua mökkiä");
         muokkausNappi.setOnAction(e->{
@@ -218,7 +219,7 @@ public class CottageHandler extends Application {
      * Metodi luo popup ikkunan, missä varmistetaan että käyttäjä haluaa poistaa valitun mökin
      * ja poistaa valitun mökin jos käyttäjä painaa "Kyllä"
      */
-    public void mokinPoisto(){
+    public void mokinPoisto(Stage mokkiStage){
         VBox varoitusPaneeli = new VBox(30);
         varoitusPaneeli.setPrefSize(300, 300);
         varoitusPaneeli.setPadding(new Insets(10, 10, 10, 10));
@@ -235,6 +236,7 @@ public class CottageHandler extends Application {
             main.connect.deleteStuff("mokki", "mokkinimi", valittuNimi);
             System.out.println("mökki poistettu onnistuneesti");
             popUpStage.close();
+            main.mainMenuMaker(mokkiStage);
         });
         enHalua.setOnAction(e->{
             System.out.println("Mökkiä ei poistettu");
@@ -364,8 +366,10 @@ public class CottageHandler extends Application {
             ArrayList<String> kriteeriLista = new ArrayList<>();
             if (!alueTF.getText().isEmpty())
                 main.connect.updateTable("mokki", "alue_id", alueTF.getText(), ("mokkinimi = " + valittuNimi));
-            if (!postinroTF.getText().isEmpty())
+            if (postinroTF.getText().length()==5){
                 main.connect.updateTable("mokki", "postinro", postinroTF.getText(), ("mokkinimi = " + valittuNimi));
+            } else if (!postinroTF.getText().isEmpty())
+                main.errorPopUp("Tarkista postinumero!");
             if (!nimiTF.getText().isEmpty())
                 main.connect.updateTable("mokki", "mokkinimi", ("\"" + nimiTF.getText()) + "\"", ("mokkinimi = " + valittuNimi));
             if (!osoiteTF.getText().isEmpty())
