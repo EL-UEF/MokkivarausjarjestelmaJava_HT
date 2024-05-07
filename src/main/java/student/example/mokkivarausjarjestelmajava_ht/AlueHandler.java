@@ -76,7 +76,7 @@ public class AlueHandler extends Application {
         Button koti = main.kotiNappain(alueStage);
         Button poistoNappi = new Button("Poista valittu alue");
         poistoNappi.setOnAction(e->{
-            alueenPoisto();
+            alueenPoisto(alueStage);
         });
         Button palvelunLisaysNappi = new Button("Lisää palvelu valitulle alueelle");
         palvelunLisaysNappi.setOnAction(e->{
@@ -115,6 +115,7 @@ public class AlueHandler extends Application {
              * Tiedot tallennetaan SQL tietokantaan main.connectin kautta
              */
             main.connect.insertData("alue", "nimi","\"" + uusiNimi + "\"");
+            main.mainMenuMaker(alueenLisaysStage);
         });
         Button kotiNappula = main.kotiNappain(alueenLisaysStage);
         paneeliUudenAlueenTiedoille.setAlignment(Pos.CENTER);
@@ -141,6 +142,7 @@ public class AlueHandler extends Application {
         tallenna.setOnAction(e->{
             String uusiNimi = nimiTF.getText();
             main.connect.updateTable("alue","nimi","\"" + uusiNimi + "\"",("nimi = "+"\"" + valittuNimi + "\""));
+            main.mainMenuMaker(muokkausStage);
         });
         Button kotiNappula = main.kotiNappain(muokkausStage);
         paneeliMuokattavilleTiedoille.getChildren().addAll(nimiTeksti, nimiTF, tallenna, kotiNappula);
@@ -175,7 +177,7 @@ public class AlueHandler extends Application {
         etsintaStage.setScene(scene);
         etsintaStage.show();
     }
-    public void alueenPoisto(){
+    public void alueenPoisto(Stage alueStage){
         VBox varoitusPaneeli = new VBox(30);
         varoitusPaneeli.setPrefSize(300, 300);
         varoitusPaneeli.setPadding(new Insets(10, 10, 10, 10));
@@ -192,6 +194,7 @@ public class AlueHandler extends Application {
             main.connect.deleteStuff("alue", "nimi", ("'" + valittuNimi + "'"));
             System.out.println("Alue poistettu onnistuneesti");
             popUpStage.close();
+            main.mainMenuMaker(alueStage);
         });
         enHalua.setOnAction(e->{
             System.out.println("Aluetta ei poistettu");
