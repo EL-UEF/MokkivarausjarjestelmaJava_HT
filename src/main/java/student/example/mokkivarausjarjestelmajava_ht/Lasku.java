@@ -1,30 +1,15 @@
 package student.example.mokkivarausjarjestelmajava_ht;
 
-import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
-import javafx.stage.Stage;
+
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+
 
 public class Lasku {
-    private Main main;
+    private final Main main;
     int lasku_id=0;
     int varaus_id=0;
     double summa = 0;
@@ -33,15 +18,15 @@ public class Lasku {
 
     public String SQLToString(String id){
         String criteria = ("lasku_id = " + id);
-        int SQLvaraus_id = -1;
-        int asiakas_id = -1;
-        String asiakasNimi = null;
-        String mokkiNimi = null;
-        LocalDateTime alkuPaiva = null;
-        LocalDateTime loppuPaiva = null;
-        String kaytetytPalvelut = null;
-        int kokonaisHinta = -1;
-        int maksettu = -1;
+        int SQLvaraus_id;
+        int asiakas_id;
+        String asiakasNimi;
+        String mokkiNimi;
+        LocalDateTime alkuPaiva;
+        LocalDateTime loppuPaiva;
+        String kaytetytPalvelut;
+        int kokonaisHinta;
+        int maksettu;
         String formatoituAlkuPaiva;
         String formatoituLoppuPaiva;
         String maksuStatus = "ei";
