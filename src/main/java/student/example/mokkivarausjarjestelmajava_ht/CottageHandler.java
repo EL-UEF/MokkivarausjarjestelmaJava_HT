@@ -345,7 +345,7 @@ public class CottageHandler extends Application {
         TextField postinroTF = new TextField();
         Text nimiTeksti = new Text("Uusi nimi");
         TextField nimiTF = new TextField();
-        Text osoiteTeksti = new Text("Haluatko oikeasti muokata osoitetta? Go for it champ...");
+        Text osoiteTeksti = new Text("Uusi osoite (vapaaehtoinen)");
         TextField osoiteTF = new TextField();
         Text hintaTeksti = new Text("Uusi hinta");
         TextField hintaTF = new TextField();
@@ -364,8 +364,16 @@ public class CottageHandler extends Application {
         Button tallennusNappi = new Button("Tallenna");
         tallennusNappi.setOnAction(e->{
             ArrayList<String> kriteeriLista = new ArrayList<>();
-            if (!alueTF.getText().isEmpty())
-                main.connect.updateTable("mokki", "alue_id", alueTF.getText(), ("mokkinimi = " + valittuNimi));
+
+            if (!alueTF.getText().isEmpty()) {
+                try {
+                    // Yritetään muuttaa teksti numeroksi, jos tulee error siirrytään catchiin
+                    Integer.parseInt(alueTF.getText());
+                    main.connect.updateTable("mokki", "alue_id", alueTF.getText(), ("mokkinimi = " + valittuNimi));
+                } catch (NumberFormatException y) {
+                    main.errorPopUp("Virhe muokkauksessa");
+                }
+            }
             if (postinroTF.getText().length()==5){
                 main.connect.updateTable("mokki", "postinro", postinroTF.getText(), ("mokkinimi = " + valittuNimi));
             } else if (!postinroTF.getText().isEmpty())
