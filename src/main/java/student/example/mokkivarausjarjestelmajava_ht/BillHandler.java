@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BillHandler extends Application {
-    private Lasku lasku;
-    private Main main;
+    private final Lasku lasku;
+    private final Main main;
     String valittuNimi = "-1";
     BillPDFer billPdfer;
     DateTimeFormatter sqlKoodiksiFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -36,7 +36,7 @@ public class BillHandler extends Application {
         TextArea alueLaskujenTiedoille = new TextArea();
         alueLaskujenTiedoille.setText("Klikkaa laskua nähdäksesi sen tarkemmat tiedot :)");
         alueLaskujenTiedoille.setEditable(false);
-        /**
+        /*
          * Logiikka laskujen indeksien näyttämiselle ListViewissä ja tietojen hakemiselle tietokannasta
          */
         ArrayList<String> laskuNimiLista = new ArrayList<>();
@@ -55,25 +55,15 @@ public class BillHandler extends Application {
         Button kotiNappi = main.kotiNappain(laskuStage);
         Button pdfer = new Button("Luo pdf");
         Button lisaysNappi = new Button("Uusi lasku");
-        lisaysNappi.setOnAction(e->{
-            laskunLisaysMetodi(laskuStage);
-        });
+        lisaysNappi.setOnAction(e-> laskunLisaysMetodi(laskuStage));
 
         Button maksettuNappi = new Button("Merkkaa lasku maksetuksi");
-        maksettuNappi.setOnAction(e->{
-            asetaMaksetuksi(laskuStage);
-        });
+        maksettuNappi.setOnAction(e-> asetaMaksetuksi(laskuStage));
         Button maksamattomatNappi = new Button("Näytä avoimet laskut");
-        maksamattomatNappi.setOnAction(e->{
-            naytaAvoimetLaskut(laskuStage);
-        });
+        maksamattomatNappi.setOnAction(e-> naytaAvoimetLaskut(laskuStage));
         Button etsintaNappi = new Button("Etsi laskua");
-        etsintaNappi.setOnAction(e->{
-            laskunEtsintaMetodi(laskuStage);
-        });
-        pdfer.setOnAction(e->{
-            billPdfer.createBillPDF(valittuNimi);
-        });
+        etsintaNappi.setOnAction(e-> laskunEtsintaMetodi(laskuStage));
+        pdfer.setOnAction(e-> billPdfer.createBillPDF(valittuNimi));
         HBox paneeliAlaValikolle = new HBox(10);
         paneeliAlaValikolle.getChildren().addAll(kotiNappi, pdfer, lisaysNappi, maksettuNappi, maksamattomatNappi, etsintaNappi);
         BPlaskuille.setBottom(paneeliAlaValikolle);
