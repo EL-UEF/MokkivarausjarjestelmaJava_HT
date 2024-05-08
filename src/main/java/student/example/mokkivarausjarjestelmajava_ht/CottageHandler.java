@@ -94,14 +94,14 @@ public class CottageHandler extends Application {
          */
         tallennusNappi.setOnAction(e->{
             boolean virheSyotteessa = false;
-            String mokinAlue = null;
-            String mokinPostinumero = null;
-            String lisattavanMokinNimi = null;
-            String lisattavaOsoite = null;
-            String lisattavaHinta = null;
-            String lisattavaKuvaus = null;
-            String lisattavaHenkilomaara = null;
-            String lisattavatVarusteet = null;
+            String mokinAlue = "";
+            String mokinPostinumero = "";
+            String lisattavanMokinNimi = "";
+            String lisattavaOsoite = "";
+            String lisattavaHinta = "";
+            String lisattavaKuvaus = "";
+            String lisattavaHenkilomaara = "";
+            String lisattavatVarusteet = "";
             try {
                 mokinAlue = alueTF.getText();
                 mokinPostinumero = postinroTF.getText();
