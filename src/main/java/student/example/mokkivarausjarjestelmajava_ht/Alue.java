@@ -15,8 +15,8 @@ public class Alue {
 
     public String SQLToStringAlue(String valittuId){
         String query = ("SELECT * FROM alue WHERE nimi = " + "\"" + valittuId + "\"");
-        int SQLalue_id = 0;
-        String SQLnimi = null;
+        int SQLalue_id;
+        String SQLnimi;
         try {
             ResultSet rs = main.connect.executeQuery(query);
             rs.next();
