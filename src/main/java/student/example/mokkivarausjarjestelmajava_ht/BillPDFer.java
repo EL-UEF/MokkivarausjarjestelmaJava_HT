@@ -57,15 +57,15 @@ public class BillPDFer {
     }
 
     private String luoPdfTeksti(String lasku_id) {
-        int laskuID = -1;
-        int varausID = -1;
-        int asiakasID = -1;
+        int laskuID;
+        int varausID;
+        int asiakasID;
         String asiakasNimi;
         String mokkinimi;
-        LocalDateTime SQLalkupvm = null;
-        LocalDateTime SQLloppupvm = null;
+        LocalDateTime SQLalkupvm;
+        LocalDateTime SQLloppupvm;
         String palveluMaara;
-        Double kokonaisHinta = -1.0;
+        Double kokonaisHinta;
         //Haetaan laskuun laitettavat tiedot:
         try {
             ResultSet rs = main.connect.searchForStuff("laskutustiedot", ("lasku_id = " + lasku_id));
