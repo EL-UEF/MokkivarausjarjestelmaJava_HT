@@ -25,11 +25,11 @@ public class CottageHandler extends Application {
     /**
      * Luotu main instance jotta voidaan käyttää Mainin metodeja
      */
-    private Main main;
+    private final Main main;
     /**
      * Luotu Mokki instance jotta voidaan käyttää Mokkin metodeja
      */
-    private Mokki mokki;
+    private final Mokki mokki;
 
     /**
      * Alustaja jota Main käyttää
@@ -53,8 +53,8 @@ public class CottageHandler extends Application {
      * @param mokkiStage Stage, jonka sisältö halutaan muuttaa mökkien lisäysvalikoksi
      */
     protected void mokinLisaysMetodi(Stage mokkiStage){
-        /**
-         * graafisia komponentteja ja niiden sijoittelua
+        /*
+          graafisia komponentteja ja niiden sijoittelua
          */
         BorderPane BPMokinLisaamiselle = new BorderPane();
         VBox paneeliUudenMokinTiedoille = new VBox(10);
@@ -88,7 +88,7 @@ public class CottageHandler extends Application {
         paneeliUudenMokinTiedoille.getChildren().addAll(annaAlue, paneeliAlueelle, mokinNimi, nimiTF, hintaTeksti, hintaTF, kuvausTeksti, kuvausTF,
                 henkilomaaraTeksti, henkiloTF, paneeliMokinVarusteille, tallennusNappi);
         paneeliUudenMokinTiedoille.setAlignment(Pos.CENTER);
-        /**
+        /*
          * Toiminnallisuus tallennusnappiin.
          * hakee tiedot kaikista textFieldeistä ja lisää mökin niiden perusteella
          */
@@ -135,7 +135,7 @@ public class CottageHandler extends Application {
                 virheSyotteessa=true;
                 main.errorPopUp("Virhe!\nTarkista, että kaikki kentät on täytetty oikein!");
             }
-            /**
+            /*
              * Tarkistetaan, että kaikki kentät on täytetty oikein ja
              * Käytetään main instanssissa olemassa olevaa connectionia SQL tietojen muokkaamiseen
              */
@@ -168,7 +168,7 @@ public class CottageHandler extends Application {
         TextArea alueMokkienTiedoille = new TextArea();
         alueMokkienTiedoille.setText("Klikkaa mökkiä nähdäksesi sen tarkemmat tiedot :)");
         alueMokkienTiedoille.setEditable(false);
-        /**
+        /*
          * Logiikka mökkien indeksien näyttämiselle ListViewissä ja tietojen hakemiselle tietokannasta
          */
         ArrayList<String> mokkiNimiLista = new ArrayList<>();
@@ -184,26 +184,18 @@ public class CottageHandler extends Application {
             valittuNimi =("'" + mokkiLista.getSelectionModel().getSelectedItem() + "'");
             alueMokkienTiedoille.setText(mokki.SQLToString(valittuNimi));
         });
-        /**
+        /*
          * Alavalikon käyttöliittymä mökkien hallintaa varten
          */
         Button kotiNappi = main.kotiNappain(mokkiStage);
         Button lisaysNappi = new Button("Lisää uusi mökki");
-        lisaysNappi.setOnAction(e->{
-            mokinLisaysMetodi(mokkiStage);
-        });
+        lisaysNappi.setOnAction(e-> mokinLisaysMetodi(mokkiStage));
         Button poistoNappi = new Button("Poista valittu mökki");
-        poistoNappi.setOnAction(e->{
-            mokinPoisto(mokkiStage);
-        });
+        poistoNappi.setOnAction(e-> mokinPoisto(mokkiStage));
         Button muokkausNappi = new Button("Muokkaa valittua mökkiä");
-        muokkausNappi.setOnAction(e->{
-            mokinMuokkausMetodi(mokkiStage);
-        });
+        muokkausNappi.setOnAction(e-> mokinMuokkausMetodi(mokkiStage));
         Button etsintaNappi = new Button("Etsi mökkiä");
-        etsintaNappi.setOnAction(e->{
-            mokinEtsintaMetodi(mokkiStage);
-        });
+        etsintaNappi.setOnAction(e-> mokinEtsintaMetodi(mokkiStage));
         HBox paneeliAlaValikolle = new HBox(10);
         paneeliAlaValikolle.getChildren().addAll(kotiNappi, lisaysNappi, muokkausNappi, etsintaNappi, poistoNappi);
         BPmokeille.setBottom(paneeliAlaValikolle);
