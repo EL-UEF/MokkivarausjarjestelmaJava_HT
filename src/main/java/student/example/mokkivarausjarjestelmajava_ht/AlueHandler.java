@@ -17,7 +17,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class AlueHandler extends Application {
-    private Main main;
+    private final Main main;
     Alue alue;
     String valittuNimi;
 
@@ -33,7 +33,7 @@ public class AlueHandler extends Application {
      * @param rs SQL tietokannasta tulevat tiedot
      */
     public void alueMetodi(Stage alueStage, ResultSet rs){
-        /**
+        /*
          * Käyttöliittymän luominen alueiden käsittelyä varten
          */
         BorderPane BPAlueille = new BorderPane();
@@ -41,7 +41,7 @@ public class AlueHandler extends Application {
         alueAlueidenTiedoille.setText("Klikkaa aluetta nähdäksesi sen tarkemmat tiedot :)");
         alueAlueidenTiedoille.setEditable(false);
         ArrayList<String> alueNimiLista = new ArrayList<>();
-        /**
+        /*
          * Haetaan alueet SQL tietokannasta nimen perusteella
          * näytetään tiedot listViewissä
          * Tässä valittuNimi pitää kirjaa siitä, mikä alue käyttäjällä on valittuna
@@ -58,30 +58,20 @@ public class AlueHandler extends Application {
             valittuNimi = alueLista.getSelectionModel().getSelectedItem();
             alueAlueidenTiedoille.setText(alue.SQLToStringAlue(valittuNimi));
         });
-        /**
+        /*
          * Alavalikon luonti alueiden hallintaa varten ja sen toiminnallisuus
          */
         Button uusiAlue = new Button("Lisää uusi alue");
         Button muokkausNappi = new Button("Muokkaa valittua aluetta");
-        muokkausNappi.setOnAction(e->{
-            alueenMuokkausMetodi(alueStage);
-        });
-        uusiAlue.setOnAction(e->{
-            alueenLisaysMetodi(alueStage);
-        });
+        muokkausNappi.setOnAction(e-> alueenMuokkausMetodi(alueStage));
+        uusiAlue.setOnAction(e-> alueenLisaysMetodi(alueStage));
         Button etsintaNappi = new Button("Etsi alue");
-        etsintaNappi.setOnAction(event -> {
-            alueenEtsintäMetodi(alueStage);
-        });
+        etsintaNappi.setOnAction(event -> alueenEtsintaMetodi(alueStage));
         Button koti = main.kotiNappain(alueStage);
         Button poistoNappi = new Button("Poista valittu alue");
-        poistoNappi.setOnAction(e->{
-            alueenPoisto(alueStage);
-        });
+        poistoNappi.setOnAction(e-> alueenPoisto(alueStage));
         Button palvelunLisaysNappi = new Button("Lisää palvelu valitulle alueelle");
-        palvelunLisaysNappi.setOnAction(e->{
-            palvelunLisaysMetodi(alueStage);
-        });
+        palvelunLisaysNappi.setOnAction(e-> palvelunLisaysMetodi(alueStage));
         HBox paneeliAlaValikolle = new HBox(10);
         paneeliAlaValikolle.getChildren().addAll(koti, muokkausNappi, uusiAlue, etsintaNappi, poistoNappi, palvelunLisaysNappi);
         BPAlueille.setLeft(alueLista);
@@ -98,7 +88,7 @@ public class AlueHandler extends Application {
      * @param alueenLisaysStage Stage, jossa käyttöliittymä pyörii
      */
     public void alueenLisaysMetodi(Stage alueenLisaysStage){
-        /**
+        /*
          * Luodaan käyttöliittymä alueiden lisäämiselle ja toiminnallisuus siihen
          */
         BorderPane BPAlueidenLisaamiselle = new BorderPane();
@@ -111,7 +101,7 @@ public class AlueHandler extends Application {
         Button lisaysNappi = new Button("Lisää");
         lisaysNappi.setOnAction(e->{
             String uusiNimi = nimiTF.getText();
-            /**
+            /*
              * Tiedot tallennetaan SQL tietokantaan main.connectin kautta
              */
             main.connect.insertData("alue", "nimi","\"" + uusiNimi + "\"");
@@ -154,7 +144,7 @@ public class AlueHandler extends Application {
         muokkausStage.setTitle("Muokkaa aluetta");
         muokkausStage.show();
     }
-    protected void alueenEtsintäMetodi(Stage etsintaStage){
+    protected void alueenEtsintaMetodi(Stage etsintaStage){
         BorderPane BPMokinEtsinnalle = new BorderPane();
         VBox paneeliEtsintaKriteereille = new VBox(10);
         paneeliEtsintaKriteereille.setAlignment(Pos.CENTER);
@@ -206,7 +196,7 @@ public class AlueHandler extends Application {
         popUpStage.show();
     }
     protected void palvelunLisaysMetodi(Stage palveluStage){
-        /**
+        /*
          * graafisia komponentteja ja niiden sijoittelua
          */
         BorderPane BPPalvelunLisaamiselle = new BorderPane();
@@ -228,7 +218,7 @@ public class AlueHandler extends Application {
                 kuvausTeksti, kuvausTF, hintaTeksti, hintaTF,
                 alvTeksti, alvTF, tallennusNappi);
         paneeliUudenPalvelunTiedoille.setAlignment(Pos.CENTER);
-        /**
+        /*
          * Toiminnallisuus tallennusnappiin.
          * hakee tiedot kaikista textFieldeistä ja lisää palvelun niiden perusteella
          */
@@ -237,7 +227,7 @@ public class AlueHandler extends Application {
             String lisattavaKuvaus = kuvausTF.getText();
             String lisattavaHinta = hintaTF.getText();
             String lisattavaALV = alvTF.getText();
-            /**
+            /*
              * Käytetään main instanssissa olemassa olevaa connectionia SQL tietojen muokkaamiseen
              */
             main.connect.insertData("palvelu", "alue_id, nimi, kuvaus, hinta, alv",
