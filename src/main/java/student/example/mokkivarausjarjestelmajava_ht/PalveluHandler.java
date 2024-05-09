@@ -2,6 +2,7 @@ package student.example.mokkivarausjarjestelmajava_ht;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -10,11 +11,17 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class PalveluHandler extends Application {
@@ -81,8 +88,11 @@ public class PalveluHandler extends Application {
         etsintaNappi.setOnAction(e->{
             palvelunEtsintaMetodi(palveluStage);
         });
+        Button popupButton = new Button("Palvelu raportti");
+        popupButton.setOnAction(e -> showPopup());
+
         HBox paneeliAlaValikolle = new HBox(10);
-        paneeliAlaValikolle.getChildren().addAll(kotiNappi, lisaysNappi,muokkausNappi, etsintaNappi, poistoNappi);
+        paneeliAlaValikolle.getChildren().addAll(kotiNappi, lisaysNappi,muokkausNappi, etsintaNappi, poistoNappi, popupButton);
         BPpalveluille.setBottom(paneeliAlaValikolle);
         BPpalveluille.setLeft(palveluLista);
         BPpalveluille.setCenter(aluePalveluidenTiedoille);
@@ -259,6 +269,54 @@ public class PalveluHandler extends Application {
         etsintaStage.setTitle("Palvelun etsintä");
         etsintaStage.setScene(scene);
         etsintaStage.show();
+    }
+    public void showPopup() {
+
+        BorderPane paneeliPopUpille = new BorderPane();
+        paneeliPopUpille.setPrefSize(450, 350);
+        paneeliPopUpille.setPadding(new Insets(10, 10, 10, 10));
+        // Upper Center
+        HBox upperCenterBox = new HBox(10);
+        upperCenterBox.setAlignment(Pos.CENTER);
+        TextField textField1 = new TextField();
+        textField1.setFocusTraversable(false);
+        textField1.setPromptText("alku pvm: pp.kk.vvvvv");
+        TextField textField2 = new TextField();
+        textField2.setFocusTraversable(false);
+        textField2.setPromptText("loppu pvm: pp.kk.vvvvv");
+        Button upperCenterButton = new Button("Etsi");
+        upperCenterBox.getChildren().addAll(textField1, textField2, upperCenterButton);
+        paneeliPopUpille.setTop(upperCenterBox);
+
+        // Middle Center
+        TextArea raporttiText = new TextArea();
+        raporttiText.setEditable(false);
+        paneeliPopUpille.setCenter(raporttiText);
+        Button okNappi = new Button("OK");
+        okNappi.setAlignment(Pos.CENTER);
+        paneeliPopUpille.setBottom(okNappi);
+
+        paneeliPopUpille.requestFocus();
+        Scene scene = new Scene(paneeliPopUpille);
+        Stage popUpStage = new Stage();
+
+        upperCenterButton.setOnAction(e -> {
+            if(textField1.getText() != null & textField2.getText() != null){
+            // Add functionality here to handle button click
+            String text1 = textField1.getText();
+            String text2 = textField2.getText();
+            raporttiText.setText(palvelu.SQLRaport(text1,text2));
+            paneeliPopUpille.requestFocus();
+            }
+        });
+
+        okNappi.setOnAction(e -> {
+            popUpStage.close();
+        });
+
+        popUpStage.setTitle("Raportti");
+        popUpStage.setScene(scene);
+        popUpStage.show();
     }
     public static void main(String[] args) {
         launch(args);

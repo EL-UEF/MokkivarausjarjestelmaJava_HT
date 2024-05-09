@@ -5,6 +5,12 @@ import javafx.stage.Stage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class Palvelu {
     private Main main;
@@ -14,6 +20,43 @@ public class Palvelu {
     String kuvaus;
     Double hinta;
     Double alv = 0.1;
+
+    /**
+     *
+     * @param alku Käyttäjän input muodossa String pp.kk.vvvv (esim 12.03.2021)
+     * @param loppu Käyttäjän input muodossa String pp.kk.vvvv (esim 12.03.2021)
+     * @return String muodossa kaikki saadut tiedot kannasta
+     */
+    public String SQLRaport(String alku, String loppu){
+        String alku_pvm;
+        String loppu_pvm;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        System.out.println(LocalDate.parse(alku, formatter).format(formatter2));
+        alku_pvm = LocalDate.parse(alku, formatter).format(formatter2);
+        loppu_pvm = LocalDate.parse(loppu, formatter).format(formatter2);
+        String query = ("Call palvelu_raportti ("+"'"+alku_pvm+"',"+" '"+loppu_pvm+"'"+")");
+
+        String alue_nimi;
+        String palvelu;
+        double tuotto;
+        StringBuilder kokoTeksti = new StringBuilder();
+        try{
+            ResultSet rs = main.connect.executeQuery(query);
+            if(rs != null){
+            while(rs.next()){
+                alue_nimi = rs.getString("alue_nimi");
+                palvelu = rs.getString("palvelu");
+                tuotto = rs.getDouble("tuotto");
+                kokoTeksti.append("Alue nimi: ").append(alue_nimi).append("\nPalvelu: ").append(palvelu).append("\nNimi: ").append("\nTuotto: ").append(tuotto).append("\n");
+            }
+        }
+        else kokoTeksti = new StringBuilder("Ei tietoja antamalla aikavälillä");}
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+        return kokoTeksti.toString();
+    }
     public String SQLToString(String nimi){
         String query = ("SELECT * FROM palvelu WHERE nimi = " + nimi);
         String SQLpalvelu_id = null;
