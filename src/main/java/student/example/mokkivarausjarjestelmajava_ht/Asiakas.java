@@ -1,9 +1,6 @@
 package student.example.mokkivarausjarjestelmajava_ht;
 
-import javafx.application.Application;
-import javafx.stage.Stage;
 
-import java.security.PublicKey;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -22,12 +19,12 @@ public class Asiakas {
     }
     public String SQLToString(String id){
         String query = ("SELECT * FROM asiakas WHERE asiakas_id = " + id);
-        String SQLpostinro = null;
-        String SQLetunimi = null;
-        String SQLsukunimi = null;
-        String SQLlahiosoite = null;
-        String SQLsposti = null;
-        String SQLpuhnro = null;
+        String SQLpostinro;
+        String SQLetunimi;
+        String SQLsukunimi;
+        String SQLlahiosoite;
+        String SQLsposti;
+        String SQLpuhnro;
         try {
             ResultSet rs = main.connect.executeQuery(query);
             rs.next();
