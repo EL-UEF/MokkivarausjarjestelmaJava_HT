@@ -5,6 +5,8 @@ import javafx.stage.Stage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class Mokki {
@@ -86,6 +88,32 @@ public class Mokki {
     public Mokki(String data, String table, String values, Main main) throws SQLException {
         main.connect.insertData(data,table,values);
 
+    }
+    public String SQLRaport(String alku, String loppu){
+        String alku_pvm;
+        String loppu_pvm;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        System.out.println(LocalDate.parse(alku, formatter).format(formatter2));
+        alku_pvm = LocalDate.parse(alku, formatter).format(formatter2);
+        loppu_pvm = LocalDate.parse(loppu, formatter).format(formatter2);
+        String query = ("Call majoitus_raportti ("+"'"+alku_pvm+"',"+" '"+loppu_pvm+"'"+")");
+        String alue_nimi;
+        String mokkinimi;
+        double tuotto;
+        StringBuilder kokoTeksti = new StringBuilder();
+        try{
+            ResultSet rs = main.connect.executeQuery(query);
+            while(rs.next()) {
+                alue_nimi = rs.getString("alue_nimi");
+                mokkinimi = rs.getString("mokkinimi");
+                tuotto = rs.getDouble("tuotto");
+                kokoTeksti.append("Alue nimi: ").append(alue_nimi).append("\nMökki: ").append(mokkinimi).append("\nTuotto: ").append(tuotto).append("\n");
+            }
+            return kokoTeksti.toString();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

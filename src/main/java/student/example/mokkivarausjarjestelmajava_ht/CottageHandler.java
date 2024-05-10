@@ -195,9 +195,11 @@ public class CottageHandler extends Application {
         Button muokkausNappi = new Button("Muokkaa valittua mökkiä");
         muokkausNappi.setOnAction(e-> mokinMuokkausMetodi(mokkiStage));
         Button etsintaNappi = new Button("Etsi mökkiä");
+        Button popupButton = new Button("Majoitus raportti");
+        popupButton.setOnAction(e -> showPopup());
         etsintaNappi.setOnAction(e-> mokinEtsintaMetodi(mokkiStage));
         HBox paneeliAlaValikolle = new HBox(10);
-        paneeliAlaValikolle.getChildren().addAll(kotiNappi, lisaysNappi, muokkausNappi, etsintaNappi, poistoNappi);
+        paneeliAlaValikolle.getChildren().addAll(kotiNappi, lisaysNappi, muokkausNappi, etsintaNappi, poistoNappi, popupButton);
         BPmokeille.setBottom(paneeliAlaValikolle);
         BPmokeille.setLeft(mokkiLista);
         BPmokeille.setCenter(alueMokkienTiedoille);
@@ -407,6 +409,54 @@ public class CottageHandler extends Application {
         muokkausStage.setTitle("Mökin tietojen muokkaus");
         muokkausStage.setScene(scene);
         muokkausStage.show();
+    }
+    public void showPopup() {
+
+        BorderPane paneeliPopUpille = new BorderPane();
+        paneeliPopUpille.setPrefSize(450, 350);
+        paneeliPopUpille.setPadding(new Insets(10, 10, 10, 10));
+        // Upper Center
+        HBox upperCenterBox = new HBox(10);
+        upperCenterBox.setAlignment(Pos.CENTER);
+        TextField textField1 = new TextField();
+        textField1.setFocusTraversable(false);
+        textField1.setPromptText("alku pvm: pp.kk.vvvvv");
+        TextField textField2 = new TextField();
+        textField2.setFocusTraversable(false);
+        textField2.setPromptText("loppu pvm: pp.kk.vvvvv");
+        Button upperCenterButton = new Button("Etsi");
+        upperCenterBox.getChildren().addAll(textField1, textField2, upperCenterButton);
+        paneeliPopUpille.setTop(upperCenterBox);
+
+        // Middle Center
+        TextArea raporttiText = new TextArea();
+        raporttiText.setEditable(false);
+        paneeliPopUpille.setCenter(raporttiText);
+        Button okNappi = new Button("OK");
+        okNappi.setAlignment(Pos.CENTER);
+        paneeliPopUpille.setBottom(okNappi);
+
+        paneeliPopUpille.requestFocus();
+        Scene scene = new Scene(paneeliPopUpille);
+        Stage popUpStage = new Stage();
+
+        upperCenterButton.setOnAction(e -> {
+            if(textField1.getText() != null & textField2.getText() != null){
+                // Add functionality here to handle button click
+                String text1 = textField1.getText();
+                String text2 = textField2.getText();
+                raporttiText.setText(mokki.SQLRaport(text1,text2));
+                paneeliPopUpille.requestFocus();
+            }
+        });
+
+        okNappi.setOnAction(e -> {
+            popUpStage.close();
+        });
+
+        popUpStage.setTitle("Raportti");
+        popUpStage.setScene(scene);
+        popUpStage.show();
     }
     public static void main(String[] args) {
         launch(args);

@@ -43,21 +43,18 @@ public class Palvelu {
         StringBuilder kokoTeksti = new StringBuilder();
         try{
             ResultSet rs = main.connect.executeQuery(query);
-            if(rs != null){
-            while(rs.next()){
+            while(rs.next()) {
                 alue_nimi = rs.getString("alue_nimi");
                 palvelu = rs.getString("palvelu");
                 tuotto = rs.getDouble("tuotto");
-                kokoTeksti.append("Alue nimi: ").append(alue_nimi).append("\nPalvelu: ").append(palvelu).append("\nNimi: ").append("\nTuotto: ").append(tuotto).append("\n");
+                kokoTeksti.append("Alue nimi: ").append(alue_nimi).append("\nPalvelu: ").append(palvelu).append("\nTuotto: ").append(tuotto).append("\n");
             }
-        }
-        else kokoTeksti = new StringBuilder("Ei tietoja antamalla aikavälillä");}
-        catch (SQLException e){
+        return kokoTeksti.toString();
+    } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return kokoTeksti.toString();
     }
-    public String SQLToString(String nimi){
+        public String SQLToString(String nimi){
         String query = ("SELECT * FROM palvelu WHERE nimi = " + nimi);
         String SQLpalvelu_id = null;
         int SQLalue_id = 0;
