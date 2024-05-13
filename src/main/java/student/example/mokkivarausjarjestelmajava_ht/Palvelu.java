@@ -47,7 +47,7 @@ public class Palvelu {
                 alue_nimi = rs.getString("alue_nimi");
                 palvelu = rs.getString("palvelu");
                 tuotto = rs.getDouble("tuotto");
-                kokoTeksti.append("Alue nimi: ").append(alue_nimi).append("\nPalvelu: ").append(palvelu).append("\nTuotto: ").append(tuotto).append("\n");
+                kokoTeksti.append("Alue nimi: ").append(alue_nimi).append("\nPalvelu: ").append(palvelu).append("\nTuotto: ").append(tuotto).append("\n").append("\n");
             }
         return kokoTeksti.toString();
     } catch (SQLException e) {

@@ -108,7 +108,7 @@ public class Mokki {
                 alue_nimi = rs.getString("alue_nimi");
                 mokkinimi = rs.getString("mokkinimi");
                 tuotto = rs.getDouble("tuotto");
-                kokoTeksti.append("Alue nimi: ").append(alue_nimi).append("\nMökki: ").append(mokkinimi).append("\nTuotto: ").append(tuotto).append("\n");
+                kokoTeksti.append("Alue nimi: ").append(alue_nimi).append("\nMökki: ").append(mokkinimi).append("\nTuotto: ").append(tuotto).append("\n").append("\n");
             }
             return kokoTeksti.toString();
         } catch (SQLException e) {
