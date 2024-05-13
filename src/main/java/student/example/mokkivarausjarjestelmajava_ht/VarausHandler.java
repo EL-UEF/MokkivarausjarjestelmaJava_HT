@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VarausHandler extends Application {
-    private Main main;
-    private Varaus varaus;
+    private final Main main;
+    private final Varaus varaus;
     int valittuIndeksi=-1;
 
     /**
@@ -44,7 +44,7 @@ public class VarausHandler extends Application {
         TextArea alueVaraustenTiedoille = new TextArea();
         alueVaraustenTiedoille.setText("Klikkaa varausta nähdäksesi sen tarkemmat tiedot :)");
         alueVaraustenTiedoille.setEditable(false);
-        /**
+        /*
          * Logiikka palveluiden indeksien näyttämiselle ListViewissä ja tietojen hakemiselle tietokannasta
          */
         ArrayList<String> varausNimiLista = new ArrayList<>();
@@ -63,23 +63,15 @@ public class VarausHandler extends Application {
         Button kotiNappi = main.kotiNappain(varausStage);
         Button lisaysNappi = new Button("Tee uusi varaus");
 
-        lisaysNappi.setOnAction(e->{
-            varauksenLisaysMetodi(varausStage);
-        });
+        lisaysNappi.setOnAction(e-> varauksenLisaysMetodi(varausStage));
 
         Button poistoNappi = new Button("Poista valittu varaus");
-        poistoNappi.setOnAction(e->{
-            varauksenPoisto(varausStage);
-        });
+        poistoNappi.setOnAction(e-> varauksenPoisto(varausStage));
 
         Button muokkausNappi = new Button("Muokkaa valittua varausta");
-        muokkausNappi.setOnAction(e->{
-            varauksenMuokkausMetodi(varausStage);
-        });
+        muokkausNappi.setOnAction(e-> varauksenMuokkausMetodi(varausStage));
         Button etsintaNappi = new Button("Etsi varausta");
-        etsintaNappi.setOnAction(e->{
-            varauksenEtsintaMetodi(varausStage);
-        });
+        etsintaNappi.setOnAction(e-> varauksenEtsintaMetodi(varausStage));
         HBox paneeliAlaValikolle = new HBox(10);
         paneeliAlaValikolle.getChildren().addAll(kotiNappi, lisaysNappi, muokkausNappi, etsintaNappi, poistoNappi);
         BPvarauksille.setBottom(paneeliAlaValikolle);
@@ -91,7 +83,7 @@ public class VarausHandler extends Application {
         varausStage.show();
     }
     protected void varauksenLisaysMetodi(Stage varausStage){
-        /**
+        /*
          * graafisia komponentteja ja niiden sijoittelua
          */
         BorderPane BPvarauksenLisaamiselle = new BorderPane();
@@ -120,7 +112,7 @@ public class VarausHandler extends Application {
         paneeliUudenVarauksenTiedoille.getChildren().addAll(annaAsiakas, asiakasidTF, varattavaMokki, mokkiTF, alkuPrompt, paneeliVarauksenAlulle,
                 loppuPrompt, paneeliVarauksenLopulle, tallennusNappi);
         paneeliUudenVarauksenTiedoille.setAlignment(Pos.CENTER);
-        /**
+        /*
          * Toiminnallisuus tallennusnappiin.
          * hakee tiedot kaikista textFieldeistä ja lisää palvelun niiden perusteella
          * pelleilty DateTime formattien kanssa oikein huolella mutta nyt toimii
@@ -139,7 +131,7 @@ public class VarausHandler extends Application {
             } catch (Exception ex) {
                 main.errorPopUp("Virhe päivämäärien tallentamisessa.\nVarmista, että olet syöttänyt päivämäärät oikein ja kokonaan\nEli 1.1.2024->01.01.2024");
             }
-            /**
+            /*
              * Käytetään main instanssissa olemassa olevaa connectionia SQL tietojen muokkaamiseen
              */
             main.connect.insertData("varaus", "asiakas_id, mokki_id, varattu_pvm, vahvistus_pvm, varattu_alkupvm, varattu_loppupvm",
