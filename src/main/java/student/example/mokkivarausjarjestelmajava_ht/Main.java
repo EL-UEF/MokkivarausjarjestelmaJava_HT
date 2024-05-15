@@ -5,11 +5,18 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+
+import java.sql.SQLException;
 
 
 public class Main extends Application {
@@ -27,7 +34,7 @@ public class Main extends Application {
     private AlueHandler alueHandler = new AlueHandler(this, alue);
     private PalveluHandler palveluHandler = new PalveluHandler(this, palvelu);
 
-    public SqlConnect connect = new SqlConnect("Test_user", "1234", this);
+    public SqlConnect connect = new SqlConnect(this);
     public Main() {
     }
 
@@ -44,7 +51,7 @@ public class Main extends Application {
         /**
          * Käynnistetään main menu
          */
-        mainMenuMaker(primaryStage);
+        showLoginScreen(primaryStage);
     }
 
     /**
@@ -120,6 +127,52 @@ public class Main extends Application {
         popUpStage.setScene(scene);
         popUpStage.show();
     }
+    private void showLoginScreen(Stage primaryStage) {
+        Stage loginStage = new Stage();
+        loginStage.initModality(Modality.APPLICATION_MODAL);
+        loginStage.setTitle("Login");
+
+        GridPane loginPane = new GridPane();
+        loginPane.setAlignment(Pos.CENTER);
+        loginPane.setPadding(new Insets(10, 10, 10, 10));
+        loginPane.setHgap(10);
+        loginPane.setVgap(10);
+
+        Label userLabel = new Label("Username:");
+        TextField userField = new TextField();
+        Label passLabel = new Label("Password:");
+        PasswordField passField = new PasswordField();
+        Button loginButton = new Button("Login");
+
+        loginPane.add(userLabel, 0, 0);
+        loginPane.add(userField, 1, 0);
+        loginPane.add(passLabel, 0, 1);
+        loginPane.add(passField, 1, 1);
+        loginPane.add(loginButton, 1, 2);
+
+        loginButton.setOnAction(e -> {
+            String username = userField.getText();
+            String password = passField.getText();
+            connect.setPassword(username);
+            connect.setUser(password);
+            try{
+                connect.createConnection();
+                loginStage.close();
+                mainMenuMaker(primaryStage);}
+            catch (Exception ex) {
+                Label errorLabel = new Label("Invalid username or password");
+                errorLabel.setStyle("-fx-text-fill: red;");
+                loginPane.add(errorLabel, 1, 3);}
+
+        });
+
+        Scene loginScene = new Scene(loginPane, 300, 200);
+        loginStage.setScene(loginScene);
+        loginStage.showAndWait();
+    }
+
+
+
 
     /**
      * Luo napin, josta painamalla pääsee aloitusnäyttöön

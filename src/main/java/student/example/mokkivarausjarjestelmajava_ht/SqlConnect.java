@@ -137,6 +137,9 @@ public class SqlConnect {
             main.errorPopUp("Virhe tietojen poistamisessa!\nOta yhteyttä ryhmään 5!" + e);
         }
     }
+    public  SqlConnect(Main main){
+        this.main = main;
+    }
 
         /**
          *
