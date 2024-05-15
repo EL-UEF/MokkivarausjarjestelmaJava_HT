@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 
 public class Mokki {
@@ -94,9 +95,12 @@ public class Mokki {
         String loppu_pvm;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        System.out.println(LocalDate.parse(alku, formatter).format(formatter2));
-        alku_pvm = LocalDate.parse(alku, formatter).format(formatter2);
-        loppu_pvm = LocalDate.parse(loppu, formatter).format(formatter2);
+        try {
+            alku_pvm = LocalDate.parse(alku, formatter).format(formatter2);
+            loppu_pvm = LocalDate.parse(loppu, formatter).format(formatter2);
+        } catch (DateTimeParseException e) {
+            return "Päivämäärä ei muodossa 'pp.kk.yyyy'.";
+        }
         String query = ("Call majoitus_raportti ("+"'"+alku_pvm+"',"+" '"+loppu_pvm+"'"+")");
         String alue_nimi;
         String mokkinimi;
@@ -112,7 +116,9 @@ public class Mokki {
             }
             return kokoTeksti.toString();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            return "Database error: " + e.getMessage();
+        } catch (Exception e) {
+            return "Unexpected error: " + e.getMessage();
         }
     }
 

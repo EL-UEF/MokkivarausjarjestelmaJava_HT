@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 
 public class Palvelu {
@@ -32,9 +33,12 @@ public class Palvelu {
         String loppu_pvm;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        System.out.println(LocalDate.parse(alku, formatter).format(formatter2));
-        alku_pvm = LocalDate.parse(alku, formatter).format(formatter2);
-        loppu_pvm = LocalDate.parse(loppu, formatter).format(formatter2);
+        try {
+            alku_pvm = LocalDate.parse(alku, formatter).format(formatter2);
+            loppu_pvm = LocalDate.parse(loppu, formatter).format(formatter2);
+        } catch (DateTimeParseException e) {
+            return "Päivämäärä ei muodossa 'pp.kk.yyyy'.";
+        }
         String query = ("Call palvelu_raportti ("+"'"+alku_pvm+"',"+" '"+loppu_pvm+"'"+")");
 
         String alue_nimi;
@@ -50,8 +54,10 @@ public class Palvelu {
                 kokoTeksti.append("Alue nimi: ").append(alue_nimi).append("\nPalvelu: ").append(palvelu).append("\nTuotto: ").append(tuotto).append("\n").append("\n");
             }
         return kokoTeksti.toString();
-    } catch (SQLException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            return "Database error: " + e.getMessage();
+        } catch (Exception e) {
+            return "Unexpected error: " + e.getMessage();
         }
     }
         public String SQLToString(String nimi){
