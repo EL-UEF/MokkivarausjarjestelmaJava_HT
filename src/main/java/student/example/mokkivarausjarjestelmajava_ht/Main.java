@@ -153,8 +153,8 @@ public class Main extends Application {
         loginButton.setOnAction(e -> {
             String username = userField.getText();
             String password = passField.getText();
-            connect.setPassword(username);
-            connect.setUser(password);
+            connect.setPassword(password);
+            connect.setUser(username);
             try{
                 connect.createConnection();
                 loginStage.close();
